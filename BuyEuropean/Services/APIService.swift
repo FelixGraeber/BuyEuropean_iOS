@@ -1,0 +1,84 @@
+import Foundation
+import Combine
+
+enum APIError: Error {
+    case invalidURL
+    case invalidResponse
+    case invalidData
+    case networkError(Error)
+    case decodingError(Error)
+    case encodingError(Error)
+    case serverError(Int)
+    case unknown
+    
+    var message: String {
+        switch self {
+        case .invalidURL:
+            return "Invalid URL"
+        case .invalidResponse:
+            return "Invalid response from server"
+        case .invalidData:
+            return "Invalid data received"
+        case .networkError(let error):
+            return "Network error: \(error.localizedDescription)"
+        case .decodingError(let error):
+            return "Failed to decode response: \(error.localizedDescription)"
+        case .encodingError(let error):
+            return "Failed to encode request: \(error.localizedDescription)"
+        case .serverError(let code):
+            return "Server error with status code: \(code)"
+        case .unknown:
+            return "An unknown error occurred"
+        }
+    }
+}
+
+class APIService {
+    static let shared = APIService()
+    
+    private let baseURL = "https://buy-e-ubackend-felixgraeber.replit.app"
+    
+    private init() {}
+    
+    func analyzeProduct(imageBase64: String, prompt: String? = nil) async throws -> BuyEuropeanResponse {
+        guard let url = URL(string: "\(baseURL)/analyze-product") else {
+            throw APIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let requestBody = AnalyzeProductRequest(image: imageBase64, prompt: prompt)
+        
+        do {
+            let encoder = JSONEncoder()
+            request.httpBody = try encoder.encode(requestBody)
+        } catch {
+            throw APIError.encodingError(error)
+        }
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw APIError.invalidResponse
+            }
+            
+            guard (200...299).contains(httpResponse.statusCode) else {
+                throw APIError.serverError(httpResponse.statusCode)
+            }
+            
+            do {
+                let decoder = JSONDecoder()
+                return try decoder.decode(BuyEuropeanResponse.self, from: data)
+            } catch {
+                throw APIError.decodingError(error)
+            }
+        } catch let urlError as URLError {
+            throw APIError.networkError(urlError)
+        } catch {
+            throw error
+        }
+    }
+}
