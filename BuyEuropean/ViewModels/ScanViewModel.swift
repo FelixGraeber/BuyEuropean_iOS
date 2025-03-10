@@ -27,9 +27,44 @@ class ScanViewModel: ObservableObject {
     @Published var showCamera = false
     @Published var showPhotoLibrary = false
     @Published var errorMessage: String?
+    @Published var showPermissionRequest = false
     
     private let apiService = APIService.shared
     private let imageService = ImageService.shared
+    private let permissionService = PermissionService.shared
+    
+    init() {
+        checkCameraPermission()
+    }
+    
+    func checkCameraPermission() {
+        if permissionService.shouldShowPermissionPrompt {
+            showPermissionRequest = true
+        }
+    }
+    
+    func requestCameraPermission() async {
+        let granted = await permissionService.requestCameraPermission()
+        if granted {
+            await MainActor.run {
+                showCamera = true
+            }
+        }
+    }
+    
+    func handleCameraButtonTap() {
+        if permissionService.cameraPermissionStatus == .granted {
+            if capturedImage == nil {
+                showCamera = true
+            } else {
+                Task {
+                    await analyzeImage()
+                }
+            }
+        } else {
+            showPermissionRequest = true
+        }
+    }
     
     func analyzeImage() async {
         guard let image = capturedImage else {

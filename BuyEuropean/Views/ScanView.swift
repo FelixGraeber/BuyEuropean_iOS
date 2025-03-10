@@ -91,13 +91,7 @@ struct ScanView: View {
                     
                     // Capture button
                     Button(action: {
-                        if viewModel.capturedImage == nil {
-                            viewModel.showCamera = true
-                        } else {
-                            Task {
-                                await viewModel.analyzeImage()
-                            }
-                        }
+                        viewModel.handleCameraButtonTap()
                     }) {
                         ZStack {
                             Circle()
@@ -141,6 +135,11 @@ struct ScanView: View {
         .sheet(isPresented: $viewModel.showPhotoLibrary) {
             ImagePicker(selectedImage: $viewModel.capturedImage, isPresented: $viewModel.showPhotoLibrary, sourceType: .photoLibrary)
                 .edgesIgnoringSafeArea(.all)
+        }
+        .sheet(isPresented: $viewModel.showPermissionRequest) {
+            CameraPermissionView {
+                await viewModel.requestCameraPermission()
+            }
         }
         .sheet(item: sheetDestination) { destination in
             switch destination {
