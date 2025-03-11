@@ -1,10 +1,3 @@
-//
-//  ScanView.swift
-//  BuyEuropean
-//
-//  Created by Felix Graeber on 10.03.25.
-//
-
 import SwiftUI
 import AVFoundation
 
@@ -219,6 +212,9 @@ struct ScanView: View {
                     .padding(.bottom, 30)
                 }
             }
+        }
+        .onAppear {
+            cameraService.checkPermissionsAndSetup()
         }
         .sheet(isPresented: $viewModel.showPhotoLibrary) {
             ImagePicker(

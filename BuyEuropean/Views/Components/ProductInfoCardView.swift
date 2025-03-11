@@ -20,7 +20,7 @@ struct ProductInfoCardView: View {
         VStack(alignment: .leading, spacing: 16) {
             // Product info
             infoRow(
-                icon: "package.fill",
+                icon: "tag.fill",
                 iconColor: Color.blue,
                 title: "PRODUCT",
                 value: product
