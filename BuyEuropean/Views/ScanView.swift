@@ -18,11 +18,11 @@ struct ScanView: View {
             // Background
             Color.black.edgesIgnoringSafeArea(.all)
             
-            VStack {
-                // Top area with title/logo
-                HStack {
-                    // Back button - only show when image is captured
-                    if viewModel.capturedImage != nil {
+            VStack(spacing: 0) {
+                // Top area with title/logo - Only show when image is captured
+                if viewModel.capturedImage != nil {
+                    HStack {
+                        // Back button
                         Button(action: {
                             // Cancel background analysis and reset
                             viewModel.cancelBackgroundAnalysis()
@@ -37,23 +37,19 @@ struct ScanView: View {
                             .padding(10)
                             .foregroundColor(.white)
                         }
-                    }
-                    
-                    Spacer()
-                    Text("BuyEuropean")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                    Spacer()
-                    
-                    // Empty view for balance when back button is visible
-                    if viewModel.capturedImage != nil {
+                        
+                        Spacer()
+                        Text("BuyEuropean")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                        Spacer()
+                        
+                        // Empty view for balance when back button is visible
                         Color.clear
                             .frame(width: 80, height: 10)
                     }
+                    .padding(.top)
                 }
-                .padding(.top)
-                
-                Spacer()
                 
                 // Main content area - camera preview or captured image
                 ZStack {
@@ -67,7 +63,7 @@ struct ScanView: View {
                         ZStack {
                             CameraPreview(session: cameraService.session)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .cornerRadius(12)
+                                .edgesIgnoringSafeArea(.all)
                             
                             // Camera state overlays
                             switch cameraService.state {

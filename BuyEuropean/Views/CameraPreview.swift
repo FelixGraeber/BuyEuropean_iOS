@@ -48,10 +48,22 @@ struct CameraPreview: UIViewRepresentable {
         previewLayer.videoGravity = .resizeAspectFill
         view.layer.addSublayer(previewLayer)
         
+        // Store the previewLayer in the associated CameraService if possible
+        if let cameraService = findCameraService(for: session) {
+            cameraService.previewLayer = previewLayer
+        }
+        
         return view
     }
     
     func updateUIView(_ uiView: UIView, context: Context) {}
+    
+    // Helper to find the CameraService instance associated with this session
+    private func findCameraService(for session: AVCaptureSession) -> CameraService? {
+        // Use NotificationCenter to find the CameraService
+        NotificationCenter.default.post(name: .didCreatePreviewLayer, object: session)
+        return nil
+    }
 }
 
 // MARK: - Camera Service
@@ -62,12 +74,27 @@ class CameraService: NSObject, ObservableObject {
     private let output = AVCapturePhotoOutput()
     private var completionHandler: ((Result<UIImage, Camera.Error>) -> Void)?
     
+    // Add a reference to the preview layer for cropping
+    var previewLayer: AVCaptureVideoPreviewLayer?
+    
     // Add a flag to track if setup is in progress
     private var isSettingUp = false
     
     override init() {
         super.init()
-        // Don't set state to initializing here, as it will be set in checkPermissionsAndSetup
+        // Register for notifications
+        NotificationCenter.default.addObserver(self, selector: #selector(handlePreviewLayerCreation(_:)), name: .didCreatePreviewLayer, object: nil)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    @objc private func handlePreviewLayerCreation(_ notification: Notification) {
+        if let notifiedSession = notification.object as? AVCaptureSession, notifiedSession === session {
+            // The notification was for our session, but we still need to find the layer
+            // This will be handled by the CameraPreview directly setting our previewLayer property
+        }
     }
     
     func checkPermissionsAndSetup() {
@@ -219,8 +246,84 @@ extension CameraService: AVCapturePhotoCaptureDelegate {
             return
         }
         
-        completionHandler?(.success(image))
+        // Crop the image to match the preview's aspect ratio
+        if let previewLayer = self.previewLayer, let croppedImage = cropImageToMatchPreview(image, previewLayer: previewLayer) {
+            completionHandler?(.success(croppedImage))
+        } else {
+            completionHandler?(.success(image))
+        }
     }
+    
+    // Helper method to crop the captured image to match what's shown in the preview
+    private func cropImageToMatchPreview(_ image: UIImage, previewLayer: AVCaptureVideoPreviewLayer) -> UIImage? {
+        // Get the connection from the output
+        guard let connection = output.connection(with: .video) else {
+            return nil
+        }
+        
+        // Calculate the crop rect based on the preview layer's bounds and the image dimensions
+        let cropRect = calculateCropRect(for: image, previewLayer: previewLayer, connection: connection)
+        
+        // Create a cropped image
+        guard let cgImage = image.cgImage,
+              let croppedCGImage = cgImage.cropping(to: cropRect) else {
+            return nil
+        }
+        
+        // Create a new UIImage with the cropped CGImage
+        return UIImage(cgImage: croppedCGImage, scale: image.scale, orientation: image.imageOrientation)
+    }
+    
+    // Calculate the crop rect based on the preview layer's bounds and the image dimensions
+    private func calculateCropRect(for image: UIImage, previewLayer: AVCaptureVideoPreviewLayer, connection: AVCaptureConnection) -> CGRect {
+        // Get the image dimensions
+        let imageWidth = CGFloat(image.cgImage?.width ?? 0)
+        let imageHeight = CGFloat(image.cgImage?.height ?? 0)
+        
+        // Get the preview layer's bounds
+        let layerBounds = previewLayer.bounds
+        
+        // Calculate the aspect ratio of the preview layer
+        let layerRatio = layerBounds.width / layerBounds.height
+        
+        // Calculate the aspect ratio of the image
+        let imageRatio = imageWidth / imageHeight
+        
+        // Calculate the crop rect
+        var cropRect: CGRect
+        
+        if imageRatio > layerRatio {
+            // Image is wider than the preview layer
+            let cropWidth = imageHeight * layerRatio
+            let cropX = (imageWidth - cropWidth) / 2
+            cropRect = CGRect(x: cropX, y: 0, width: cropWidth, height: imageHeight)
+        } else {
+            // Image is taller than the preview layer
+            let cropHeight = imageWidth / layerRatio
+            let cropY = (imageHeight - cropHeight) / 2
+            cropRect = CGRect(x: 0, y: cropY, width: imageWidth, height: cropHeight)
+        }
+        
+        // Adjust for device orientation and camera position
+        let deviceOrientation = UIDevice.current.orientation
+        let isUsingFrontCamera = cameraPosition == .front
+        
+        // Adjust the crop rect based on the device orientation and camera position
+        if deviceOrientation.isPortrait || deviceOrientation.isLandscape {
+            // No adjustment needed for portrait orientation with back camera
+            if isUsingFrontCamera && !deviceOrientation.isPortrait {
+                // Flip horizontally for front camera in landscape
+                cropRect.origin.x = imageWidth - cropRect.maxX
+            }
+        }
+        
+        return cropRect
+    }
+}
+
+// MARK: - Notification Names
+extension Notification.Name {
+    static let didCreatePreviewLayer = Notification.Name("CameraService.didCreatePreviewLayer")
 }
 
 // MARK: - Equatable conformance
