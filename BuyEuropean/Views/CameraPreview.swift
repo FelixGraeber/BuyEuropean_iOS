@@ -58,6 +58,7 @@ struct CameraPreview: UIViewRepresentable {
 class CameraService: NSObject, ObservableObject {
     @Published private(set) var state: Camera.State = .initializing
     @Published private(set) var session = AVCaptureSession()
+    @Published var cameraPosition: AVCaptureDevice.Position = .back
     private let output = AVCapturePhotoOutput()
     private var completionHandler: ((Result<UIImage, Camera.Error>) -> Void)?
     
@@ -154,7 +155,7 @@ class CameraService: NSObject, ObservableObject {
         session.outputs.forEach { session.removeOutput($0) }
         
         // Configure camera input
-        guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
+        guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: cameraPosition) else {
             throw Camera.Error.noCamera
         }
         
@@ -190,6 +191,11 @@ class CameraService: NSObject, ObservableObject {
         }
         isSettingUp = false
         state = .initializing
+    }
+    
+    func toggleCameraPosition() {
+        cameraPosition = cameraPosition == .back ? .front : .back
+        setupCamera()
     }
 }
 

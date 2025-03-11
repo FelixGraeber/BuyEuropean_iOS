@@ -168,16 +168,16 @@ struct ScanView: View {
                     }
                     .disabled(cameraService.state != .ready && viewModel.capturedImage == nil)
                     
-                    // Info button
+                    // Selfie button
                     Button(action: {
-                        // Show info or settings
+                        cameraService.toggleCameraPosition()
                     }) {
                         ZStack {
                             Circle()
                                 .strokeBorder(Color.white, lineWidth: 2)
                                 .frame(width: 60, height: 60)
                             
-                            Image(systemName: "info")
+                            Image(systemName: "camera.rotate")
                                 .font(.title)
                                 .foregroundColor(.white)
                         }

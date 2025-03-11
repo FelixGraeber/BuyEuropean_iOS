@@ -119,4 +119,8 @@ class ScanViewModel: ObservableObject {
         scanState = .ready
         errorMessage = nil
     }
+    
+    func toggleCameraPosition(cameraService: CameraService) {
+        cameraService.toggleCameraPosition()
+    }
 }
