@@ -192,7 +192,9 @@ struct ScanView: View {
         }
         .sheet(isPresented: $viewModel.showPermissionRequest) {
             CameraPermissionView {
-                await viewModel.requestCameraPermission()
+                if await viewModel.requestCameraPermission() {
+                    cameraService.checkPermissionsAndSetup()
+                }
             }
         }
         .sheet(item: sheetDestination) { destination in

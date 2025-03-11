@@ -43,8 +43,8 @@ class ScanViewModel: ObservableObject {
         }
     }
     
-    func requestCameraPermission() async {
-        _ = await permissionService.requestCameraPermission()
+    func requestCameraPermission() async -> Bool {
+        return await permissionService.requestCameraPermission()
     }
     
     func handleCameraButtonTap(cameraService: CameraService? = nil) {

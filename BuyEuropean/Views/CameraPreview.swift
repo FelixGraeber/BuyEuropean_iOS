@@ -61,11 +61,26 @@ class CameraService: NSObject, ObservableObject {
     private let output = AVCapturePhotoOutput()
     private var completionHandler: ((Result<UIImage, Camera.Error>) -> Void)?
     
+    // Add a flag to track if setup is in progress
+    private var isSettingUp = false
+    
     override init() {
         super.init()
+        // Don't set state to initializing here, as it will be set in checkPermissionsAndSetup
     }
     
     func checkPermissionsAndSetup() {
+        // Guard against multiple setup attempts
+        guard !isSettingUp else {
+            print("Camera setup already in progress, ignoring duplicate call")
+            return
+        }
+        
+        // Only reset state if not already initializing
+        if case .initializing = state {} else {
+            state = .initializing
+        }
+        
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized:
             setupCamera()
@@ -75,32 +90,49 @@ class CameraService: NSObject, ObservableObject {
                     if granted {
                         self?.setupCamera()
                     } else {
+                        self?.isSettingUp = false
                         self?.state = .error(.notAuthorized)
                     }
                 }
             }
         case .denied, .restricted:
+            isSettingUp = false
             state = .error(.notAuthorized)
         @unknown default:
+            isSettingUp = false
             state = .error(.notAuthorized)
         }
     }
     
     private func setupCamera() {
+        // Set flag to indicate setup is in progress
+        isSettingUp = true
         state = .initializing
+        
+        // Check if session is already running
+        if session.isRunning {
+            print("Camera session already running, stopping before reconfiguration")
+            session.stopRunning()
+        }
         
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self = self else { return }
             
             do {
                 try self.configureCameraSession()
-                self.session.startRunning()
+                
+                // Only start session if it's not already running
+                if !self.session.isRunning {
+                    self.session.startRunning()
+                }
                 
                 DispatchQueue.main.async {
+                    self.isSettingUp = false
                     self.state = .ready
                 }
             } catch {
                 DispatchQueue.main.async {
+                    self.isSettingUp = false
                     self.state = .error(.setupFailed(error))
                 }
             }
@@ -108,6 +140,12 @@ class CameraService: NSObject, ObservableObject {
     }
     
     private func configureCameraSession() throws {
+        // Only configure if not already running
+        guard !session.isRunning else {
+            print("Session already running, skipping configuration")
+            return
+        }
+        
         session.beginConfiguration()
         defer { session.commitConfiguration() }
         
@@ -147,7 +185,10 @@ class CameraService: NSObject, ObservableObject {
     }
     
     func stopSession() {
-        session.stopRunning()
+        if session.isRunning {
+            session.stopRunning()
+        }
+        isSettingUp = false
         state = .initializing
     }
 }
