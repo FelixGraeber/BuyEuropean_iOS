@@ -44,9 +44,6 @@ struct ScanView: View {
                             CameraPreview(session: cameraService.session)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 .cornerRadius(12)
-                                .onAppear {
-                                    cameraService.checkPermissionsAndSetup()
-                                }
                             
                             // Camera state overlays
                             switch cameraService.state {
