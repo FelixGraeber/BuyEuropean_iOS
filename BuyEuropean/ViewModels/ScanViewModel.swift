@@ -83,7 +83,8 @@ class ScanViewModel: ObservableObject {
         // Resize image to reduce upload size
         let resizedImage = imageService.resizeImage(image: image, targetSize: CGSize(width: 800, height: 800))
         
-        guard let base64Image = imageService.convertImageToBase64(image: resizedImage) else {
+        // Compress the resized image to reduce file size
+        guard let base64Image = imageService.convertImageToBase64(image: resizedImage, compressionQuality: 0.6) else {
             DispatchQueue.main.async {
                 self.errorMessage = "Failed to process image"
                 self.scanState = .error("Failed to process image")
