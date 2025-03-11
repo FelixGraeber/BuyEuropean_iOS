@@ -160,6 +160,8 @@ struct ScanView: View {
                                 case .success(let image):
                                     DispatchQueue.main.async {
                                         viewModel.capturedImage = image
+                                        // Start background analysis immediately
+                                        viewModel.startBackgroundAnalysis()
                                     }
                                 case .failure(let error):
                                     print("Failed to capture photo: \(error.localizedDescription)")
@@ -197,9 +199,8 @@ struct ScanView: View {
                 } else {
                     // Full-width Analyze Image button for review screen
                     Button(action: {
-                        Task {
-                            await viewModel.analyzeImage()
-                        }
+                        // Use handleCameraButtonTap which will check for cached results
+                        viewModel.handleCameraButtonTap()
                     }) {
                         HStack {
                             Image(systemName: "magnifyingglass")
@@ -220,8 +221,16 @@ struct ScanView: View {
             }
         }
         .sheet(isPresented: $viewModel.showPhotoLibrary) {
-            ImagePicker(selectedImage: $viewModel.capturedImage, isPresented: $viewModel.showPhotoLibrary, sourceType: .photoLibrary)
-                .edgesIgnoringSafeArea(.all)
+            ImagePicker(
+                selectedImage: $viewModel.capturedImage,
+                isPresented: $viewModel.showPhotoLibrary,
+                sourceType: .photoLibrary,
+                onImageSelected: {
+                    // Start background analysis as soon as image is selected from photo library
+                    viewModel.startBackgroundAnalysis()
+                }
+            )
+            .edgesIgnoringSafeArea(.all)
         }
         .sheet(isPresented: $viewModel.showPermissionRequest) {
             CameraPermissionView {

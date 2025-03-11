@@ -37,6 +37,9 @@ class ScanViewModel: ObservableObject {
     // Task to keep track of background processing
     private var backgroundAnalysisTask: Task<Void, Never>?
     
+    // Store the analysis result for immediate access
+    private var cachedAnalysisResult: BuyEuropeanResponse?
+    
     init() {
         checkCameraPermission()
     }
@@ -70,7 +73,15 @@ class ScanViewModel: ObservableObject {
                 }
             }
         } else if capturedImage != nil {
-            // If background analysis is already in progress, just update UI state
+            // If we already have a cached result, use it immediately
+            if let cachedResult = cachedAnalysisResult {
+                DispatchQueue.main.async {
+                    self.scanState = .result(cachedResult)
+                }
+                return
+            }
+            
+            // If background analysis is already in progress, just update UI state to show loading
             if case .backgroundScanning = scanState {
                 DispatchQueue.main.async {
                     self.scanState = .scanning
@@ -88,6 +99,9 @@ class ScanViewModel: ObservableObject {
     func startBackgroundAnalysis() {
         // Cancel any existing task first
         cancelBackgroundAnalysis()
+        
+        // Clear any cached result
+        cachedAnalysisResult = nil
         
         // Start a new background task
         backgroundAnalysisTask = Task {
@@ -130,11 +144,14 @@ class ScanViewModel: ObservableObject {
                 }
                 
                 await MainActor.run {
-                    // Only update if we're still in background scanning state
-                    if case .backgroundScanning = self.scanState {
-                        // Store result but don't show it yet
+                    // Store the result in our cache
+                    self.cachedAnalysisResult = response
+                    
+                    // Only update UI state if we're in scanning mode (user clicked analyze)
+                    if case .scanning = self.scanState {
                         self.scanState = .result(response)
                     }
+                    // Otherwise keep the state as backgroundScanning
                 }
             } catch let error as APIError {
                 if !Task.isCancelled {
@@ -158,6 +175,7 @@ class ScanViewModel: ObservableObject {
     func cancelBackgroundAnalysis() {
         backgroundAnalysisTask?.cancel()
         backgroundAnalysisTask = nil
+        cachedAnalysisResult = nil
         
         // Only reset state if we're in background scanning
         if case .backgroundScanning = scanState {
@@ -222,6 +240,7 @@ class ScanViewModel: ObservableObject {
         capturedImage = nil
         scanState = .ready
         errorMessage = nil
+        cachedAnalysisResult = nil
     }
     
     func toggleCameraPosition(cameraService: CameraService) {

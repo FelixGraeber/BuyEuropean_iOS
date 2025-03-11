@@ -12,6 +12,7 @@ struct ImagePicker: UIViewControllerRepresentable {
     @Binding var selectedImage: UIImage?
     @Binding var isPresented: Bool
     var sourceType: UIImagePickerController.SourceType
+    var onImageSelected: (() -> Void)?
     
     func makeUIViewController(context: Context) -> UIImagePickerController {
         let imagePicker = UIImagePickerController()
@@ -36,6 +37,9 @@ struct ImagePicker: UIViewControllerRepresentable {
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
             if let image = info[.originalImage] as? UIImage {
                 parent.selectedImage = image
+                DispatchQueue.main.async {
+                    self.parent.onImageSelected?()
+                }
             }
             parent.isPresented = false
         }
