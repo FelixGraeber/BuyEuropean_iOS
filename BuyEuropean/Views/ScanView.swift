@@ -21,11 +21,35 @@ struct ScanView: View {
             VStack {
                 // Top area with title/logo
                 HStack {
+                    // Back button - only show when image is captured
+                    if viewModel.capturedImage != nil {
+                        Button(action: {
+                            // Cancel background analysis and reset
+                            viewModel.cancelBackgroundAnalysis()
+                            viewModel.resetScan()
+                        }) {
+                            HStack {
+                                Image(systemName: "arrow.left")
+                                    .font(.title2)
+                                Text("Back")
+                                    .font(.headline)
+                            }
+                            .padding(10)
+                            .foregroundColor(.white)
+                        }
+                    }
+                    
                     Spacer()
                     Text("BuyEuropean")
                         .font(.headline)
                         .foregroundColor(.white)
                     Spacer()
+                    
+                    // Empty view for balance when back button is visible
+                    if viewModel.capturedImage != nil {
+                        Color.clear
+                            .frame(width: 80, height: 10)
+                    }
                 }
                 .padding(.top)
                 
@@ -113,27 +137,28 @@ struct ScanView: View {
                     .multilineTextAlignment(.center)
                     .padding(.vertical)
                 
-                // Bottom navigation bar
-                HStack(spacing: 60) {
-                    // Gallery button
-                    Button(action: {
-                        viewModel.showPhotoLibrary = true
-                    }) {
-                        ZStack {
-                            Circle()
-                                .strokeBorder(Color.white, lineWidth: 2)
-                                .frame(width: 60, height: 60)
-                            
-                            Image(systemName: "photo.fill")
-                                .font(.title)
-                                .foregroundColor(.white)
+                // Bottom navigation or action buttons
+                if viewModel.capturedImage == nil {
+                    // Camera mode buttons
+                    HStack(spacing: 60) {
+                        // Gallery button - only show when no image is captured
+                        Button(action: {
+                            viewModel.showPhotoLibrary = true
+                        }) {
+                            ZStack {
+                                Circle()
+                                    .strokeBorder(Color.white, lineWidth: 2)
+                                    .frame(width: 60, height: 60)
+                                
+                                Image(systemName: "photo.fill")
+                                    .font(.title)
+                                    .foregroundColor(.white)
+                            }
                         }
-                    }
-                    .disabled(!cameraService.state.isReady && viewModel.capturedImage == nil)
+                        .disabled(!cameraService.state.isReady)
                     
-                    // Capture button
-                    Button(action: {
-                        if viewModel.capturedImage == nil {
+                        // Capture button - only show when no image is captured
+                        Button(action: {
                             cameraService.capturePhoto { result in
                                 switch result {
                                 case .success(let image):
@@ -144,46 +169,58 @@ struct ScanView: View {
                                     print("Failed to capture photo: \(error.localizedDescription)")
                                 }
                             }
-                        } else {
-                            Task {
-                                await viewModel.analyzeImage()
-                            }
-                        }
-                    }) {
-                        ZStack {
-                            Circle()
-                                .fill(Color.white)
-                                .frame(width: 80, height: 80)
-                            
-                            if viewModel.capturedImage == nil {
+                        }) {
+                            ZStack {
+                                Circle()
+                                    .fill(Color.white)
+                                    .frame(width: 80, height: 80)
+                                
                                 Circle()
                                     .strokeBorder(Color.black, lineWidth: 2)
                                     .frame(width: 70, height: 70)
-                            } else {
-                                Image(systemName: "arrow.right")
+                            }
+                        }
+                        .disabled(cameraService.state != .ready)
+                        
+                        // Selfie button
+                        Button(action: {
+                            cameraService.toggleCameraPosition()
+                        }) {
+                            ZStack {
+                                Circle()
+                                    .strokeBorder(Color.white, lineWidth: 2)
+                                    .frame(width: 60, height: 60)
+                                
+                                Image(systemName: "camera.rotate")
                                     .font(.title)
-                                    .foregroundColor(.black)
+                                    .foregroundColor(.white)
                             }
                         }
                     }
-                    .disabled(cameraService.state != .ready && viewModel.capturedImage == nil)
-                    
-                    // Selfie button
+                    .padding(.bottom, 30)
+                } else {
+                    // Full-width Analyze Image button for review screen
                     Button(action: {
-                        cameraService.toggleCameraPosition()
-                    }) {
-                        ZStack {
-                            Circle()
-                                .strokeBorder(Color.white, lineWidth: 2)
-                                .frame(width: 60, height: 60)
-                            
-                            Image(systemName: "camera.rotate")
-                                .font(.title)
-                                .foregroundColor(.white)
+                        Task {
+                            await viewModel.analyzeImage()
                         }
+                    }) {
+                        HStack {
+                            Image(systemName: "magnifyingglass")
+                                .font(.headline)
+                            Text("Analyze Image")
+                                .font(.headline)
+                                .bold()
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(Color(red: 0/255, green: 51/255, blue: 153/255)) // European blue
+                        .foregroundColor(.white)
+                        .cornerRadius(12)
                     }
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 30)
                 }
-                .padding(.bottom, 30)
             }
         }
         .sheet(isPresented: $viewModel.showPhotoLibrary) {
