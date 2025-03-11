@@ -62,6 +62,7 @@ struct EuropeanAlternative: Identifiable, Codable, Equatable {
 }
 
 struct BuyEuropeanResponse: Codable, Equatable {
+    let id: Int?
     let thinking: String
     let identifiedProductName: String
     let identifiedCompany: String
@@ -74,6 +75,7 @@ struct BuyEuropeanResponse: Codable, Equatable {
     let potentialAlternatives: [EuropeanAlternative]?
     
     enum CodingKeys: String, CodingKey {
+        case id
         case thinking
         case identifiedProductName = "identified_product_name"
         case identifiedCompany = "identified_company"

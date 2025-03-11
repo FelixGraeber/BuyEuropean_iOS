@@ -39,25 +39,12 @@ class FeedbackViewModel: ObservableObject {
         isSubmitting = true
         error = nil
         
-        // Format the analysis ID for submission
-        let formattedAnalysisId: String
-        if let numericId = Int(feedbackData.analysisId) {
-            formattedAnalysisId = String(numericId)
-        } else if let numericMatch = feedbackData.analysisId.range(of: #"\d+"#, options: .regularExpression) {
-            formattedAnalysisId = String(feedbackData.analysisId[numericMatch])
-        } else {
-            // Fallback to a hash of the string if no numeric part
-            let hashValue = abs(feedbackData.analysisId.hash % 1000000)
-            formattedAnalysisId = String(hashValue)
-        }
-        
-        // Create a copy of the feedback data with the formatted ID
-        var submissionData = feedbackData
-        submissionData.analysisId = formattedAnalysisId
+        // Use the analysis ID directly without any formatting
+        // The ID is already properly formatted from ResultsView
         
         Task {
             do {
-                try await apiService.submitFeedback(feedback: submissionData)
+                try await apiService.submitFeedback(feedback: feedbackData)
                 
                 await MainActor.run {
                     self.isSubmitting = false

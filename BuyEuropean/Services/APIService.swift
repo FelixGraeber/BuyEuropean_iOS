@@ -83,7 +83,7 @@ class APIService {
     }
     
     func submitFeedback(feedback: FeedbackModel) async throws {
-        guard let url = URL(string: "\(baseURL)/submit-feedback") else {
+        guard let url = URL(string: "\(baseURL)/api/feedback/analysis") else {
             throw APIError.invalidURL
         }
         

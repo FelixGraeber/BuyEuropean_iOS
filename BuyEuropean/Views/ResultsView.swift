@@ -13,8 +13,8 @@ struct ResultsView: View {
         
         // Initialize ViewModels
         _viewModel = StateObject(wrappedValue: ResultsViewModel(response: response))
-        // Provide a unique analysisId for the feedback here
-        _feedbackViewModel = StateObject(wrappedValue: FeedbackViewModel(analysisId: UUID().uuidString))
+        // Pass the actual ID from the API response, or fallback to a UUID string if ID is nil
+        _feedbackViewModel = StateObject(wrappedValue: FeedbackViewModel(analysisId: response.id != nil ? String(response.id!) : UUID().uuidString))
     }
     
     var body: some View {
