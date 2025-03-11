@@ -44,25 +44,30 @@ class ScanViewModel: ObservableObject {
     }
     
     func requestCameraPermission() async {
-        let granted = await permissionService.requestCameraPermission()
-        if granted {
-            await MainActor.run {
-                showCamera = true
-            }
-        }
+        _ = await permissionService.requestCameraPermission()
     }
     
-    func handleCameraButtonTap() {
-        if permissionService.cameraPermissionStatus == .granted {
-            if capturedImage == nil {
-                showCamera = true
-            } else {
-                Task {
-                    await analyzeImage()
+    func handleCameraButtonTap(cameraService: CameraService? = nil) {
+        if let cameraService = cameraService {
+            // Take photo from live preview
+            cameraService.capturePhoto { [weak self] result in
+                switch result {
+                case .success(let image):
+                    DispatchQueue.main.async {
+                        self?.capturedImage = image
+                    }
+                case .failure(let error):
+                    DispatchQueue.main.async {
+                        self?.errorMessage = error.localizedDescription
+                        self?.scanState = .error(error.localizedDescription)
+                    }
                 }
             }
-        } else {
-            showPermissionRequest = true
+        } else if capturedImage != nil {
+            // Analyze existing image
+            Task {
+                await analyzeImage()
+            }
         }
     }
     

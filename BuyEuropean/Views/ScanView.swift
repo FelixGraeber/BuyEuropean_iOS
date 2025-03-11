@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import AVFoundation
 
 struct ScanView: View {
     @StateObject private var viewModel = ScanViewModel()
+    @StateObject private var cameraService = CameraService()
     @State private var showingActionSheet = false
     
     var body: some View {
@@ -37,13 +39,55 @@ struct ScanView: View {
                             .scaledToFit()
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else {
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color.gray.opacity(0.3))
-                            .overlay(
-                                Image(systemName: "camera.fill")
-                                    .font(.largeTitle)
-                                    .foregroundColor(.white)
-                            )
+                        // Camera preview with state overlays
+                        ZStack {
+                            CameraPreview(session: cameraService.session)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .cornerRadius(12)
+                                .onAppear {
+                                    cameraService.checkPermissionsAndSetup()
+                                }
+                            
+                            // Camera state overlays
+                            switch cameraService.state {
+                            case .initializing:
+                                Color.black.opacity(0.8)
+                                    .overlay(
+                                        VStack {
+                                            ProgressView()
+                                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                                .scaleEffect(2)
+                                            Text("Initializing camera...")
+                                                .foregroundColor(.white)
+                                                .padding(.top)
+                                        }
+                                    )
+                            case .error(let error):
+                                Color.black.opacity(0.8)
+                                    .overlay(
+                                        VStack(spacing: 16) {
+                                            Image(systemName: "exclamationmark.triangle.fill")
+                                                .font(.system(size: 40))
+                                                .foregroundColor(.yellow)
+                                            Text(error.localizedDescription)
+                                                .foregroundColor(.white)
+                                                .multilineTextAlignment(.center)
+                                                .padding(.horizontal)
+                                            Button("Try Again") {
+                                                cameraService.checkPermissionsAndSetup()
+                                            }
+                                            .foregroundColor(.white)
+                                            .padding()
+                                            .background(Color.blue)
+                                            .cornerRadius(8)
+                                        }
+                                    )
+                            case .capturing:
+                                Color.white.opacity(0.1)
+                            default:
+                                EmptyView()
+                            }
+                        }
                     }
                     
                     // Scanning overlay
@@ -88,10 +132,26 @@ struct ScanView: View {
                                 .foregroundColor(.white)
                         }
                     }
+                    .disabled(!cameraService.state.isReady && viewModel.capturedImage == nil)
                     
                     // Capture button
                     Button(action: {
-                        viewModel.handleCameraButtonTap()
+                        if viewModel.capturedImage == nil {
+                            cameraService.capturePhoto { result in
+                                switch result {
+                                case .success(let image):
+                                    DispatchQueue.main.async {
+                                        viewModel.capturedImage = image
+                                    }
+                                case .failure(let error):
+                                    print("Failed to capture photo: \(error.localizedDescription)")
+                                }
+                            }
+                        } else {
+                            Task {
+                                await viewModel.analyzeImage()
+                            }
+                        }
                     }) {
                         ZStack {
                             Circle()
@@ -109,6 +169,7 @@ struct ScanView: View {
                             }
                         }
                     }
+                    .disabled(cameraService.state != .ready && viewModel.capturedImage == nil)
                     
                     // Info button
                     Button(action: {
@@ -127,10 +188,6 @@ struct ScanView: View {
                 }
                 .padding(.bottom, 30)
             }
-        }
-        .sheet(isPresented: $viewModel.showCamera) {
-            ImagePicker(selectedImage: $viewModel.capturedImage, isPresented: $viewModel.showCamera, sourceType: .camera)
-                .edgesIgnoringSafeArea(.all)
         }
         .sheet(isPresented: $viewModel.showPhotoLibrary) {
             ImagePicker(selectedImage: $viewModel.capturedImage, isPresented: $viewModel.showPhotoLibrary, sourceType: .photoLibrary)
@@ -151,11 +208,6 @@ struct ScanView: View {
                 ErrorView(message: message, onDismiss: {
                     viewModel.resetScan()
                 })
-            }
-        }
-        .onChange(of: viewModel.scanState) { newState in
-            if case .result(let response) = newState {
-                // Navigate to results view
             }
         }
     }
