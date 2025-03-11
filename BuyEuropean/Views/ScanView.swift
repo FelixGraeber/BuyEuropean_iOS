@@ -239,7 +239,11 @@ struct ScanView: View {
             switch destination {
             case .results(let response):
                 ResultsView(response: response, onDismiss: {
-                    viewModel.resetScan()
+                    // First reset the sheet destination to nil to ensure proper dismissal
+                    DispatchQueue.main.async {
+                        // Reset the scan state which will cause the sheet to dismiss
+                        viewModel.resetScan()
+                    }
                 })
             case .error(let message):
                 ErrorView(message: message, onDismiss: {

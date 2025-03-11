@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct ShareOptionsView: View {
     @Binding var isVisible: Bool
     let onShare: () -> UIActivityViewController
+    let onCopyText: () -> String
     @State private var isAnimated = false
     
     var body: some View {
@@ -42,13 +44,24 @@ struct ShareOptionsView: View {
                 Button(action: {
                     let activityVC = onShare()
                     
+                    // Present the share sheet
                     if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                        let rootViewController = windowScene.windows.first?.rootViewController {
+                        // Configure excluded activity types (optional)
+                        activityVC.excludedActivityTypes = [
+                            .assignToContact,
+                            .addToReadingList
+                        ]
+                        
+                        // Set completion handler
+                        activityVC.completionWithItemsHandler = { (activityType, completed, returnedItems, error) in
+                            // Dismiss the share sheet when done
+                            withAnimation {
+                                isVisible = false
+                            }
+                        }
+                        
                         rootViewController.present(activityVC, animated: true)
-                    }
-                    
-                    withAnimation {
-                        isVisible = false
                     }
                 }) {
                     HStack(spacing: 12) {
@@ -79,10 +92,12 @@ struct ShareOptionsView: View {
                 
                 // Copy to clipboard
                 Button(action: {
-                    // This would be implemented in the ViewModel
-                    UIPasteboard.general.string = "Analysis results copied to clipboard"
+                    // Get the text directly from the provided closure
+                    let shareText = onCopyText()
+                    UIPasteboard.general.string = shareText
                     
-                    // Show toast or feedback
+                    // Show feedback (could be enhanced with a toast notification)
+                    // For now, just dismiss the sheet
                     withAnimation {
                         isVisible = false
                     }
@@ -143,6 +158,9 @@ struct ShareOptionsView: View {
                     activityItems: ["Sample share text"],
                     applicationActivities: nil
                 )
+            },
+            onCopyText: {
+                "Sample text for clipboard"
             }
         )
         .padding()

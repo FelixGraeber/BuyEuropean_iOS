@@ -7,13 +7,13 @@
 
 import SwiftUI
 import Combine
+import UIKit
 
 class ResultsViewModel: ObservableObject {
     // Data
     private let response: BuyEuropeanResponse
     
     // UI state
-    @Published var showShareOptions = false
     @Published var showFeedback = false
     @Published var isAnimating = false
     
@@ -44,28 +44,6 @@ class ResultsViewModel: ObservableObject {
         CountryFlagUtility.countryToFlag(country)
     }
     
-    // Share the result via system share sheet
-    func shareResult() -> UIActivityViewController {
-        // Create text to share
-        let shareText = """
-        Product Analysis Results:
-        
-        Product: \(response.identifiedProductName)
-        Company: \(response.identifiedCompany)
-        Headquarters: \(response.identifiedHeadquarters)
-        Classification: \(response.classification.displayName)
-        
-        Analyzed with BuyEuropean app
-        """
-        
-        let activityViewController = UIActivityViewController(
-            activityItems: [shareText],
-            applicationActivities: nil
-        )
-        
-        return activityViewController
-    }
-    
     // Open web search for an alternative
     func openWebSearch(for alternative: EuropeanAlternative) {
         let searchQuery = "\(alternative.productName) \(alternative.company)"
@@ -79,13 +57,6 @@ class ResultsViewModel: ObservableObject {
     func toggleFeedback() {
         withAnimation {
             showFeedback.toggle()
-        }
-    }
-    
-    // Toggle share options visibility
-    func toggleShareOptions() {
-        withAnimation {
-            showShareOptions.toggle()
         }
     }
 }

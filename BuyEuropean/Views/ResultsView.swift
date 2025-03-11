@@ -24,17 +24,13 @@ struct ResultsView: View {
                 .edgesIgnoringSafeArea(.all)
             
             VStack(spacing: 0) {
-                // Top bar with share and close
+                // Top bar with centered title and balanced layout
                 HStack {
-                    // Share button on the leading side
-                    Button {
-                        viewModel.toggleShareOptions()
-                    } label: {
-                        Image(systemName: "square.and.arrow.up")
-                            .font(.system(size: 18))
-                            .padding(8)
-                    }
-                    .padding(.leading, 16)
+                    // Empty space with same width as the Done button for balance
+                    Button("") { }
+                        .opacity(0)
+                        .padding(.leading, 16)
+                        .frame(width: 60, alignment: .leading)
                     
                     Spacer()
                     
@@ -49,6 +45,7 @@ struct ResultsView: View {
                         onDismiss()
                     }
                     .padding(.trailing, 16)
+                    .frame(width: 60, alignment: .trailing)
                 }
                 .padding(.vertical, 10)
                 .background(Color(.systemBackground).opacity(0.9))
@@ -123,30 +120,6 @@ struct ResultsView: View {
                     }
                 }
             }
-            
-            // SHARE OVERLAY
-            if viewModel.showShareOptions {
-                ZStack {
-                    Color.black.opacity(0.4)
-                        .edgesIgnoringSafeArea(.all)
-                        .onTapGesture {
-                            withAnimation {
-                                viewModel.toggleShareOptions()
-                            }
-                        }
-                    
-                    ShareOptionsView(
-                        isVisible: $viewModel.showShareOptions,
-                        onShare: {
-                            viewModel.shareResult()
-                        }
-                    )
-                    .padding(.horizontal, 20)
-                }
-                .transition(.opacity)
-                .zIndex(1)
-            }
         }
-        .animation(.easeInOut(duration: 0.2), value: viewModel.showShareOptions)
     }
 }
