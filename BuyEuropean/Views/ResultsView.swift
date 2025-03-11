@@ -11,153 +11,153 @@ struct ResultsView: View {
     let response: BuyEuropeanResponse
     let onDismiss: () -> Void
     
+    @StateObject private var viewModel: ResultsViewModel
+    @StateObject private var feedbackViewModel: FeedbackViewModel
+    
+    init(response: BuyEuropeanResponse, onDismiss: @escaping () -> Void) {
+        self.response = response
+        self.onDismiss = onDismiss
+        
+        // Initialize ViewModels
+        _viewModel = StateObject(wrappedValue: ResultsViewModel(response: response))
+        _feedbackViewModel = StateObject(wrappedValue: FeedbackViewModel(analysisId: UUID().uuidString))
+    }
+    
     var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    // Product identification section
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Product Identification")
-                            .font(.title)
-                            .fontWeight(.bold)
-                        
-                        Divider()
-                        
-                        productInfoRow(title: "Product", value: response.identifiedProductName)
-                        productInfoRow(title: "Company", value: response.identifiedCompany)
-                        productInfoRow(title: "Headquarters", value: response.identifiedHeadquarters)
-                        
+        ZStack {
+            // Main content
+            NavigationView {
+                ScrollView {
+                    VStack(spacing: 24) {
                         // Classification badge
-                        HStack {
-                            Text("Classification:")
-                                .fontWeight(.medium)
-                            
-                            Text(response.classification.displayName)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                                .background(classificationColor)
-                                .foregroundColor(.white)
-                                .cornerRadius(20)
-                        }
-                        .padding(.top, 4)
-                        
-                        // Rationale
-                        Text("Identification Rationale:")
-                            .fontWeight(.medium)
+                        ClassificationBadgeView(style: viewModel.classificationStyle)
                             .padding(.top, 8)
                         
-                        Text(response.identificationRationale)
-                            .padding(.horizontal)
-                    }
-                    .padding()
-                    .background(Color(.systemBackground))
-                    .cornerRadius(12)
-                    .shadow(radius: 2)
-                    
-                    // Alternatives section (if any)
-                    if shouldShowAlternatives {
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("European Alternatives")
-                                .font(.title)
-                                .fontWeight(.bold)
-                            
-                            Divider()
-                            
-                            if let alternatives = response.potentialAlternatives, !alternatives.isEmpty {
-                                ForEach(alternatives) { alternative in
-                                    alternativeView(alternative: alternative)
-                                }
-                            } else if !response.potentialAlternative.isEmpty {
-                                // Fallback to the string alternative if no structured alternatives
-                                Text(response.potentialAlternative)
+                        // Product information card
+                        ProductInfoCardView(
+                            product: response.identifiedProductName,
+                            company: response.identifiedCompany,
+                            headquarters: response.identifiedHeadquarters,
+                            rationale: response.identificationRationale,
+                            countryFlag: viewModel.countryFlag(for: response.identifiedHeadquarters)
+                        )
+                        .padding(.horizontal)
+                        
+                        // European alternatives section
+                        if viewModel.shouldShowAlternatives {
+                            VStack(alignment: .leading, spacing: 16) {
+                                AlternativesHeaderView()
                                     .padding(.horizontal)
-                            }
-                            
-                            if !response.potentialAlternativeThinking.isEmpty {
-                                Text("Reasoning:")
-                                    .fontWeight(.medium)
-                                    .padding(.top, 8)
                                 
-                                Text(response.potentialAlternativeThinking)
-                                    .padding(.horizontal)
+                                if let alternatives = response.potentialAlternatives, !alternatives.isEmpty {
+                                    ForEach(alternatives) { alternative in
+                                        AlternativeCardView(
+                                            alternative: alternative,
+                                            countryFlag: viewModel.countryFlag(for: alternative.country),
+                                            onLearnMore: {
+                                                viewModel.openWebSearch(for: alternative)
+                                            }
+                                        )
+                                        .padding(.horizontal)
+                                    }
+                                } else if !response.potentialAlternative.isEmpty {
+                                    // Fallback for string alternative
+                                    Text(response.potentialAlternative)
+                                        .padding()
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .background(Color(.systemBackground))
+                                        .cornerRadius(12)
+                                        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+                                        .padding(.horizontal)
+                                }
                             }
                         }
-                        .padding()
-                        .background(Color(.systemBackground))
-                        .cornerRadius(12)
-                        .shadow(radius: 2)
+                        
+                        // Feedback section
+                        VStack(spacing: 16) {
+                            if !viewModel.showFeedback {
+                                Button(action: {
+                                    viewModel.toggleFeedback()
+                                }) {
+                                    HStack {
+                                        Image(systemName: "message.fill")
+                                            .font(.system(size: 16))
+                                        
+                                        Text("Provide Feedback")
+                                            .font(.subheadline)
+                                            .fontWeight(.medium)
+                                    }
+                                    .foregroundColor(.blue)
+                                    .padding(.vertical, 12)
+                                    .padding(.horizontal, 20)
+                                    .background(Color.blue.opacity(0.1))
+                                    .cornerRadius(25)
+                                }
+                            } else {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    HStack {
+                                        Text("Feedback")
+                                            .font(.headline)
+                                            .foregroundColor(Color(.label))
+                                        
+                                        Spacer()
+                                        
+                                        Button(action: {
+                                            viewModel.toggleFeedback()
+                                        }) {
+                                            Image(systemName: "xmark.circle.fill")
+                                                .font(.system(size: 20))
+                                                .foregroundColor(Color(.systemGray3))
+                                        }
+                                    }
+                                    
+                                    FeedbackView(viewModel: feedbackViewModel)
+                                }
+                                .padding(.horizontal)
+                            }
+                        }
+                        
+                        Spacer(minLength: 40)
                     }
+                    .padding(.bottom, 20)
                 }
-                .padding()
-            }
-            .navigationBarTitle("Analysis Results", displayMode: .inline)
-            .navigationBarItems(trailing: Button("Done") {
-                onDismiss()
-            })
-            .background(Color(.systemGroupedBackground).edgesIgnoringSafeArea(.all))
-        }
-    }
-    
-    private func productInfoRow(title: String, value: String) -> some View {
-        HStack(alignment: .top) {
-            Text("\(title):")
-                .fontWeight(.medium)
-                .frame(width: 120, alignment: .leading)
-            
-            Text(value)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-    }
-    
-    private func alternativeView(alternative: EuropeanAlternative) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text(alternative.productName)
-                    .font(.headline)
-                
-                Spacer()
-                
-                if let country = alternative.country {
-                    Text(country)
-                        .font(.subheadline)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.blue.opacity(0.2))
-                        .cornerRadius(8)
-                }
+                .navigationBarTitle("Analysis Results", displayMode: .inline)
+                .navigationBarItems(
+                    leading: Button(action: {
+                        viewModel.toggleShareOptions()
+                    }) {
+                        Image(systemName: "square.and.arrow.up")
+                            .font(.system(size: 18))
+                    },
+                    trailing: Button("Done") {
+                        onDismiss()
+                    }
+                )
+                .background(Color(.systemGroupedBackground).edgesIgnoringSafeArea(.all))
             }
             
-            Text(alternative.company)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-            
-            Text(alternative.description)
-                .padding(.top, 4)
-            
-            Divider()
-                .padding(.top, 8)
+            // Share options overlay
+            if viewModel.showShareOptions {
+                ZStack {
+                    Color.black.opacity(0.4)
+                        .edgesIgnoringSafeArea(.all)
+                        .onTapGesture {
+                            viewModel.toggleShareOptions()
+                        }
+                    
+                    ShareOptionsView(
+                        isVisible: $viewModel.showShareOptions,
+                        onShare: {
+                            viewModel.shareResult()
+                        }
+                    )
+                    .padding(.horizontal, 20)
+                }
+                .transition(.opacity)
+                .zIndex(1)
+            }
         }
-        .padding(.vertical, 4)
-    }
-    
-    private var classificationColor: Color {
-        switch response.classification {
-        case .europeanCountry:
-            return Color.green
-        case .europeanAlly:
-            return Color.blue
-        case .europeanSceptic:
-            return Color.yellow
-        case .europeanAdversary:
-            return Color.red
-        case .unknown:
-            return Color.gray
-        }
-    }
-    
-    private var shouldShowAlternatives: Bool {
-        // Show alternatives if it's not a European country
-        return response.classification != .europeanCountry &&
-               (response.potentialAlternatives != nil || !response.potentialAlternative.isEmpty)
+        .animation(.easeInOut(duration: 0.2), value: viewModel.showShareOptions)
+        .animation(.easeInOut(duration: 0.2), value: viewModel.showFeedback)
     }
 }

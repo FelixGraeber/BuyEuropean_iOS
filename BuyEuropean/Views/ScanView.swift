@@ -127,7 +127,7 @@ struct ScanView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 
                 // Tagline
-                Text("Vote with your money.\nBuy European.")
+                Text("Vote with your Money.\nBuy European.")
                     .font(.headline)
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)

@@ -81,4 +81,53 @@ class APIService {
             throw error
         }
     }
+    
+    func submitFeedback(feedback: FeedbackModel) async throws {
+        guard let url = URL(string: "\(baseURL)/submit-feedback") else {
+            throw APIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        do {
+            let encoder = JSONEncoder()
+            request.httpBody = try encoder.encode(feedback)
+        } catch {
+            throw APIError.encodingError(error)
+        }
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw APIError.invalidResponse
+            }
+            
+            guard (200...299).contains(httpResponse.statusCode) else {
+                // If we get an error response with data, try to decode it for more details
+                if !data.isEmpty {
+                    do {
+                        if let errorResponse = try? JSONDecoder().decode([String: String].self, from: data),
+                           let errorMessage = errorResponse["error"] {
+                            print("Server error: \(errorMessage)")
+                        }
+                    } catch {
+                        print("Failed to decode error response")
+                    }
+                }
+                throw APIError.serverError(httpResponse.statusCode)
+            }
+            
+            // Successfully submitted feedback
+            return
+        } catch let urlError as URLError {
+            throw APIError.networkError(urlError)
+        } catch let apiError as APIError {
+            throw apiError
+        } catch {
+            throw APIError.unknown
+        }
+    }
 }
