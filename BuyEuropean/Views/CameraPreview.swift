@@ -246,12 +246,33 @@ extension CameraService: AVCapturePhotoCaptureDelegate {
             return
         }
         
+        // Process the image based on camera position and orientation
+        let processedImage = processImage(image)
+        
         // Crop the image to match the preview's aspect ratio
-        if let previewLayer = self.previewLayer, let croppedImage = cropImageToMatchPreview(image, previewLayer: previewLayer) {
+        if let previewLayer = self.previewLayer, let croppedImage = cropImageToMatchPreview(processedImage, previewLayer: previewLayer) {
             completionHandler?(.success(croppedImage))
         } else {
-            completionHandler?(.success(image))
+            completionHandler?(.success(processedImage))
         }
+    }
+    
+    // Process image to handle mirroring based on camera position
+    private func processImage(_ image: UIImage) -> UIImage {
+        // If using front camera, we need to mirror the image horizontally to match the preview
+        if cameraPosition == .front {
+            // Create a mirrored version of the image
+            if let cgImage = image.cgImage {
+                return UIImage(
+                    cgImage: cgImage,
+                    scale: image.scale,
+                    orientation: image.imageOrientation == .right ? .leftMirrored : .rightMirrored
+                )
+            }
+        }
+        
+        // For back camera or if mirroring fails, return the original image
+        return image
     }
     
     // Helper method to crop the captured image to match what's shown in the preview
