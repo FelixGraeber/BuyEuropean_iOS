@@ -59,7 +59,8 @@ class APIService {
         }
         
         do {
-            let (data, response) = try await URLSession.shared.data(for: request)
+            _ = try JSONSerialization.data(withJSONObject: [:], options: [])
+            let (data, response) = try await URLSession.shared.data(for: request, delegate: nil)
             
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw APIError.invalidResponse
@@ -77,8 +78,10 @@ class APIService {
             }
         } catch let urlError as URLError {
             throw APIError.networkError(urlError)
+        } catch let apiError as APIError {
+            throw apiError
         } catch {
-            throw error
+            throw APIError.unknown
         }
     }
     
@@ -99,6 +102,7 @@ class APIService {
         }
         
         do {
+            _ = try JSONSerialization.data(withJSONObject: [:], options: [])
             let (data, response) = try await URLSession.shared.data(for: request)
             
             guard let httpResponse = response as? HTTPURLResponse else {
@@ -122,12 +126,8 @@ class APIService {
             
             // Successfully submitted feedback
             return
-        } catch let urlError as URLError {
-            throw APIError.networkError(urlError)
-        } catch let apiError as APIError {
-            throw apiError
         } catch {
-            throw APIError.unknown
+            throw APIError.networkError(error)
         }
     }
 }

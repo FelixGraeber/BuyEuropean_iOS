@@ -8,7 +8,8 @@
 import Foundation
 import Combine
 
-class FeedbackViewModel: ObservableObject {
+@MainActor
+class FeedbackViewModel: ObservableObject, @unchecked Sendable {
     // Feedback data
     @Published var feedbackData: FeedbackModel
     
@@ -51,7 +52,8 @@ class FeedbackViewModel: ObservableObject {
                     self.isSubmitted = true
                     
                     // Reset form after 3 seconds if still showing
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+                        guard let self = self else { return }
                         if self.isSubmitted {
                             self.resetForm()
                         }

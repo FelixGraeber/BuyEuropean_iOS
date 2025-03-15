@@ -22,7 +22,8 @@ enum ScanState: Equatable {
     case error(String)
 }
 
-class ScanViewModel: ObservableObject {
+@MainActor
+class ScanViewModel: ObservableObject, @unchecked Sendable {
     @Published var capturedImage: UIImage?
     @Published var scanState: ScanState = .ready
     @Published var showCamera = false
@@ -104,13 +105,15 @@ class ScanViewModel: ObservableObject {
         cachedAnalysisResult = nil
         
         // Start a new background task
-        backgroundAnalysisTask = Task {
+        backgroundAnalysisTask = Task { [weak self] in
+            guard let self = self else { return }
+            
             // Set state to background scanning
             await MainActor.run {
                 self.scanState = .backgroundScanning
             }
             
-            guard let image = capturedImage else {
+            guard let image = self.capturedImage else {
                 await MainActor.run {
                     self.errorMessage = "No image selected"
                     self.scanState = .error("No image selected")
@@ -119,10 +122,10 @@ class ScanViewModel: ObservableObject {
             }
             
             // Resize image to reduce upload size
-            let resizedImage = imageService.resizeImage(image: image, targetSize: CGSize(width: 800, height: 800))
+            let resizedImage = self.imageService.resizeImage(image: image, targetSize: CGSize(width: 800, height: 800))
             
             // Compress the resized image to reduce file size
-            guard let base64Image = imageService.convertImageToBase64(image: resizedImage, compressionQuality: 0.6) else {
+            guard let base64Image = self.imageService.convertImageToBase64(image: resizedImage, compressionQuality: 0.6) else {
                 await MainActor.run {
                     self.errorMessage = "Failed to process image"
                     self.scanState = .error("Failed to process image")
@@ -136,7 +139,7 @@ class ScanViewModel: ObservableObject {
                     return
                 }
                 
-                let response = try await apiService.analyzeProduct(imageBase64: base64Image)
+                let response = try await self.apiService.analyzeProduct(imageBase64: base64Image)
                 
                 // Check again if task was cancelled after API call
                 if Task.isCancelled {
@@ -193,7 +196,8 @@ class ScanViewModel: ObservableObject {
         cancelBackgroundAnalysis()
         
         guard let image = capturedImage else {
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
                 self.errorMessage = "No image selected"
                 self.scanState = .error("No image selected")
             }
@@ -205,30 +209,35 @@ class ScanViewModel: ObservableObject {
         
         // Compress the resized image to reduce file size
         guard let base64Image = imageService.convertImageToBase64(image: resizedImage, compressionQuality: 0.6) else {
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
                 self.errorMessage = "Failed to process image"
                 self.scanState = .error("Failed to process image")
             }
             return
         }
         
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
             self.scanState = .scanning
         }
         
         do {
             let response = try await apiService.analyzeProduct(imageBase64: base64Image)
             
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
                 self.scanState = .result(response)
             }
         } catch let error as APIError {
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
                 self.errorMessage = error.message
                 self.scanState = .error(error.message)
             }
         } catch {
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
                 self.errorMessage = error.localizedDescription
                 self.scanState = .error(error.localizedDescription)
             }
