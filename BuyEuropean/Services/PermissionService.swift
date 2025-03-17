@@ -13,7 +13,7 @@ class PermissionService: ObservableObject {
     @Published private(set) var cameraPermissionStatus: PermissionStatus = .notDetermined
     @AppStorage("hasShownCameraPermissionPrompt") private var hasShownPrompt = false
     
-    private init() {
+    init() {
         updateCameraPermissionStatus()
     }
     

@@ -122,7 +122,7 @@ class ScanViewModel: ObservableObject, @unchecked Sendable {
             }
             
             // Resize image to reduce upload size
-            let resizedImage = self.imageService.resizeImage(image: image, targetSize: CGSize(width: 800, height: 800))
+            let resizedImage = self.imageService.resizeImage(image: image)
             
             // Compress the resized image to reduce file size
             guard let base64Image = self.imageService.convertImageToBase64(image: resizedImage, compressionQuality: 0.6) else {
@@ -205,7 +205,7 @@ class ScanViewModel: ObservableObject, @unchecked Sendable {
         }
         
         // Resize image to reduce upload size
-        let resizedImage = imageService.resizeImage(image: image, targetSize: CGSize(width: 800, height: 800))
+        let resizedImage = imageService.resizeImage(image: image)
         
         // Compress the resized image to reduce file size
         guard let base64Image = imageService.convertImageToBase64(image: resizedImage, compressionQuality: 0.6) else {

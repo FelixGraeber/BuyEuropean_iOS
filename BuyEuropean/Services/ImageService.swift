@@ -4,39 +4,29 @@ import SwiftUI
 class ImageService {
     static let shared = ImageService()
     
-    private init() {}
+    init() {}
     
     func convertImageToBase64(image: UIImage, compressionQuality: CGFloat = 0.7) -> String? {
         guard let imageData = image.jpegData(compressionQuality: compressionQuality) else {
             return nil
         }
-        
         return imageData.base64EncodedString()
     }
     
-    func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
-        let size = image.size
+    func resizeImage(image: UIImage) -> UIImage {
+        let maxSize: CGFloat = 512
+        let originalSize = image.size
         
-        let widthRatio  = targetSize.width  / size.width
-        let heightRatio = targetSize.height / size.height
+        // Calculate the scale factor based on the longest side.
+        let scaleFactor = maxSize / max(originalSize.width, originalSize.height)
+        let newSize = CGSize(width: originalSize.width * scaleFactor,
+                             height: originalSize.height * scaleFactor)
         
-        // Figure out what our orientation is, and use that to form the rectangle
-        var newSize: CGSize
-        if(widthRatio > heightRatio) {
-            newSize = CGSize(width: size.width * heightRatio, height: size.height * heightRatio)
-        } else {
-            newSize = CGSize(width: size.width * widthRatio, height: size.height * widthRatio)
+        // Use UIGraphicsImageRenderer for modern image drawing.
+        let renderer = UIGraphicsImageRenderer(size: newSize)
+        let newImage = renderer.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: newSize))
         }
-        
-        // This is the rect that we've calculated out and this is what is actually used below
-        let rect = CGRect(origin: .zero, size: newSize)
-        
-        // Actually do the resizing to the rect using the ImageContext stuff
-        UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
-        image.draw(in: rect)
-        let newImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        
-        return newImage ?? image
+        return newImage
     }
 }
