@@ -35,8 +35,7 @@ class ResultsViewModel: ObservableObject {
     // Determine if alternatives should be shown
     var shouldShowAlternatives: Bool {
         response.classification != .europeanCountry &&
-        (response.potentialAlternatives != nil && !(response.potentialAlternatives?.isEmpty ?? true) || 
-         !response.potentialAlternative.isEmpty)
+        (response.potentialAlternatives != nil && !(response.potentialAlternatives?.isEmpty ?? true))
     }
     
     // Get the country flag emoji

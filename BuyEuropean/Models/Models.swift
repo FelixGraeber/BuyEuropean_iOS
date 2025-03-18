@@ -71,7 +71,6 @@ struct BuyEuropeanResponse: Codable, Equatable {
     let rawCountry: String
     let classification: Classification
     let potentialAlternativeThinking: String
-    let potentialAlternative: String
     let potentialAlternatives: [EuropeanAlternative]?
     
     enum CodingKeys: String, CodingKey {
@@ -84,7 +83,6 @@ struct BuyEuropeanResponse: Codable, Equatable {
         case rawCountry = "raw_country"
         case classification
         case potentialAlternativeThinking = "potential_alternative_thinking"
-        case potentialAlternative = "potential_alternative"
         case potentialAlternatives = "potential_alternatives"
     }
 }

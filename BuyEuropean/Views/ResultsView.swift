@@ -90,14 +90,6 @@ struct ResultsView: View {
                                         .padding(.horizontal)
                                         .padding(.bottom, 8)
                                     }
-                                } else if !response.potentialAlternative.isEmpty {
-                                    Text(response.potentialAlternative)
-                                        .padding()
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .background(Color(.systemBackground))
-                                        .cornerRadius(12)
-                                        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
-                                        .padding(.horizontal)
                                 } else {
                                     Text("No alternative could be found.")
                                         .foregroundColor(.secondary)
