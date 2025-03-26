@@ -12,6 +12,9 @@ import Combine
 import UIKit
 #endif
 
+// Import our models and services
+@_implementationOnly import Foundation
+
 // Forward declaration of BuyEuropeanResponse to resolve circular dependency
 // The actual type is defined in Models.swift
 enum ScanState: Equatable {
@@ -20,6 +23,21 @@ enum ScanState: Equatable {
     case backgroundScanning
     case result(BuyEuropeanResponse)
     case error(String)
+    
+    static func == (lhs: ScanState, rhs: ScanState) -> Bool {
+        switch (lhs, rhs) {
+        case (.ready, .ready),
+             (.scanning, .scanning),
+             (.backgroundScanning, .backgroundScanning):
+            return true
+        case let (.result(lhsResponse), .result(rhsResponse)):
+            return lhsResponse == rhsResponse
+        case let (.error(lhsError), .error(rhsError)):
+            return lhsError == rhsError
+        default:
+            return false
+        }
+    }
 }
 
 @MainActor
@@ -254,5 +272,32 @@ class ScanViewModel: ObservableObject, @unchecked Sendable {
     
     func toggleCameraPosition(cameraService: CameraService) {
         cameraService.toggleCameraPosition()
+    }
+    
+    // Add manual text analysis function
+    func analyzeManualText(_ text: String) {
+        Task {
+            await MainActor.run {
+                self.scanState = .scanning
+            }
+            
+            do {
+                let response = try await apiService.analyzeText(text: text)
+                
+                await MainActor.run {
+                    self.scanState = .result(response)
+                }
+            } catch let error as APIError {
+                await MainActor.run {
+                    self.errorMessage = error.message
+                    self.scanState = .error(error.message)
+                }
+            } catch {
+                await MainActor.run {
+                    self.errorMessage = error.localizedDescription
+                    self.scanState = .error(error.localizedDescription)
+                }
+            }
+        }
     }
 }

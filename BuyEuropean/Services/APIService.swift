@@ -130,4 +130,48 @@ class APIService {
             throw APIError.networkError(error)
         }
     }
+    
+    func analyzeText(text: String) async throws -> BuyEuropeanResponse {
+        guard let url = URL(string: "\(baseURL)/analyze-text") else {
+            throw APIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let requestBody = ["text": text]
+        
+        do {
+            let encoder = JSONEncoder()
+            request.httpBody = try encoder.encode(requestBody)
+        } catch {
+            throw APIError.encodingError(error)
+        }
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw APIError.invalidResponse
+            }
+            
+            guard (200...299).contains(httpResponse.statusCode) else {
+                throw APIError.serverError(httpResponse.statusCode)
+            }
+            
+            do {
+                let decoder = JSONDecoder()
+                return try decoder.decode(BuyEuropeanResponse.self, from: data)
+            } catch {
+                throw APIError.decodingError(error)
+            }
+        } catch let urlError as URLError {
+            throw APIError.networkError(urlError)
+        } catch let apiError as APIError {
+            throw apiError
+        } catch {
+            throw APIError.unknown
+        }
+    }
 }

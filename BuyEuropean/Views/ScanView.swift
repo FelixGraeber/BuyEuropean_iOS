@@ -1,17 +1,33 @@
 import SwiftUI
 import AVFoundation
+import Combine
+
+#if canImport(UIKit)
+import UIKit
+#endif
+
+// Import our custom components
+import Foundation
 
 struct ScanView: View {
     @StateObject private var viewModel = ScanViewModel()
+    @StateObject private var permissionService = PermissionService.shared
+    @State private var isShowingImagePicker = false
+    @State private var isShowingResults = false
+    @State private var isShowingError = false
+    @State private var manualInputText = ""
+    @State private var isManualInputExpanded = false
     @StateObject private var cameraService = CameraService()
     @State private var showingActionSheet = false
+    @State private var isTextInputExpanded = false
     
     var body: some View {
         ZStack {
-            // Background
-            Color.black.edgesIgnoringSafeArea(.all)
-            
-            VStack(spacing: 0) {
+            // Background and camera view
+            if !isTextInputExpanded {
+                Color.black.edgesIgnoringSafeArea(.all)
+                
+                VStack(spacing: 0) {
                 // Top area with title/logo - Only show when image is captured
                 if viewModel.capturedImage != nil {
                     HStack {
@@ -130,7 +146,7 @@ struct ScanView: View {
                 if viewModel.capturedImage == nil {
                     // Camera mode buttons
                     HStack(spacing: 60) {
-                        // Gallery button - only show when no image is captured
+                        // Gallery button
                         Button(action: {
                             viewModel.showPhotoLibrary = true
                         }) {
@@ -145,21 +161,10 @@ struct ScanView: View {
                             }
                         }
                         .disabled(!cameraService.state.isReady)
-                    
-                        // Capture button - only show when no image is captured
+                        
+                        // Capture button
                         Button(action: {
-                            cameraService.capturePhoto { result in
-                                switch result {
-                                case .success(let image):
-                                    DispatchQueue.main.async {
-                                        viewModel.capturedImage = image
-                                        // Start background analysis immediately
-                                        viewModel.startBackgroundAnalysis()
-                                    }
-                                case .failure(let error):
-                                    print("Failed to capture photo: \(error.localizedDescription)")
-                                }
-                            }
+                            viewModel.handleCameraButtonTap(cameraService: cameraService)
                         }) {
                             ZStack {
                                 Circle()
@@ -212,6 +217,23 @@ struct ScanView: View {
                     .padding(.bottom, 30)
                 }
             }
+            
+            }
+            
+            // Floating text input button - always visible when no image is captured
+            if viewModel.capturedImage == nil {
+                FloatingTextInput(
+                    text: $manualInputText,
+                    isExpanded: $isTextInputExpanded
+                ) {
+                    // Handle text submission
+                    if !manualInputText.isEmpty {
+                        viewModel.analyzeManualText(manualInputText)
+                        // Don't clear text here - FloatingTextInput handles animation
+                        // and we'll reset after analysis completes
+                    }
+                }
+            }
         }
         .onAppear {
             cameraService.checkPermissionsAndSetup()
@@ -220,13 +242,11 @@ struct ScanView: View {
             ImagePicker(
                 selectedImage: $viewModel.capturedImage,
                 isPresented: $viewModel.showPhotoLibrary,
-                sourceType: .photoLibrary,
-                onImageSelected: {
-                    // Start background analysis as soon as image is selected from photo library
-                    viewModel.startBackgroundAnalysis()
-                }
-            )
-            .edgesIgnoringSafeArea(.all)
+                sourceType: .photoLibrary
+            ) {
+                // Start background analysis as soon as image is selected from photo library
+                viewModel.startBackgroundAnalysis()
+            }
         }
         .sheet(isPresented: $viewModel.showPermissionRequest) {
             CameraPermissionView {
