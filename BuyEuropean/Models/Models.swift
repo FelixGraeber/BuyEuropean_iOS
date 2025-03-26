@@ -116,3 +116,14 @@ struct AnalyzeProductRequest: Codable {
     let image: String // Base64-encoded image
     let prompt: String? // Optional additional prompt
 }
+
+struct UserLocation: Codable {
+    let city: String
+    let country: String
+}
+
+struct AnalyzeTextRequest: Codable {
+    let product_text: String
+    let prompt: String?
+    let userLocation: UserLocation?
+}

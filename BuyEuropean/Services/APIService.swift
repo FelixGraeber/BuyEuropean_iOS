@@ -1,6 +1,11 @@
 import Foundation
 import Combine
 
+// Import models - use direct model import 
+import SwiftUI // For SwiftUI support
+// These models should be accessible from the module
+// BuyEuropeanResponse, AnalyzeProductRequest, AnalyzeTextRequest are defined in Models.swift
+
 enum APIError: Error {
     case invalidURL
     case invalidResponse
@@ -131,7 +136,7 @@ class APIService {
         }
     }
     
-    func analyzeText(text: String) async throws -> BuyEuropeanResponse {
+    func analyzeText(text: String, prompt: String? = nil) async throws -> BuyEuropeanResponse {
         guard let url = URL(string: "\(baseURL)/analyze-text") else {
             throw APIError.invalidURL
         }
@@ -140,7 +145,11 @@ class APIService {
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        let requestBody = ["text": text]
+        let requestBody = AnalyzeTextRequest(
+            product_text: text,
+            prompt: prompt,
+            userLocation: nil
+        )
         
         do {
             let encoder = JSONEncoder()

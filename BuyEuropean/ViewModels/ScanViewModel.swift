@@ -286,14 +286,17 @@ class ScanViewModel: ObservableObject, @unchecked Sendable {
     }
     
     // Add manual text analysis function
-    func analyzeManualText(_ text: String) {
+    func analyzeManualText(_ text: String, prompt: String? = nil) {
         Task {
             await MainActor.run {
                 self.scanState = .scanning
             }
             
             do {
-                let response = try await apiService.analyzeText(text: text)
+                let response = try await apiService.analyzeText(
+                    text: text,
+                    prompt: prompt
+                )
                 
                 await MainActor.run {
                     self.scanState = .result(response)
