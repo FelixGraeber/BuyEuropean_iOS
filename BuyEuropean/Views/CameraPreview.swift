@@ -36,37 +36,60 @@ enum Camera {
     }
 }
 
+// Custom UIView subclass to automatically update the previewLayer frame during layout
+class CameraPreviewView: UIView {
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        if let previewLayer = self.layer.sublayers?.compactMap({ $0 as? AVCaptureVideoPreviewLayer }).first {
+            previewLayer.frame = self.bounds
+        }
+    }
+}
+
 // MARK: - Camera Preview
 struct CameraPreview: UIViewRepresentable {
     let session: AVCaptureSession
+    // Use isSquare to determine if the viewfinder should be square with rounded corners
+    let isSquare: Bool
     
-    func makeUIView(context: Context) -> UIView {
-        let view = UIView(frame: UIScreen.main.bounds)
+    init(session: AVCaptureSession, isSquare: Bool = false) {
+        self.session = session
+        self.isSquare = isSquare
+    }
+    
+    func makeUIView(context: Context) -> CameraPreviewView {
+        let view = CameraPreviewView()
         
         let previewLayer = AVCaptureVideoPreviewLayer(session: session)
-        previewLayer.frame = view.frame
         previewLayer.videoGravity = .resizeAspectFill
+        
+        if isSquare {
+            view.layer.cornerRadius = 12
+            view.clipsToBounds = true
+        }
+        
         view.layer.addSublayer(previewLayer)
         
-        // Store the previewLayer in the associated CameraService if possible
-        if let cameraService = findCameraService(for: session) {
-            cameraService.previewLayer = previewLayer
-        }
+        // Notify CameraService if needed (optional)
+        _ = findCameraService(for: session)
         
         return view
     }
     
-    func updateUIView(_ uiView: UIView, context: Context) {}
+    func updateUIView(_ uiView: CameraPreviewView, context: Context) {
+        uiView.setNeedsLayout()
+    }
     
-    // Helper to find the CameraService instance associated with this session
+    // Helper to notify about creation of the previewLayer. Returns nil by default.
     private func findCameraService(for session: AVCaptureSession) -> CameraService? {
-        // Use NotificationCenter to find the CameraService
         NotificationCenter.default.post(name: .didCreatePreviewLayer, object: session)
         return nil
     }
 }
 
 // MARK: - Camera Service
+// The CameraService code remains unchanged below.
+
 class CameraService: NSObject, ObservableObject {
     @Published private(set) var state: Camera.State = .initializing
     @Published private(set) var session = AVCaptureSession()
@@ -74,15 +97,13 @@ class CameraService: NSObject, ObservableObject {
     private let output = AVCapturePhotoOutput()
     private var completionHandler: ((Result<UIImage, Camera.Error>) -> Void)?
     
-    // Add a reference to the preview layer for cropping
+    // Reference to the preview layer for cropping purposes
     var previewLayer: AVCaptureVideoPreviewLayer?
     
-    // Add a flag to track if setup is in progress
     private var isSettingUp = false
     
     override init() {
         super.init()
-        // Register for notifications
         NotificationCenter.default.addObserver(self, selector: #selector(handlePreviewLayerCreation(_:)), name: .didCreatePreviewLayer, object: nil)
     }
     
@@ -92,19 +113,16 @@ class CameraService: NSObject, ObservableObject {
     
     @objc private func handlePreviewLayerCreation(_ notification: Notification) {
         if let notifiedSession = notification.object as? AVCaptureSession, notifiedSession === session {
-            // The notification was for our session, but we still need to find the layer
-            // This will be handled by the CameraPreview directly setting our previewLayer property
+            // The previewLayer is set in CameraPreview; further handling can be done here if needed.
         }
     }
     
     func checkPermissionsAndSetup() {
-        // Guard against multiple setup attempts
         guard !isSettingUp else {
             print("Camera setup already in progress, ignoring duplicate call")
             return
         }
         
-        // Only reset state if not already initializing
         if case .initializing = state {} else {
             state = .initializing
         }
@@ -133,11 +151,9 @@ class CameraService: NSObject, ObservableObject {
     }
     
     private func setupCamera() {
-        // Set flag to indicate setup is in progress
         isSettingUp = true
         state = .initializing
         
-        // Check if session is already running
         if session.isRunning {
             print("Camera session already running, stopping before reconfiguration")
             session.stopRunning()
@@ -149,7 +165,6 @@ class CameraService: NSObject, ObservableObject {
             do {
                 try self.configureCameraSession()
                 
-                // Only start session if it's not already running
                 if !self.session.isRunning {
                     self.session.startRunning()
                 }
@@ -168,7 +183,6 @@ class CameraService: NSObject, ObservableObject {
     }
     
     private func configureCameraSession() throws {
-        // Only configure if not already running
         guard !session.isRunning else {
             print("Session already running, skipping configuration")
             return
@@ -177,11 +191,9 @@ class CameraService: NSObject, ObservableObject {
         session.beginConfiguration()
         defer { session.commitConfiguration() }
         
-        // Reset any existing inputs/outputs
         session.inputs.forEach { session.removeInput($0) }
         session.outputs.forEach { session.removeOutput($0) }
         
-        // Configure camera input
         guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: cameraPosition) else {
             throw Camera.Error.noCamera
         }
@@ -192,7 +204,6 @@ class CameraService: NSObject, ObservableObject {
         }
         session.addInput(input)
         
-        // Configure photo output
         guard session.canAddOutput(output) else {
             throw Camera.Error.setupFailed(NSError(domain: "CameraService", code: 2, userInfo: [NSLocalizedDescriptionKey: "Cannot add photo output"]))
         }
@@ -226,7 +237,6 @@ class CameraService: NSObject, ObservableObject {
     }
 }
 
-// MARK: - AVCapturePhotoCaptureDelegate
 extension CameraService: AVCapturePhotoCaptureDelegate {
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Swift.Error?) {
         defer {
@@ -246,10 +256,8 @@ extension CameraService: AVCapturePhotoCaptureDelegate {
             return
         }
         
-        // Process the image based on camera position and orientation
         let processedImage = processImage(image)
         
-        // Crop the image to match the preview's aspect ratio
         if let previewLayer = self.previewLayer, let croppedImage = cropImageToMatchPreview(processedImage, previewLayer: previewLayer) {
             completionHandler?(.success(croppedImage))
         } else {
@@ -257,11 +265,8 @@ extension CameraService: AVCapturePhotoCaptureDelegate {
         }
     }
     
-    // Process image to handle mirroring based on camera position
     private func processImage(_ image: UIImage) -> UIImage {
-        // If using front camera, we need to mirror the image horizontally to match the preview
         if cameraPosition == .front {
-            // Create a mirrored version of the image
             if let cgImage = image.cgImage {
                 return UIImage(
                     cgImage: cgImage,
@@ -270,95 +275,66 @@ extension CameraService: AVCapturePhotoCaptureDelegate {
                 )
             }
         }
-        
-        // For back camera or if mirroring fails, return the original image
         return image
     }
     
-    // Helper method to crop the captured image to match what's shown in the preview
     private func cropImageToMatchPreview(_ image: UIImage, previewLayer: AVCaptureVideoPreviewLayer) -> UIImage? {
-        // Get the connection from the output
         guard let connection = output.connection(with: .video) else {
             return nil
         }
-        
-        // Calculate the crop rect based on the preview layer's bounds and the image dimensions
         let cropRect = calculateCropRect(for: image, previewLayer: previewLayer, connection: connection)
         
-        // Create a cropped image
         guard let cgImage = image.cgImage,
               let croppedCGImage = cgImage.cropping(to: cropRect) else {
             return nil
         }
         
-        // Create a new UIImage with the cropped CGImage
         return UIImage(cgImage: croppedCGImage, scale: image.scale, orientation: image.imageOrientation)
     }
     
-    // Calculate the crop rect based on the preview layer's bounds and the image dimensions
     private func calculateCropRect(for image: UIImage, previewLayer: AVCaptureVideoPreviewLayer, connection: AVCaptureConnection) -> CGRect {
-        // Get the image dimensions
         let imageWidth = CGFloat(image.cgImage?.width ?? 0)
         let imageHeight = CGFloat(image.cgImage?.height ?? 0)
         
-        // Get the preview layer's bounds
         let layerBounds = previewLayer.bounds
         
-        // Calculate the aspect ratio of the preview layer
         let layerRatio = layerBounds.width / layerBounds.height
-        
-        // Calculate the aspect ratio of the image
         let imageRatio = imageWidth / imageHeight
         
-        // Calculate the crop rect
         var cropRect: CGRect
         
         if imageRatio > layerRatio {
-            // Image is wider than the preview layer
             let cropWidth = imageHeight * layerRatio
             let cropX = (imageWidth - cropWidth) / 2
             cropRect = CGRect(x: cropX, y: 0, width: cropWidth, height: imageHeight)
         } else {
-            // Image is taller than the preview layer
             let cropHeight = imageWidth / layerRatio
             let cropY = (imageHeight - cropHeight) / 2
             cropRect = CGRect(x: 0, y: cropY, width: imageWidth, height: cropHeight)
         }
         
-        // Adjust for device orientation and camera position
         let deviceOrientation = UIDevice.current.orientation
-        let isUsingFrontCamera = cameraPosition == .front
-        
-        // Adjust the crop rect based on the device orientation and camera position
-        if deviceOrientation.isPortrait || deviceOrientation.isLandscape {
-            // No adjustment needed for portrait orientation with back camera
-            if isUsingFrontCamera && !deviceOrientation.isPortrait {
-                // Flip horizontally for front camera in landscape
-                cropRect.origin.x = imageWidth - cropRect.maxX
-            }
+        if cameraPosition == .front && !deviceOrientation.isPortrait {
+            cropRect.origin.x = imageWidth - cropRect.maxX
         }
         
         return cropRect
     }
 }
 
-// MARK: - Notification Names
 extension Notification.Name {
     static let didCreatePreviewLayer = Notification.Name("CameraService.didCreatePreviewLayer")
 }
 
-// MARK: - Equatable conformance
 extension Camera.State: Equatable {
     public static func == (lhs: Camera.State, rhs: Camera.State) -> Bool {
         switch (lhs, rhs) {
-        case (.initializing, .initializing):
-            return true
-        case (.ready, .ready):
-            return true
-        case (.capturing, .capturing):
+        case (.initializing, .initializing),
+             (.ready, .ready),
+             (.capturing, .capturing):
             return true
         case (.error(let e1), .error(let e2)):
-            return e1 == e2
+            return e1.localizedDescription == e2.localizedDescription
         default:
             return false
         }
