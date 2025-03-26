@@ -216,93 +216,92 @@ struct ScanView: View {
                         }
                         // MANUAL INPUT MODE CONTENT
                         else if selectedMode == .manual {
-                            LinearGradient(
-                                gradient: Gradient(colors: [Color(.systemGray6), Color(.systemBackground)]),
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                            .edgesIgnoringSafeArea(.all)
-                            
-                            VStack(spacing: isSmallDevice ? 16 : 28) {
-                                ZStack {
-                                    // Outer decorative frame
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .fill(Color.white)
-                                        .frame(width: min(geometry.size.width - 40, 512) + 12,
-                                               height: min(geometry.size.width - 40, 512) + 12)
-                                        .shadow(color: Color.black.opacity(0.12), radius: 16, x: 0, y: 6)
+                            // Wrap content in a ScrollView so it can expand properly and
+                            // dismiss the keyboard interactively on iOS16+:
+                            ScrollView {
+                                LinearGradient(
+                                    gradient: Gradient(colors: [Color(.systemGray6), Color(.systemBackground)]),
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                                .edgesIgnoringSafeArea(.all)
+                                .frame(height: 0) // To preserve the gradient fade at top
+
+                                // Use a VStack to hold your custom frames, text fields, etc.
+                                VStack(spacing: isSmallDevice ? 16 : 28) {
+                                    ZStack {
+                                        // Outer decorative frame
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .fill(Color.white)
+                                            .frame(width: min(geometry.size.width - 40, 512) + 12,
+                                                   height: min(geometry.size.width - 40, 512) + 12)
+                                            .shadow(color: Color.black.opacity(0.12), radius: 16, x: 0, y: 6)
+
+                                        // Second decorative frame
+                                        RoundedRectangle(cornerRadius: 14)
+                                            .fill(Color(red: 245/255, green: 247/255, blue: 250/255))
+                                            .frame(width: min(geometry.size.width - 40, 512) + 6,
+                                                   height: min(geometry.size.width - 40, 512) + 6)
+
+                                        VStack(spacing: 20) {
                                     
-                                    // Second decorative frame
-                                    RoundedRectangle(cornerRadius: 14)
-                                        .fill(Color(red: 245/255, green: 247/255, blue: 250/255))
-                                        .frame(width: min(geometry.size.width - 40, 512) + 6,
-                                               height: min(geometry.size.width - 40, 512) + 6)
-                                    
-                                    VStack(spacing: 20) {
-                                        Image(systemName: "eurozonesign.square.fill")
-                                            .font(.system(size: 70))
-                                            .foregroundColor(Color(red: 0/255, green: 51/255, blue: 153/255))
-                                            .padding()
-                                            .background(
-                                                RoundedRectangle(cornerRadius: 20)
-                                                    .fill(Color(red: 0/255, green: 51/255, blue: 153/255).opacity(0.1))
-                                                    .frame(width: 150, height: 150)
-                                            )
-                                        
-                                        Text("Enter a brand or product name")
-                                            .font(.headline)
-                                            .foregroundColor(Color(red: 0/255, green: 51/255, blue: 153/255))
-                                            .padding(.top, 10)
-                                        
-                                        VStack(spacing: 16) {
-                                            TextField("e.g., iPhone, Samsung, Nestlé, Zara...", text: $manualInputText)
-                                                .font(.system(size: 17))
-                                                .padding()
-                                                .background(
-                                                    RoundedRectangle(cornerRadius: 12)
-                                                        .fill(Color(.systemGray6))
-                                                        .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
-                                                )
-                                                .submitLabel(.search)
-                                                .focused($isTextFieldFocused)
-                                                .onSubmit {
+                                            Text("Enter a brand or product name")
+                                                .font(.headline)
+                                                .foregroundColor(Color(red: 0/255, green: 51/255, blue: 153/255))
+                                                .padding(.top, 10)
+
+                                            VStack(spacing: 16) {
+                                                TextField("e.g., iPhone, Samsung, Nestlé, Zara...", text: $manualInputText)
+                                                    .font(.system(size: 17))
+                                                    .focused($isTextFieldFocused)
+                                                    .padding()
+                                                    .background(
+                                                        RoundedRectangle(cornerRadius: 12)
+                                                            .fill(Color(.systemGray6))
+                                                            .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+                                                    )
+                                                    .submitLabel(.search)
+                                                    .onSubmit {
+                                                        if !manualInputText.isEmpty {
+                                                            viewModel.analyzeManualText(manualInputText)
+                                                        }
+                                                    }
+
+                                                Button(action: {
                                                     if !manualInputText.isEmpty {
                                                         viewModel.analyzeManualText(manualInputText)
                                                     }
+                                                }) {
+                                                    HStack(spacing: 12) {
+                                                        Image(systemName: "magnifyingglass")
+                                                            .font(.headline)
+                                                        Text("Analyze")
+                                                            .font(.headline)
+                                                            .fontWeight(.semibold)
+                                                    }
+                                                    .frame(maxWidth: .infinity)
+                                                    .padding(.vertical, 16)
+                                                    .background(
+                                                        RoundedRectangle(cornerRadius: 12)
+                                                            .fill(manualInputText.isEmpty ?
+                                                                  Color(red: 0/255, green: 51/255, blue: 153/255).opacity(0.5) :
+                                                                  Color(red: 0/255, green: 51/255, blue: 153/255))
+                                                            .shadow(color: Color(red: 0/255, green: 51/255, blue: 153/255).opacity(0.3),
+                                                                    radius: 5, x: 0, y: 3)
+                                                    )
+                                                    .foregroundColor(.white)
                                                 }
-                                            
-                                            Button(action: {
-                                                if !manualInputText.isEmpty {
-                                                    viewModel.analyzeManualText(manualInputText)
-                                                }
-                                            }) {
-                                                HStack(spacing: 12) {
-                                                    Image(systemName: "magnifyingglass")
-                                                        .font(.headline)
-                                                    Text("Analyze")
-                                                        .font(.headline)
-                                                        .fontWeight(.semibold)
-                                                }
-                                                .frame(maxWidth: .infinity)
-                                                .padding(.vertical, 16)
-                                                .background(
-                                                    RoundedRectangle(cornerRadius: 12)
-                                                        .fill(manualInputText.isEmpty ?
-                                                              Color(red: 0/255, green: 51/255, blue: 153/255).opacity(0.5) :
-                                                              Color(red: 0/255, green: 51/255, blue: 153/255))
-                                                        .shadow(color: Color(red: 0/255, green: 51/255, blue: 153/255).opacity(0.3),
-                                                                radius: 5, x: 0, y: 3)
-                                                )
-                                                .foregroundColor(.white)
+                                                .disabled(manualInputText.isEmpty)
                                             }
-                                            .disabled(manualInputText.isEmpty)
+                                            .padding(.horizontal, 24)
                                         }
-                                        .padding(.horizontal, 24)
+                                        .padding()
                                     }
-                                    .padding()
                                 }
+                                .padding()
                             }
-                            .padding()
+                            // iOS16+ method to dismiss keyboard by pulling down:
+                            .scrollDismissesKeyboard(.interactively)
                         }
                         
                         // Scanning overlay
@@ -437,10 +436,8 @@ struct ScanView: View {
                                 Button(action: {
                                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                                         selectedMode = .manual
-                                        // Focus the text field after a short delay to ensure smooth animation
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                            isTextFieldFocused = true
-                                        }
+                                        // Directly set focus rather than delaying
+                                        isTextFieldFocused = true
                                     }
                                 }) {
                                     HStack(spacing: 6) {
