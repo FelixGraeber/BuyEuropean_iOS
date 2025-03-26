@@ -89,15 +89,18 @@ struct ScanView: View {
                                 if let image = viewModel.capturedImage {
                                     PhotoPreviewView(
                                         image: image,
+                                        // Pass the calculated dimensions
+                                        previewWidth: cameraPreviewWidth,
+                                        previewHeight: cameraPreviewHeight,
                                         onBackToCamera: {
-                                            viewModel.cancelBackgroundAnalysis()
+                                            viewModel.cancelBackgroundAnalysis() // Keep existing logic
                                             viewModel.resetScan()
                                         },
                                         onAnalyze: {
-                                            viewModel.handleCameraButtonTap()
+                                            viewModel.handleCameraButtonTap() // Keep existing logic
                                         }
                                     )
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    
                                 } else {
                                     // Camera preview container
                                     ZStack {
@@ -135,7 +138,7 @@ struct ScanView: View {
                                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 }
                             }
-                            .transition(.opacity.animation(.easeInOut(duration: 0.2)))
+                            .transition(.opacity.animation(.easeInOut(duration: 0.25)))
                         }
                         // --- MANUAL INPUT MODE ---
                         else if selectedMode == .manual {
@@ -326,6 +329,7 @@ struct ScanView: View {
             }
             // .animation(.easeInOut(duration: 0.3), value: selectedMode)
             .animation(.easeInOut(duration: 0.2), value: viewModel.scanState)
+            .animation(.default, value: cameraService.state)
         }
         .onAppear {
             cameraService.checkPermissionsAndSetup()
