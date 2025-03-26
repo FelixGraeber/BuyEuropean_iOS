@@ -373,13 +373,13 @@ struct ScanView: View {
                 ResultsView(
                     response: response,
                     onDismiss: {
-                        // Action handled by sheetDestination binding 'set'
+                        viewModel.scanState = .ready // Set to ready state to dismiss sheet
                     })
             case .error(let message):
                 ErrorView(
                     message: message,
                     onDismiss: {
-                        // Action handled by sheetDestination binding 'set'
+                        viewModel.scanState = .ready // Set to ready state to dismiss sheet
                     })
             }
         }
