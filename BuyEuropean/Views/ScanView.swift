@@ -36,83 +36,16 @@ struct ScanView: View {
                 .edgesIgnoringSafeArea(.all)
             
             VStack(spacing: 0) {
-                // Top area with mode switcher - hide when image is captured
-                if viewModel.capturedImage == nil && viewModel.scanState == .ready {
-                    VStack(spacing: 16) {
-                        // Title
-                        Text("BuyEuropean")
-                            .font(.headline)
-                            .fontWeight(.bold)
-                            .foregroundColor(selectedMode == .camera ? .white : .primary)
-                            .padding(.top)
-                        
-                        // Mode switcher
-                        HStack(spacing: 0) {
-                            // Camera mode button
-                            Button(action: {
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                    selectedMode = .camera
-                                }
-                            }) {
-                                VStack(spacing: 8) {
-                                    Image(systemName: "camera.fill")
-                                        .font(.title3)
-                                    
-                                    Text("Scan")
-                                        .font(.subheadline)
-                                        .fontWeight(.medium)
-                                }
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 12)
-                                .foregroundColor(selectedMode == .camera ? .white : .gray)
-                                .background(
-                                    ZStack {
-                                        if selectedMode == .camera {
-                                            RoundedRectangle(cornerRadius: 12)
-                                                .fill(Color.blue.opacity(0.3))
-                                                .matchedGeometryEffect(id: "ModeBackground", in: animation)
-                                        }
-                                    }
-                                )
-                            }
-                            
-                            // Manual mode button
-                            Button(action: {
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                    selectedMode = .manual
-                                }
-                            }) {
-                                VStack(spacing: 8) {
-                                    Image(systemName: "keyboard")
-                                        .font(.title3)
-                                    
-                                    Text("Type")
-                                        .font(.subheadline)
-                                        .fontWeight(.medium)
-                                }
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 12)
-                                .foregroundColor(selectedMode == .manual ? .primary : .gray)
-                                .background(
-                                    ZStack {
-                                        if selectedMode == .manual {
-                                            RoundedRectangle(cornerRadius: 12)
-                                                .fill(Color.blue.opacity(0.15))
-                                                .matchedGeometryEffect(id: "ModeBackground", in: animation)
-                                        }
-                                    }
-                                )
-                            }
-                        }
-                        .padding(4)
-                        .background(
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(selectedMode == .camera ? Color.white.opacity(0.15) : Color(.systemGray6))
-                        )
-                        .padding(.horizontal, 40)
-                    }
-                } else if viewModel.capturedImage != nil {
-                    // Back button when image is captured
+                // App title - always show at top
+                Text("BuyEuropean")
+                    .font(.headline)
+                    .fontWeight(.bold)
+                    .foregroundColor(selectedMode == .camera ? .white : .primary)
+                    .padding(.top)
+                    .padding(.bottom, 8)
+                
+                // Back button when image is captured
+                if viewModel.capturedImage != nil {
                     HStack {
                         Button(action: {
                             // Cancel background analysis and reset
@@ -130,16 +63,7 @@ struct ScanView: View {
                         }
                         
                         Spacer()
-                        Text("BuyEuropean")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                        Spacer()
-                        
-                        // Empty view for balance when back button is visible
-                        Color.clear
-                            .frame(width: 80, height: 10)
                     }
-                    .padding(.top)
                 }
                 
                 // Main content area based on selected mode
@@ -287,86 +211,155 @@ struct ScanView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 
-                // Tagline
-                Text("Vote with your Money.\nBuy European.")
-                    .font(.headline)
-                    .foregroundColor(selectedMode == .camera ? .white : .primary)
-                    .multilineTextAlignment(.center)
-                    .padding(.vertical)
-                
-                // Bottom navigation or action buttons for camera mode
-                if selectedMode == .camera && viewModel.capturedImage == nil {
-                    // Camera mode buttons
-                    HStack(spacing: 60) {
-                        // Gallery button
-                        Button(action: {
-                            viewModel.showPhotoLibrary = true
-                        }) {
-                            ZStack {
-                                Circle()
-                                    .strokeBorder(Color.white, lineWidth: 2)
-                                    .frame(width: 60, height: 60)
-                                
-                                Image(systemName: "photo.fill")
-                                    .font(.title)
-                                    .foregroundColor(.white)
+                // Bottom controls section - conditional based on state
+                VStack(spacing: 12) {
+                    // Tagline above buttons
+                    Text("Vote with your Money.\nBuy European.")
+                        .font(.subheadline)
+                        .foregroundColor(selectedMode == .camera ? .white : .primary)
+                        .multilineTextAlignment(.center)
+                        .padding(.bottom, 4)
+                    
+                    // Camera mode buttons or Analyze button depending on state
+                    if selectedMode == .camera && viewModel.capturedImage == nil {
+                        // Camera mode buttons
+                        HStack(spacing: 60) {
+                            // Gallery button
+                            Button(action: {
+                                viewModel.showPhotoLibrary = true
+                            }) {
+                                ZStack {
+                                    Circle()
+                                        .strokeBorder(Color.white, lineWidth: 2)
+                                        .frame(width: 60, height: 60)
+                                    
+                                    Image(systemName: "photo.fill")
+                                        .font(.title)
+                                        .foregroundColor(.white)
+                                }
+                            }
+                            .disabled(!cameraService.state.isReady)
+                            
+                            // Capture button
+                            Button(action: {
+                                viewModel.handleCameraButtonTap(cameraService: cameraService)
+                            }) {
+                                ZStack {
+                                    Circle()
+                                        .fill(Color.white)
+                                        .frame(width: 80, height: 80)
+                                    
+                                    Circle()
+                                        .strokeBorder(Color.black, lineWidth: 2)
+                                        .frame(width: 70, height: 70)
+                                }
+                            }
+                            .disabled(cameraService.state != .ready)
+                            
+                            // Selfie button
+                            Button(action: {
+                                cameraService.toggleCameraPosition()
+                            }) {
+                                ZStack {
+                                    Circle()
+                                        .strokeBorder(Color.white, lineWidth: 2)
+                                        .frame(width: 60, height: 60)
+                                    
+                                    Image(systemName: "camera.rotate")
+                                        .font(.title)
+                                        .foregroundColor(.white)
+                                }
                             }
                         }
-                        .disabled(!cameraService.state.isReady)
-                        
-                        // Capture button
+                    } else if viewModel.capturedImage != nil {
+                        // Full-width Analyze Image button for review screen
                         Button(action: {
-                            viewModel.handleCameraButtonTap(cameraService: cameraService)
+                            // Use handleCameraButtonTap which will check for cached results
+                            viewModel.handleCameraButtonTap()
                         }) {
-                            ZStack {
-                                Circle()
-                                    .fill(Color.white)
-                                    .frame(width: 80, height: 80)
-                                
-                                Circle()
-                                    .strokeBorder(Color.black, lineWidth: 2)
-                                    .frame(width: 70, height: 70)
+                            HStack {
+                                Image(systemName: "magnifyingglass")
+                                    .font(.headline)
+                                Text("Analyze Image")
+                                    .font(.headline)
+                                    .bold()
                             }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 16)
+                            .background(Color(red: 0/255, green: 51/255, blue: 153/255)) // European blue
+                            .foregroundColor(.white)
+                            .cornerRadius(12)
                         }
-                        .disabled(cameraService.state != .ready)
-                        
-                        // Selfie button
-                        Button(action: {
-                            cameraService.toggleCameraPosition()
-                        }) {
-                            ZStack {
-                                Circle()
-                                    .strokeBorder(Color.white, lineWidth: 2)
-                                    .frame(width: 60, height: 60)
-                                
-                                Image(systemName: "camera.rotate")
-                                    .font(.title)
-                                    .foregroundColor(.white)
-                            }
-                        }
+                        .padding(.horizontal, 20)
                     }
-                    .padding(.bottom, 30)
-                } else if viewModel.capturedImage != nil {
-                    // Full-width Analyze Image button for review screen
-                    Button(action: {
-                        // Use handleCameraButtonTap which will check for cached results
-                        viewModel.handleCameraButtonTap()
-                    }) {
-                        HStack {
-                            Image(systemName: "magnifyingglass")
-                                .font(.headline)
-                            Text("Analyze Image")
-                                .font(.headline)
-                                .bold()
+                    
+                    // Only show mode toggle when no image captured
+                    if viewModel.capturedImage == nil && viewModel.scanState == .ready {
+                        // Pixel-style smaller mode toggle
+                        HStack(spacing: 0) {
+                            // Camera mode button
+                            Button(action: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                    selectedMode = .camera
+                                }
+                            }) {
+                                HStack {
+                                    Image(systemName: "camera.fill")
+                                        .font(.system(size: 14))
+                                    Text("Scan")
+                                        .font(.footnote)
+                                        .fontWeight(.medium)
+                                }
+                                .padding(.vertical, 8)
+                                .padding(.horizontal, 12)
+                                .foregroundColor(selectedMode == .camera ? .white : .gray)
+                                .background(
+                                    ZStack {
+                                        if selectedMode == .camera {
+                                            Capsule()
+                                                .fill(Color.blue.opacity(0.3))
+                                                .matchedGeometryEffect(id: "ModeBackground", in: animation)
+                                        }
+                                    }
+                                )
+                            }
+                            
+                            // Manual mode button
+                            Button(action: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                    selectedMode = .manual
+                                }
+                            }) {
+                                HStack {
+                                    Image(systemName: "keyboard")
+                                        .font(.system(size: 14))
+                                    Text("Type")
+                                        .font(.footnote)
+                                        .fontWeight(.medium)
+                                }
+                                .padding(.vertical, 8)
+                                .padding(.horizontal, 12)
+                                .foregroundColor(selectedMode == .manual ? .primary : .gray)
+                                .background(
+                                    ZStack {
+                                        if selectedMode == .manual {
+                                            Capsule()
+                                                .fill(Color.blue.opacity(0.15))
+                                                .matchedGeometryEffect(id: "ModeBackground", in: animation)
+                                        }
+                                    }
+                                )
+                            }
                         }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(Color(red: 0/255, green: 51/255, blue: 153/255)) // European blue
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
+                        .padding(4)
+                        .background(
+                            Capsule()
+                                .fill(selectedMode == .camera ? Color.white.opacity(0.15) : Color(.systemGray6))
+                        )
+                        .fixedSize()
+                        .padding(.top, 8)
+                        .padding(.bottom, 20)
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 30)
                 }
             }
             .animation(.easeInOut(duration: 0.3), value: selectedMode)
