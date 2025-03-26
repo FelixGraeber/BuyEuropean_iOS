@@ -105,6 +105,9 @@ class ScanViewModel: ObservableObject, @unchecked Sendable {
                 DispatchQueue.main.async {
                     self.scanState = .scanning
                 }
+                
+                // No need to start new analysis - it's already happening in the background
+                // The background task will update the state when complete
             } else {
                 // Otherwise start a new analysis
                 Task {

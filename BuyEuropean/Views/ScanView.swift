@@ -241,7 +241,8 @@ struct ScanView: View {
                         // MARK: - Loading Indicator Overlay
                         // Use viewModel states directly
                         if viewModel.scanState == .scanning
-                            || viewModel.scanState == .backgroundScanning
+                            // Remove background scanning from here:
+                            // || viewModel.scanState == .backgroundScanning
                         {
                             ZStack {
                                 Rectangle()
@@ -354,7 +355,8 @@ struct ScanView: View {
                 isPresented: $viewModel.showPhotoLibrary,
                 sourceType: .photoLibrary
             ) {
-                // Action handled by viewModel's capturedImage observer
+                // Start background analysis as soon as image is selected from library
+                viewModel.startBackgroundAnalysis()
             }
         }
         .sheet(isPresented: $viewModel.showPermissionRequest) {
