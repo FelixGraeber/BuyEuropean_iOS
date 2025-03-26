@@ -61,11 +61,15 @@ struct PhotoPreviewView: View {
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, buttonVerticalPadding)
                                 // .padding(.horizontal, buttonHorizontalPadding) // Add if needed
+                                .background(
+                                    RoundedRectangle(cornerRadius: buttonCornerRadius)
+                                        .fill(Color(.systemGray6))
+                                        .shadow(color: Color.black.opacity(0.1), radius: 3, x: 0, y: 1)
+                                )
+                                .foregroundColor(.secondary)
                         }
-                        .buttonStyle(.bordered) // Use bordered style for a nice look
-                        .tint(.secondary) // Grayish tint for secondary action
-                        .controlSize(.large) // Consistent large size
-                        .clipShape(RoundedRectangle(cornerRadius: buttonCornerRadius)) // Consistent corner radius
+                        .clipShape(RoundedRectangle(cornerRadius: buttonCornerRadius))
+                        .controlSize(.large)
 
 
                         // Analyze Button (using brand color)
