@@ -148,7 +148,7 @@ struct ScanView: View {
             
             GeometryReader { geometry in
                 VStack(spacing: 0) {
-                    // Top bar with controlled safe-area spacing
+                    // Top bar with controlled safe-area spacing - FIXED HEADER OUTSIDE OF SCROLL VIEW
                     HStack(spacing: 10) {
                         Image("AppIconImage")
                             .resizable()
@@ -216,9 +216,12 @@ struct ScanView: View {
                         }
                         // MANUAL INPUT MODE CONTENT
                         else if selectedMode == .manual {
-                            // Wrap content in a ScrollView so it can expand properly and
-                            // dismiss the keyboard interactively on iOS16+:
+                            // IMPORTANT: The ScrollView now only contains the content, not the header
+                            // Provide some top space first to separate from header
                             ScrollView {
+                                // Add some spacing at the top to separate from the header
+                                Spacer().frame(height: 12)
+                                
                                 LinearGradient(
                                     gradient: Gradient(colors: [Color(.systemGray6), Color(.systemBackground)]),
                                     startPoint: .top,
@@ -234,14 +237,14 @@ struct ScanView: View {
                                         RoundedRectangle(cornerRadius: 16)
                                             .fill(Color.white)
                                             .frame(width: min(geometry.size.width - 40, 512) + 12,
-                                                   height: min(geometry.size.width - 40, 512) + 12)
+                                                   height: min(geometry.size.width - 40, 256) + 12)
                                             .shadow(color: Color.black.opacity(0.12), radius: 16, x: 0, y: 6)
 
                                         // Second decorative frame
                                         RoundedRectangle(cornerRadius: 14)
                                             .fill(Color(red: 245/255, green: 247/255, blue: 250/255))
                                             .frame(width: min(geometry.size.width - 40, 512) + 6,
-                                                   height: min(geometry.size.width - 40, 512) + 6)
+                                                   height: min(geometry.size.width - 40, 256) + 6)
 
                                         VStack(spacing: 20) {
                                     
@@ -299,44 +302,15 @@ struct ScanView: View {
                                     }
                                 }
                                 .padding()
+                                
+                                
                             }
                             // iOS16+ method to dismiss keyboard by pulling down:
                             .scrollDismissesKeyboard(.interactively)
                         }
                         
-                        // Scanning overlay
-                        if case .scanning = viewModel.scanState {
-                            Color.black.opacity(0.7)
-                                .edgesIgnoringSafeArea(.all)
-                            
-                            VStack(spacing: 20) {
-                                ZStack {
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .stroke(Color.white.opacity(0.3), lineWidth: 2)
-                                        .frame(width: 100, height: 100)
-                                    
-                                    ProgressView()
-                                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                                        .scaleEffect(2)
-                                }
-                                
-                                VStack(spacing: 8) {
-                                    Text("Analyzing Image")
-                                        .font(.headline)
-                                        .foregroundColor(.white)
-                                    
-                                    Text("Processing square product image...")
-                                        .font(.subheadline)
-                                        .foregroundColor(.white.opacity(0.8))
-                                }
-                                .padding()
-                            }
-                            .background(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .fill(Color.black.opacity(0.7))
-                                    .frame(width: 280, height: 240)
-                            )
-                        }
+                        
+                        
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     
