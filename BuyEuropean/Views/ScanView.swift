@@ -76,9 +76,11 @@ struct ScanView: View {
             VStack(spacing: 0) {
                 // App title with enhanced styling for square design theme
                 HStack(spacing: 10) {
-                    Image(systemName: "eurozonesign.circle.fill")
-                        .font(.title2)
-                        .foregroundColor(Color(red: 0/255, green: 51/255, blue: 153/255)) // European blue
+                    Image("AppIconImage")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 32, height: 32)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                     
                     Text("BuyEuropean")
                         .font(.title3)
