@@ -64,7 +64,7 @@ struct CameraPreview: UIViewRepresentable {
         previewLayer.videoGravity = .resizeAspectFill
         
         if isSquare {
-            view.layer.cornerRadius = 12
+            view.layer.cornerRadius = 16
             view.clipsToBounds = true
         }
         

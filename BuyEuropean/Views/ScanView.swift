@@ -87,17 +87,7 @@ struct ScanView: View {
                         
                     Spacer()
                     
-                    // Add a subtle square indicator to highlight the square design theme
-                    Text("512²")
-                        .font(.system(.footnote, design: .rounded))
-                        .fontWeight(.medium)
-                        .foregroundColor(Color(red: 0/255, green: 51/255, blue: 153/255).opacity(0.7))
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(
-                            RoundedRectangle(cornerRadius: 6)
-                                .fill(Color(red: 0/255, green: 51/255, blue: 153/255).opacity(0.1))
-                        )
+        
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
@@ -167,7 +157,7 @@ struct ScanView: View {
                                     }
                                     
                                     // Explanation subtitle
-                                    Text("512×512 pixel image ready for analysis")
+                                    Text("Captured image ready for analysis")
                                         .font(.subheadline)
                                         .foregroundColor(.secondary)
                                         .padding(.bottom, 8)
@@ -177,8 +167,8 @@ struct ScanView: View {
                                         // Outer decorative frame with visual depth
                                         RoundedRectangle(cornerRadius: 16)
                                             .fill(Color.white)
-                                            .frame(width: min(UIScreen.main.bounds.width - 40, 512) + 12,
-                                                   height: min(UIScreen.main.bounds.width - 40, 512) + 12)
+                                            .frame(width: (UIScreen.main.bounds.width - 40) + 6,
+                                                   height: (UIScreen.main.bounds.width - 40) + 6)
                                             .shadow(color: Color.black.opacity(0.12), radius: 16, x: 0, y: 6)
                                         
                                         // Second decorative frame for layered effect
@@ -191,24 +181,15 @@ struct ScanView: View {
                                         Image(uiImage: image)
                                             .resizable()
                                             .scaledToFill()
-                                            .frame(width: min(UIScreen.main.bounds.width - 40, 512),
-                                                   height: min(UIScreen.main.bounds.width - 40, 512))
-                                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                                            .frame(width: UIScreen.main.bounds.width - 40,
+                                                   height: UIScreen.main.bounds.width - 40)
+                                            .clipShape(RoundedRectangle(cornerRadius: 16))
                                             .overlay(
-                                                RoundedRectangle(cornerRadius: 12)
+                                                RoundedRectangle(cornerRadius: 16)
                                                     .stroke(Color.white, lineWidth: 2)
                                             )
                                             
-                                        // Size indicator label
-                                        Text("512×512")
-                                            .font(.system(size: 11, weight: .medium, design: .monospaced))
-                                            .foregroundColor(.white.opacity(0.9))
-                                            .padding(.horizontal, 8)
-                                            .padding(.vertical, 4)
-                                            .background(Color.black.opacity(0.3))
-                                            .cornerRadius(4)
-                                            .position(x: min(UIScreen.main.bounds.width - 40, 512) - 40,
-                                                      y: min(UIScreen.main.bounds.width - 40, 512) - 16)
+    
                                     }
                                     
                                     // Instruction text with improved styling
@@ -245,7 +226,7 @@ struct ScanView: View {
                                     .padding(.bottom, 4)
                                     
                                     // Explanation subtitle
-                                    Text("Image will be uploaded as 512×512 pixels")
+                                    Text("Image will be uploaded in square format")
                                         .font(.subheadline)
                                         .foregroundColor(.secondary)
                                         .padding(.bottom, 8)
@@ -313,16 +294,7 @@ struct ScanView: View {
                                             }
                                             .stroke(Color.white.opacity(0.9), lineWidth: 4)
                                             
-                                            // 512×512 label
-                                            Text("512×512")
-                                                .font(.system(size: 11, weight: .medium, design: .monospaced))
-                                                .foregroundColor(.white.opacity(0.9))
-                                                .padding(.horizontal, 8)
-                                                .padding(.vertical, 4)
-                                                .background(Color.black.opacity(0.3))
-                                                .cornerRadius(4)
-                                                .position(x: min(UIScreen.main.bounds.width - 40, 512) - 40,
-                                                          y: min(UIScreen.main.bounds.width - 40, 512) - 16)
+    
                                         }
                                         
                                         // Camera state overlays
@@ -415,16 +387,7 @@ struct ScanView: View {
                                                 .frame(width: 150, height: 150)
                                         )
                                     
-                                    // 512×512 label in corner to maintain design consistency
-                                    Text("512×512")
-                                        .font(.system(size: 11, weight: .medium, design: .monospaced))
-                                        .foregroundColor(Color(.systemGray))
-                                        .padding(.horizontal, 8)
-                                        .padding(.vertical, 4)
-                                        .background(Color(.systemGray6))
-                                        .cornerRadius(4)
-                                        .offset(x: (min(UIScreen.main.bounds.width - 40, 512) / 2) - 50,
-                                                y: 0)
+    
                                     
                                     // Text prompt
                                     Text("Enter a brand or product name")
@@ -501,7 +464,7 @@ struct ScanView: View {
                             }
                             
                             VStack(spacing: 8) {
-                                Text("Analyzing 512×512 Image")
+                                Text("Analyzing Image")
                                     .font(.headline)
                                     .foregroundColor(.white)
                                 
