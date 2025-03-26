@@ -19,6 +19,7 @@ struct ScanView: View {
     @State private var selectedMode: InputMode = .camera
     @StateObject private var cameraService = CameraService()
     @State private var showingActionSheet = false
+    @FocusState private var isTextFieldFocused: Bool
     
     // Animation states
     @State private var animateModeSwitching = false
@@ -27,15 +28,15 @@ struct ScanView: View {
     // Device metrics for responsive design
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     
-    // Computed properties for responsive layout
     private var isSmallDevice: Bool {
         #if canImport(UIKit)
         return UIScreen.main.bounds.width < 375
         #else
-        return false // Default for non-UIKit platforms
+        return false
         #endif
     }
     
+    // These computed properties remain unchanged, as they do not materially affect layout
     private var cameraPreviewWidth: CGFloat {
         #if canImport(UIKit)
         return min(UIScreen.main.bounds.width, 400)
@@ -147,7 +148,7 @@ struct ScanView: View {
             
             GeometryReader { geometry in
                 VStack(spacing: 0) {
-                    // App title with enhanced styling for square design theme
+                    // Top bar with controlled safe-area spacing
                     HStack(spacing: 10) {
                         Image("AppIconImage")
                             .resizable()
@@ -162,14 +163,14 @@ struct ScanView: View {
                             
                         Spacer()
                     }
+                    // If there's a large safe-area inset (e.g., iPhone 16 Pro), reduce the extra top padding
                     .padding(.horizontal, geometry.size.width < 350 ? 12 : 16)
                     .padding(.vertical, 12)
-                    .padding(.top, geometry.safeAreaInsets.top)
+                    .padding(.top, geometry.safeAreaInsets.top > 0 ? geometry.safeAreaInsets.top * 0.2 : 18)
                     .frame(maxWidth: .infinity)
                     .background(
                         Color.white
                             .shadow(color: Color.black.opacity(0.07), radius: 2, x: 0, y: 1)
-                            .edgesIgnoringSafeArea(.top)
                     )
                     
                     // Main content area based on selected mode
@@ -197,22 +198,15 @@ struct ScanView: View {
                                         .edgesIgnoringSafeArea(.all)
                                     
                                     VStack(spacing: 16) {
-                                        // Instruction text
-                                        // Empty spacer to maintain consistent spacing
-                                        Spacer()
-                                            .frame(height: 16)
+                                        // Empty spacer to maintain consistent spacing above camera
+                                        Spacer().frame(height: 16)
                                         
                                         // Camera viewfinder with taller rectangle
                                         ZStack {
-                                            // Camera preview in a taller rectangle container
                                             CameraPreview(session: cameraService.session, isSquare: false)
-                                                .frame(width: min(UIScreen.main.bounds.width, 400),
-                                                       height: min(UIScreen.main.bounds.width * 1.28, 512))
-                                                
-                                            
+                                                .frame(width: cameraPreviewWidth, height: cameraPreviewHeight)
                                         }
-                                        .frame(width: min(UIScreen.main.bounds.width, 400),
-                                               height: min(UIScreen.main.bounds.width * 1.28, 512))
+                                        .frame(width: cameraPreviewWidth, height: cameraPreviewHeight)
                                         
                                         Spacer()
                                     }
@@ -220,9 +214,8 @@ struct ScanView: View {
                                 }
                             }
                         }
-                        // MANUAL INPUT MODE CONTENT with enhanced styling
+                        // MANUAL INPUT MODE CONTENT
                         else if selectedMode == .manual {
-                            // Modern gradient background
                             LinearGradient(
                                 gradient: Gradient(colors: [Color(.systemGray6), Color(.systemBackground)]),
                                 startPoint: .top,
@@ -230,27 +223,25 @@ struct ScanView: View {
                             )
                             .edgesIgnoringSafeArea(.all)
                             
-                            VStack(spacing: UIDevice.current.userInterfaceIdiom == .phone && UIScreen.main.bounds.width < 375 ? 16 : 28) {
-                                // Square frame to maintain consistent design with camera mode
+                            VStack(spacing: isSmallDevice ? 16 : 28) {
                                 ZStack {
-                                    // Outer decorative frame with visual depth
+                                    // Outer decorative frame
                                     RoundedRectangle(cornerRadius: 16)
                                         .fill(Color.white)
                                         .frame(width: min(geometry.size.width - 40, 512) + 12,
                                                height: min(geometry.size.width - 40, 512) + 12)
                                         .shadow(color: Color.black.opacity(0.12), radius: 16, x: 0, y: 6)
                                     
-                                    // Second decorative frame for layered effect
+                                    // Second decorative frame
                                     RoundedRectangle(cornerRadius: 14)
                                         .fill(Color(red: 245/255, green: 247/255, blue: 250/255))
                                         .frame(width: min(geometry.size.width - 40, 512) + 6,
                                                height: min(geometry.size.width - 40, 512) + 6)
                                     
                                     VStack(spacing: 20) {
-                                        // European flag icon with square theme
                                         Image(systemName: "eurozonesign.square.fill")
                                             .font(.system(size: 70))
-                                            .foregroundColor(Color(red: 0/255, green: 51/255, blue: 153/255)) // European blue
+                                            .foregroundColor(Color(red: 0/255, green: 51/255, blue: 153/255))
                                             .padding()
                                             .background(
                                                 RoundedRectangle(cornerRadius: 20)
@@ -258,13 +249,11 @@ struct ScanView: View {
                                                     .frame(width: 150, height: 150)
                                             )
                                         
-                                        // Text prompt
                                         Text("Enter a brand or product name")
                                             .font(.headline)
-                                            .foregroundColor(Color(red: 0/255, green: 51/255, blue: 153/255)) // European blue
+                                            .foregroundColor(Color(red: 0/255, green: 51/255, blue: 153/255))
                                             .padding(.top, 10)
                                         
-                                        // Text input field with enhanced styling
                                         VStack(spacing: 16) {
                                             TextField("e.g., iPhone, Samsung, Nestlé, Zara...", text: $manualInputText)
                                                 .font(.system(size: 17))
@@ -275,13 +264,13 @@ struct ScanView: View {
                                                         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
                                                 )
                                                 .submitLabel(.search)
+                                                .focused($isTextFieldFocused)
                                                 .onSubmit {
                                                     if !manualInputText.isEmpty {
                                                         viewModel.analyzeManualText(manualInputText)
                                                     }
                                                 }
                                             
-                                            // Analyze button with European theme
                                             Button(action: {
                                                 if !manualInputText.isEmpty {
                                                     viewModel.analyzeManualText(manualInputText)
@@ -300,8 +289,9 @@ struct ScanView: View {
                                                     RoundedRectangle(cornerRadius: 12)
                                                         .fill(manualInputText.isEmpty ?
                                                               Color(red: 0/255, green: 51/255, blue: 153/255).opacity(0.5) :
-                                                              Color(red: 0/255, green: 51/255, blue: 153/255)) // European blue
-                                                        .shadow(color: Color(red: 0/255, green: 51/255, blue: 153/255).opacity(0.3), radius: 5, x: 0, y: 3)
+                                                              Color(red: 0/255, green: 51/255, blue: 153/255))
+                                                        .shadow(color: Color(red: 0/255, green: 51/255, blue: 153/255).opacity(0.3),
+                                                                radius: 5, x: 0, y: 3)
                                                 )
                                                 .foregroundColor(.white)
                                             }
@@ -315,13 +305,12 @@ struct ScanView: View {
                             .padding()
                         }
                         
-                        // Scanning overlay with square design theme
+                        // Scanning overlay
                         if case .scanning = viewModel.scanState {
                             Color.black.opacity(0.7)
                                 .edgesIgnoringSafeArea(.all)
                             
                             VStack(spacing: 20) {
-                                // Progress indicator with square outline
                                 ZStack {
                                     RoundedRectangle(cornerRadius: 16)
                                         .stroke(Color.white.opacity(0.3), lineWidth: 2)
@@ -352,16 +341,13 @@ struct ScanView: View {
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     
-                    // Bottom controls section with enhanced styling
+                    // Bottom controls section
                     VStack(spacing: geometry.size.width < 375 ? 8 : 16) {
-                        // Space instead of tagline
                         Spacer().frame(height: geometry.size.width < 375 ? 4 : 8)
                         
-                        // Camera mode buttons or Analyze button depending on state
                         if selectedMode == .camera && viewModel.capturedImage == nil {
-                            // Camera mode buttons with square design theme
                             HStack(spacing: 50) {
-                                // Gallery button - square design theme
+                                // Gallery button
                                 Button(action: {
                                     viewModel.showPhotoLibrary = true
                                 }) {
@@ -373,27 +359,24 @@ struct ScanView: View {
                                         
                                         Image(systemName: "photo.on.rectangle.fill")
                                             .font(.system(size: 22, weight: .medium))
-                                            .foregroundColor(Color(red: 0/255, green: 51/255, blue: 153/255)) // European blue
+                                            .foregroundColor(Color(red: 0/255, green: 51/255, blue: 153/255))
                                     }
                                 }
                                 .disabled(!cameraService.state.isReady)
                                 
-                                // Capture button - square design theme
+                                // Capture button
                                 Button(action: {
                                     viewModel.handleCameraButtonTap(cameraService: cameraService)
                                 }) {
                                     ZStack {
-                                        // Outer square
                                         RoundedRectangle(cornerRadius: 16)
-                                            .strokeBorder(Color(red: 0/255, green: 51/255, blue: 153/255), lineWidth: 4) // European blue
+                                            .strokeBorder(Color(red: 0/255, green: 51/255, blue: 153/255), lineWidth: 4)
                                             .frame(width: 78, height: 78)
                                         
-                                        // Inner square
                                         RoundedRectangle(cornerRadius: 12)
-                                            .fill(Color(red: 0/255, green: 51/255, blue: 153/255)) // European blue
+                                            .fill(Color(red: 0/255, green: 51/255, blue: 153/255))
                                             .frame(width: 64, height: 64)
-                                            
-                                        // Square icon
+                                        
                                         Image(systemName: "viewfinder")
                                             .font(.system(size: geometry.size.width < 375 ? 24 : 26, weight: .medium))
                                             .foregroundColor(.white)
@@ -402,33 +385,32 @@ struct ScanView: View {
                                 .disabled(cameraService.state != .ready)
                                 .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 3)
                                 
-                                // Flip camera button - square design theme
+                                // Flip camera button
                                 Button(action: {
                                     cameraService.toggleCameraPosition()
                                 }) {
                                     ZStack {
                                         RoundedRectangle(cornerRadius: 12)
                                             .fill(Color.white)
-                                            .frame(width: geometry.size.width < 375 ? 50 : 56, 
+                                            .frame(width: geometry.size.width < 375 ? 50 : 56,
                                                    height: geometry.size.width < 375 ? 50 : 56)
                                             .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
                                         
                                         Image(systemName: "arrow.triangle.2.circlepath.camera.fill")
                                             .font(.system(size: geometry.size.width < 375 ? 20 : 22, weight: .medium))
-                                            .foregroundColor(Color(red: 0/255, green: 51/255, blue: 153/255)) // European blue
+                                            .foregroundColor(Color(red: 0/255, green: 51/255, blue: 153/255))
                                     }
                                 }
                             }
                         }
                         
-                        // Only show mode toggle when no image captured
+                        // Toggle between camera and manual modes only if no captured image
                         if viewModel.capturedImage == nil && viewModel.scanState == .ready {
-                            // Enhanced mode toggle with square design theme
                             HStack(spacing: 0) {
-                                // Camera mode button
                                 Button(action: {
                                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                                         selectedMode = .camera
+                                        isTextFieldFocused = false
                                     }
                                 }) {
                                     HStack(spacing: 6) {
@@ -445,17 +427,20 @@ struct ScanView: View {
                                         ZStack {
                                             if selectedMode == .camera {
                                                 RoundedRectangle(cornerRadius: 8)
-                                                    .fill(Color(red: 0/255, green: 51/255, blue: 153/255)) // European blue
+                                                    .fill(Color(red: 0/255, green: 51/255, blue: 153/255))
                                                     .matchedGeometryEffect(id: "ModeBackground", in: animation)
                                             }
                                         }
                                     )
                                 }
                                 
-                                // Manual mode button
                                 Button(action: {
                                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                                         selectedMode = .manual
+                                        // Focus the text field after a short delay to ensure smooth animation
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                            isTextFieldFocused = true
+                                        }
                                     }
                                 }) {
                                     HStack(spacing: 6) {
@@ -472,7 +457,7 @@ struct ScanView: View {
                                         ZStack {
                                             if selectedMode == .manual {
                                                 RoundedRectangle(cornerRadius: 8)
-                                                    .fill(Color(red: 0/255, green: 51/255, blue: 153/255)) // European blue
+                                                    .fill(Color(red: 0/255, green: 51/255, blue: 153/255))
                                                     .matchedGeometryEffect(id: "ModeBackground", in: animation)
                                             }
                                         }
@@ -486,10 +471,11 @@ struct ScanView: View {
                                     .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: 2)
                             )
                             .padding(.top, geometry.size.width < 375 ? 8 : 12)
-                            .padding(.bottom, geometry.safeAreaInsets.bottom > 0 ? 0 : (geometry.size.width < 375 ? 16 : 20)) // Reduce padding slightly on devices without a bottom safe area
+                            // Always add safe-area bottom inset to avoid overflow on devices like iPhone X
+                            .padding(.bottom, geometry.safeAreaInsets.bottom + (geometry.size.width < 375 ? 16 : 20))
                         } else {
-                            // Add padding below the Analyze button if the mode toggle isn't shown
-                            Spacer().frame(height: geometry.safeAreaInsets.bottom > 0 ? 0 : (geometry.size.width < 375 ? 16 : 20))
+                            // If the toggle is hidden, still provide bottom inset
+                            Spacer().frame(height: geometry.safeAreaInsets.bottom + (geometry.size.width < 375 ? 16 : 20))
                         }
                     }
                 }
@@ -499,7 +485,6 @@ struct ScanView: View {
         .onAppear {
             cameraService.checkPermissionsAndSetup()
             #if DEBUG
-            // Helper to print safe area insets on different devices during testing
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
                 print("Top Safe Area: \(windowScene.windows.first?.safeAreaInsets.top ?? -1)")
                 print("Bottom Safe Area: \(windowScene.windows.first?.safeAreaInsets.bottom ?? -1)")
@@ -507,7 +492,7 @@ struct ScanView: View {
             #endif
         }
         .onChange(of: selectedMode) { newMode in
-            // Reset scan state when switching modes
+            // Reset scan state when switching modes if ready
             if viewModel.scanState == .ready {
                 viewModel.resetScan()
             }
@@ -518,7 +503,7 @@ struct ScanView: View {
                 isPresented: $viewModel.showPhotoLibrary,
                 sourceType: .photoLibrary
             ) {
-                // Start background analysis as soon as image is selected from photo library
+                // Start background analysis once an image is selected
                 viewModel.startBackgroundAnalysis()
             }
         }
@@ -533,11 +518,8 @@ struct ScanView: View {
             switch destination {
             case .results(let response):
                 ResultsView(response: response, onDismiss: {
-                    // First reset the sheet destination to nil to ensure proper dismissal
                     DispatchQueue.main.async {
-                        // Reset the scan state which will cause the sheet to dismiss
                         viewModel.resetScan()
-                        // Reset manual input text after analysis
                         manualInputText = ""
                     }
                 })
@@ -575,28 +557,26 @@ enum SheetDestination: Identifiable {
     var id: String {
         switch self {
         case .results(let response):
-            return "results-\(response.id)" // Make ID unique per response
+            return "results-\(response.id)"
         case .error(let message):
-            return "error-\(message)" // Make ID unique per error message
+            return "error-\(message)"
         }
     }
 }
 
-// Preview
 struct ScanView_Previews: PreviewProvider {
     static var previews: some View {
-        // Preview on different devices
         Group {
             ScanView()
-                .previewDevice("iPhone 14 Pro") // Device with Dynamic Island
+                .previewDevice("iPhone 14 Pro")
                 .previewDisplayName("iPhone 14 Pro")
-
+            
             ScanView()
-                .previewDevice("iPhone SE (3rd generation)") // Device with smaller screen / home button
+                .previewDevice("iPhone SE (3rd generation)")
                 .previewDisplayName("iPhone SE (3rd Gen)")
-
+            
             ScanView()
-                .previewDevice("iPhone 11") // Device with Notch
+                .previewDevice("iPhone 11")
                 .previewDisplayName("iPhone 11")
         }
     }
