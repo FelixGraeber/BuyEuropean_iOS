@@ -13,6 +13,11 @@ enum Classification: String, Codable {
     case europeanAlly = "european_ally"
     case europeanSceptic = "european_sceptic"
     case europeanAdversary = "european_adversary"
+    case neutral = "neutral"
+    case cat = "cat"
+    case dog = "dog"
+    case animal = "animal"
+    case human = "human"
     case unknown = "unknown"
     
     var displayName: String {
@@ -25,6 +30,16 @@ enum Classification: String, Codable {
             return "European Sceptic"
         case .europeanAdversary:
             return "European Adversary"
+        case .neutral:
+            return "Neutral"
+        case .cat:
+            return "Cat"
+        case .dog:
+            return "Dog"
+        case .animal:
+            return "Animal"
+        case .human:
+            return "Human"
         case .unknown:
             return "Unknown"
         }
@@ -40,6 +55,16 @@ enum Classification: String, Codable {
             return .yellow
         case .europeanAdversary:
             return .red
+        case .neutral:
+            return .gray.opacity(0.7)
+        case .cat:
+            return .orange
+        case .dog:
+            return .brown
+        case .animal:
+            return .mint
+        case .human:
+            return .purple
         case .unknown:
             return .gray
         }

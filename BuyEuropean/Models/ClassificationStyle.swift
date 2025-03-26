@@ -6,6 +6,11 @@
 //
 
 import SwiftUI
+import Foundation
+
+// Referencing the Classification enum from Models.swift
+// We don't need to import it since they're in the same module
+// But we need to access it correctly
 
 struct ClassificationStyle {
     let backgroundColor: Color
@@ -23,7 +28,7 @@ struct ClassificationStyle {
                 textColor: Color(red: 0/255, green: 51/255, blue: 153/255),
                 badgeColor: Color(red: 0/255, green: 51/255, blue: 153/255),
                 icon: "flag.fill",
-                title: "European Country",
+                title: "European",
                 description: "This product is made by a company headquartered in Europe."
             )
         case .europeanAlly:
@@ -52,6 +57,51 @@ struct ClassificationStyle {
                 icon: "xmark.octagon.fill",
                 title: "European Adversary",
                 description: "This product is made by a company from a country with adversarial relations to Europe."
+            )
+        case .neutral:
+            return ClassificationStyle(
+                backgroundColor: Color(red: 240/255, green: 240/255, blue: 240/255),
+                textColor: Color(red: 100/255, green: 100/255, blue: 100/255),
+                badgeColor: Color(red: 150/255, green: 150/255, blue: 150/255),
+                icon: "equal.circle.fill",
+                title: "Neutral",
+                description: "This product is made by a company from a country with neutral standing to Europe."
+            )
+        case .cat:
+            return ClassificationStyle(
+                backgroundColor: Color(red: 255/255, green: 240/255, blue: 220/255),
+                textColor: Color(red: 217/255, green: 115/255, blue: 13/255),
+                badgeColor: Color(red: 245/255, green: 158/255, blue: 11/255),
+                icon: "cat.fill",
+                title: "Cat",
+                description: "Nice try! We spotted your furry friend. Cats are adorable, but they're not European products..."
+            )
+        case .dog:
+            return ClassificationStyle(
+                backgroundColor: Color(red: 252/255, green: 237/255, blue: 222/255),
+                textColor: Color(red: 180/255, green: 83/255, blue: 9/255),
+                badgeColor: Color(red: 217/255, green: 119/255, blue: 6/255),
+                icon: "dog.fill",
+                title: "Dog",
+                description: "We see what you did there! Your dog is cute, but not quite what we're designed to analyze."
+            )
+        case .animal:
+            return ClassificationStyle(
+                backgroundColor: Color(red: 228/255, green: 250/255, blue: 241/255),
+                textColor: Color(red: 6/255, green: 148/255, blue: 100/255),
+                badgeColor: Color(red: 16/255, green: 185/255, blue: 129/255),
+                icon: "hare.fill",
+                title: "Animal",
+                description: "Hmm, that's definitely not a product. Unless you're scanning wildlife catalogs, we should get back to European shopping."
+            )
+        case .human:
+            return ClassificationStyle(
+                backgroundColor: Color(red: 249/255, green: 240/255, blue: 255/255),
+                textColor: Color(red: 159/255, green: 18/255, blue: 237/255),
+                badgeColor: Color(red: 168/255, green: 85/255, blue: 247/255),
+                icon: "person.fill",
+                title: "Human",
+                description: "We're flattered you think we can classify humans! But we're better at identifying European products than people."
             )
         case .unknown:
             return ClassificationStyle(
