@@ -214,50 +214,19 @@ struct ScanView: View {
                                 Color(.systemBackground)
                                     .edgesIgnoringSafeArea(.all)
                                 
-                                VStack(spacing: 24) {
-                                    // Instruction text above viewfinder with improved styling
-                                    VStack(spacing: 6) {
-                                        Image(systemName: "viewfinder")
-                                            .font(.system(size: 20))
-                                            .foregroundColor(Color(red: 0/255, green: 51/255, blue: 153/255).opacity(0.8))
-                                        
-                                        Text("Center product in square frame")
-                                            .font(.headline)
-                                            .foregroundColor(Color(red: 0/255, green: 51/255, blue: 153/255))
-                                    }
-                                    .padding(.bottom, 4)
-                                    
-                                    // Explanation subtitle
-                                    Text("Image will be uploaded in square format")
+                                VStack(spacing: 16) {
+                                    // Instruction text
+                                    Text("Take a photo of any product or brand...")
                                         .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                        .padding(.bottom, 8)
+                                        .foregroundColor(Color(.systemGray))
                                     
-                                    // Square camera viewfinder - exactly 512x512 or width-based if smaller
+                                    // Camera viewfinder with taller rectangle
                                     ZStack {
-                                        // Outer decorative frame with visual depth
-                                        RoundedRectangle(cornerRadius: 16)
-                                            .fill(Color.white)
-                                            .frame(width: min(UIScreen.main.bounds.width - 40, 512) + 12,
-                                                   height: min(UIScreen.main.bounds.width - 40, 512) + 12)
-                                            .shadow(color: Color.black.opacity(0.12), radius: 16, x: 0, y: 6)
-                                        
-                                        // Second decorative frame for layered effect
-                                        RoundedRectangle(cornerRadius: 14)
-                                            .fill(Color(red: 245/255, green: 247/255, blue: 250/255))
-                                            .frame(width: min(UIScreen.main.bounds.width - 40, 512) + 6,
-                                                   height: min(UIScreen.main.bounds.width - 40, 512) + 6)
-                                        
-                                        // Camera preview in a square container - exactly 512x512 max
-                                        CameraPreview(session: cameraService.session, isSquare: true)
-                                            .frame(width: min(UIScreen.main.bounds.width - 40, 512),
-                                                   height: min(UIScreen.main.bounds.width - 40, 512))
-                                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                                            .overlay(
-                                                RoundedRectangle(cornerRadius: 12)
-                                                    .stroke(Color.white, lineWidth: 2)
-                                            )
-                                        
+                                        // Camera preview in a taller rectangle container
+                                        CameraPreview(session: cameraService.session, isSquare: false)
+                                            .frame(width: 384,
+                                                   height: 512)
+                                            
                                         // Enhanced stylish corner marks with modern design
                                         ZStack {
                                             // Top left corner
@@ -270,7 +239,7 @@ struct ScanView: View {
                                             
                                             // Top right corner
                                             Path { path in
-                                                let width = min(UIScreen.main.bounds.width - 40, 512)
+                                                let width = 384
                                                 path.move(to: CGPoint(x: width, y: 40))
                                                 path.addLine(to: CGPoint(x: width, y: 0))
                                                 path.addLine(to: CGPoint(x: width - 40, y: 0))
@@ -279,7 +248,7 @@ struct ScanView: View {
                                             
                                             // Bottom left corner
                                             Path { path in
-                                                let height = min(UIScreen.main.bounds.width - 40, 512)
+                                                let height = 512
                                                 path.move(to: CGPoint(x: 0, y: height - 40))
                                                 path.addLine(to: CGPoint(x: 0, y: height))
                                                 path.addLine(to: CGPoint(x: 40, y: height))
@@ -288,15 +257,13 @@ struct ScanView: View {
                                             
                                             // Bottom right corner
                                             Path { path in
-                                                let width = min(UIScreen.main.bounds.width - 40, 512)
-                                                let height = min(UIScreen.main.bounds.width - 40, 512)
+                                                let width = 384
+                                                let height = 512
                                                 path.move(to: CGPoint(x: width, y: height - 40))
                                                 path.addLine(to: CGPoint(x: width, y: height))
                                                 path.addLine(to: CGPoint(x: width - 40, y: height))
                                             }
                                             .stroke(Color.white.opacity(0.9), lineWidth: 4)
-                                            
-    
                                         }
                                         
                                         // Camera state overlays
@@ -342,12 +309,12 @@ struct ScanView: View {
                                             EmptyView()
                                         }
                                     }
-                                    .frame(width: min(UIScreen.main.bounds.width - 40, 512),
-                                           height: min(UIScreen.main.bounds.width - 40, 512))
+                                    .frame(width: 384,
+                                           height: 512)
                                     
                                     Spacer()
                                 }
-                                .padding(.horizontal, 20)
+                                .padding(.horizontal, 0)
                             }
                         }
                     }
@@ -487,18 +454,8 @@ struct ScanView: View {
                 
                 // Bottom controls section with enhanced styling
                 VStack(spacing: 16) {
-                    // Tagline above buttons with improved styling
-                    VStack(spacing: 4) {
-                        Text("Vote with your Money")
-                            .font(.headline)
-                            .foregroundColor(Color(red: 0/255, green: 51/255, blue: 153/255)) // European blue
-                        
-                        Text("Buy European")
-                            .font(.subheadline)
-                            .foregroundColor(Color(red: 0/255, green: 51/255, blue: 153/255).opacity(0.8))
-                            .italic()
-                    }
-                    .padding(.bottom, 6)
+                    // Space instead of tagline
+                    Spacer().frame(height: 8)
                     
                     // Camera mode buttons or Analyze button depending on state
                     if selectedMode == .camera && viewModel.capturedImage == nil {
@@ -653,7 +610,7 @@ struct ScanView: View {
                                 .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: 2)
                         )
                         .padding(.top, 12)
-                        .padding(.bottom, 24)
+                        .padding(.bottom, 32)
                     }
                 }
             }
