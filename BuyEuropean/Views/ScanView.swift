@@ -1,281 +1,192 @@
-import SwiftUI
 import AVFoundation
 import Combine
+import SwiftUI
 
 #if canImport(UIKit)
-import UIKit
+    import UIKit
 #endif
 
-// Import our custom components
-import Foundation
+// Assume these custom components and types are correctly defined elsewhere:
+// PhotoPreviewView, CameraPreview, ImagePicker, CameraPermissionView,
+// ResultsView, ErrorView, ScanViewModel, CameraService, PermissionService,
+// BuyEuropeanResponse (DEFINED ONLY ONCE IN YOUR PROJECT), APIService, ImageService, APIError
 
 struct ScanView: View {
     @StateObject private var viewModel = ScanViewModel()
     @StateObject private var permissionService = PermissionService.shared
-    @State private var isShowingImagePicker = false
-    @State private var isShowingResults = false
-    @State private var isShowingError = false
+    // State vars derived from viewModel for sheet/haptic triggers
+    @State private var showResultsHapticTrigger = false
+    @State private var showErrorHapticTrigger = false
+
     @State private var manualInputText = ""
     @State private var selectedMode: InputMode = .camera
     @StateObject private var cameraService = CameraService()
-    @State private var showingActionSheet = false
     @FocusState private var isTextFieldFocused: Bool
-    
-    // Animation states
-    @State private var animateModeSwitching = false
+
     @Namespace private var animation
-    
-    // Device metrics for responsive design
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    
-    private var isSmallDevice: Bool {
-        #if canImport(UIKit)
-        return UIScreen.main.bounds.width < 375
-        #else
-        return false
-        #endif
-    }
-    
-    // These computed properties remain unchanged, as they do not materially affect layout
+
+    // Computed properties for sizes (can be adjusted or replaced with GeometryReader values)
     private var cameraPreviewWidth: CGFloat {
         #if canImport(UIKit)
-        return min(UIScreen.main.bounds.width, 400)
+            return min(UIScreen.main.bounds.width - 40, 400)  // Allow padding
         #else
-        return 400
+            return 400
         #endif
     }
-    
+
     private var cameraPreviewHeight: CGFloat {
         #if canImport(UIKit)
-        return min(UIScreen.main.bounds.width * 1.28, 512)
+            return min((UIScreen.main.bounds.width - 40) * 1.35, 540)  // Taller aspect ratio
         #else
-        return 512
+            return 540
         #endif
     }
-    
-    private var squareImageSize: CGFloat {
-        #if canImport(UIKit)
-        return min(UIScreen.main.bounds.width - 40, 512)
-        #else
-        return 512
-        #endif
-    }
-    
-    private var buttonSpacing: CGFloat {
-        return isSmallDevice ? 30 : 50
-    }
-    
-    private var controlButtonSize: CGFloat {
-        return isSmallDevice ? 50 : 56
-    }
-    
-    private var captureButtonSize: CGFloat {
-        return isSmallDevice ? 72 : 78
-    }
-    
-    private var innerButtonSize: CGFloat {
-        return isSmallDevice ? 58 : 64
-    }
-    
-    private var iconSize: CGFloat {
-        return isSmallDevice ? 20 : 22
-    }
-    
-    private var captureIconSize: CGFloat {
-        return isSmallDevice ? 24 : 26
-    }
-    
-    private var verticalSpacing: CGFloat {
-        return isSmallDevice ? 8 : 16
-    }
-    
-    private var topPadding: CGFloat {
-        return isSmallDevice ? 8 : 12
-    }
-    
-    private var bottomPadding: CGFloat {
-        return isSmallDevice ? 16 : 32
-    }
-    
-    enum InputMode {
+
+    enum InputMode: CaseIterable {
         case camera
         case manual
     }
-    
+
     var body: some View {
         ZStack {
-            // Enhanced background with subtle pattern for more elegant square design theme
-            ZStack {
-                // Base background color
-                Color(.systemBackground)
-                    .edgesIgnoringSafeArea(.all)
-                
-                // Subtle grid pattern for square theme (very light)
-                VStack(spacing: 0) {
-                    ForEach(0..<40) { row in
-                        HStack(spacing: 0) {
-                            ForEach(0..<20) { column in
-                                Rectangle()
-                                    .fill(Color.clear)
-                                    .frame(width: 20, height: 20)
-                                    .border(Color(.systemGray6), width: 0.5)
-                            }
-                        }
-                    }
-                }
-                .opacity(0.2)
-                
-                // Top and bottom fade
-                VStack {
-                    LinearGradient(
-                        gradient: Gradient(colors: [Color(.systemBackground), Color(.systemBackground).opacity(0)]),
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(height: 100)
-                    
-                    Spacer()
-                    
-                    LinearGradient(
-                        gradient: Gradient(colors: [Color(.systemBackground).opacity(0), Color(.systemBackground)]),
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(height: 100)
-                }
+            Color(.systemBackground)
                 .edgesIgnoringSafeArea(.all)
-            }
-            
+
             GeometryReader { geometry in
                 VStack(spacing: 0) {
-                    // Top bar with controlled safe-area spacing - FIXED HEADER OUTSIDE OF SCROLL VIEW
+                    // MARK: - Header
                     HStack(spacing: 10) {
-                        Image("AppIconImage")
+                        Image("AppIconImage")  // Ensure this asset exists
                             .resizable()
                             .scaledToFit()
                             .frame(width: 32, height: 32)
                             .clipShape(RoundedRectangle(cornerRadius: 8))
-                        
+
                         Text("BuyEuropean")
                             .font(geometry.size.width < 350 ? .headline : .title3)
                             .fontWeight(.bold)
-                            .foregroundColor(Color(red: 0/255, green: 51/255, blue: 153/255)) // European blue
-                            
+                            .foregroundColor(Color(red: 0 / 255, green: 51 / 255, blue: 153 / 255))
+
                         Spacer()
                     }
-                    // If there's a large safe-area inset (e.g., iPhone 16 Pro), reduce the extra top padding
                     .padding(.horizontal, geometry.size.width < 350 ? 12 : 16)
-                    .padding(.vertical, 12)
-                    .padding(.top, geometry.safeAreaInsets.top > 0 ? geometry.safeAreaInsets.top * 0.2 : 18)
-                    .frame(maxWidth: .infinity)
-                    .background(
-                        Color.white
-                            .shadow(color: Color.black.opacity(0.07), radius: 2, x: 0, y: 1)
+                    .padding(.vertical, 10)
+                    .padding(
+                        .top,
+                        geometry.safeAreaInsets.top > 20
+                            ? max(10, geometry.safeAreaInsets.top * 0.1) : 12
                     )
-                    
-                    // Main content area based on selected mode
+                    .frame(maxWidth: .infinity)
+                    .background(.regularMaterial)
+                    .shadow(color: Color.black.opacity(0.06), radius: 3, x: 0, y: 1)
+
+                    // MARK: - Main Content Area
                     ZStack {
-                        // CAMERA MODE CONTENT
+                        // --- CAMERA MODE ---
                         if selectedMode == .camera {
-                            if let image = viewModel.capturedImage {
-                                PhotoPreviewView(
-                                    image: image,
-                                    onBackToCamera: {
-                                        // Cancel background analysis and reset
-                                        viewModel.cancelBackgroundAnalysis()
-                                        viewModel.resetScan()
-                                    },
-                                    onAnalyze: {
-                                        // Use handleCameraButtonTap which will check for cached results
-                                        viewModel.handleCameraButtonTap()
-                                    }
-                                )
-                            } else {
-                                // Camera preview with square viewfinder and state overlays
-                                ZStack {
-                                    // Modern light background
-                                    Color(.systemBackground)
-                                        .edgesIgnoringSafeArea(.all)
-                                    
-                                    VStack(spacing: 16) {
-                                        // Empty spacer to maintain consistent spacing above camera
-                                        Spacer().frame(height: 16)
-                                        
-                                        // Camera viewfinder with taller rectangle
-                                        ZStack {
-                                            CameraPreview(session: cameraService.session, isSquare: false)
-                                                .frame(width: cameraPreviewWidth, height: cameraPreviewHeight)
+                            Group {
+                                if let image = viewModel.capturedImage {
+                                    PhotoPreviewView(
+                                        image: image,
+                                        onBackToCamera: {
+                                            viewModel.cancelBackgroundAnalysis()
+                                            viewModel.resetScan()
+                                        },
+                                        onAnalyze: {
+                                            viewModel.handleCameraButtonTap()
                                         }
-                                        .frame(width: cameraPreviewWidth, height: cameraPreviewHeight)
-                                        
-                                        Spacer()
+                                    )
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                } else {
+                                    // Camera preview container
+                                    ZStack {
+                                        Color.clear
+
+                                        VStack(spacing: 16) {
+                                            Spacer().frame(height: 16)
+
+                                            ZStack {
+                                                CameraPreview(session: cameraService.session)
+                                                    .frame(
+                                                        width: cameraPreviewWidth,
+                                                        height: cameraPreviewHeight
+                                                    )
+                                                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                                                    .overlay(
+                                                        RoundedRectangle(cornerRadius: 16)
+                                                            .stroke(
+                                                                Color(.systemGray5), lineWidth: 1)
+                                                    )
+                                                    .overlay(cameraStateOverlay())  // Make sure this uses correct state name
+                                            }
+                                            .frame(
+                                                width: cameraPreviewWidth,
+                                                height: cameraPreviewHeight
+                                            )
+                                            .shadow(
+                                                color: Color.black.opacity(0.1), radius: 8, x: 0,
+                                                y: 4)
+
+                                            Spacer()
+                                        }
+                                        .padding(.horizontal, 20)
                                     }
-                                    .padding(.horizontal, 0)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 }
                             }
+                            .transition(.opacity.animation(.easeInOut(duration: 0.2)))
                         }
-                        // MANUAL INPUT MODE CONTENT
+                        // --- MANUAL INPUT MODE ---
                         else if selectedMode == .manual {
-                            // IMPORTANT: The ScrollView now only contains the content, not the header
-                            // Provide some top space first to separate from header
                             ScrollView {
-                                // Add some spacing at the top to separate from the header
-                                Spacer().frame(height: 12)
-                                
-                                LinearGradient(
-                                    gradient: Gradient(colors: [Color(.systemGray6), Color(.systemBackground)]),
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                                .edgesIgnoringSafeArea(.all)
-                                .frame(height: 0) // To preserve the gradient fade at top
+                                VStack(spacing: geometry.size.width < 375 ? 20 : 28) {
+                                    Spacer().frame(height: geometry.size.width < 375 ? 16 : 24)
 
-                                // Use a VStack to hold your custom frames, text fields, etc.
-                                VStack(spacing: isSmallDevice ? 16 : 28) {
                                     ZStack {
-                                        // Outer decorative frame
                                         RoundedRectangle(cornerRadius: 16)
                                             .fill(Color.white)
-                                            .frame(width: min(geometry.size.width - 40, 512) + 12,
-                                                   height: min(geometry.size.width - 40, 256) + 12)
-                                            .shadow(color: Color.black.opacity(0.12), radius: 16, x: 0, y: 6)
+                                            .frame(
+                                                width: min(geometry.size.width - 40, 512) + 12,
+                                                height: max(
+                                                    240, min(geometry.size.width - 40, 256) + 12)
+                                            )
+                                            .shadow(
+                                                color: Color.black.opacity(0.1), radius: 10, x: 0,
+                                                y: 4)
 
-                                        // Second decorative frame
-                                        RoundedRectangle(cornerRadius: 14)
-                                            .fill(Color(red: 245/255, green: 247/255, blue: 250/255))
-                                            .frame(width: min(geometry.size.width - 40, 512) + 6,
-                                                   height: min(geometry.size.width - 40, 256) + 6)
-
-                                        VStack(spacing: 20) {
-                                    
+                                        VStack(spacing: 16) {
                                             Text("Enter a brand or product name")
                                                 .font(.headline)
-                                                .foregroundColor(Color(red: 0/255, green: 51/255, blue: 153/255))
-                                                .padding(.top, 10)
+                                                .foregroundColor(
+                                                    Color(
+                                                        red: 0 / 255, green: 51 / 255,
+                                                        blue: 153 / 255)
+                                                )
+                                                .padding(.top, 16)
 
-                                            VStack(spacing: 16) {
-                                                TextField("e.g., iPhone, Samsung, Nestlé, Zara...", text: $manualInputText)
-                                                    .font(.system(size: 17))
-                                                    .focused($isTextFieldFocused)
-                                                    .padding()
-                                                    .background(
-                                                        RoundedRectangle(cornerRadius: 12)
-                                                            .fill(Color(.systemGray6))
-                                                            .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
-                                                    )
-                                                    .submitLabel(.search)
-                                                    .onSubmit {
-                                                        if !manualInputText.isEmpty {
-                                                            viewModel.analyzeManualText(manualInputText)
-                                                        }
-                                                    }
+                                            VStack(spacing: 12) {
+                                                TextField(
+                                                    "e.g., iPhone, Samsung, Nestlé, Zara...",
+                                                    text: $manualInputText
+                                                )
+                                                .font(.body)  // Dynamic Type friendly
+                                                .focused($isTextFieldFocused)
+                                                .padding(12)
+                                                .background(
+                                                    RoundedRectangle(cornerRadius: 10)
+                                                        .fill(Color(.systemGray6))
+                                                        .shadow(
+                                                            color: Color.black.opacity(0.04),
+                                                            radius: 3, x: 0, y: 1)
+                                                )
+                                                .submitLabel(.search)
+                                                .onSubmit {
+                                                    submitManualInput()
+                                                }
 
-                                                Button(action: {
-                                                    if !manualInputText.isEmpty {
-                                                        viewModel.analyzeManualText(manualInputText)
-                                                    }
-                                                }) {
-                                                    HStack(spacing: 12) {
+                                                Button(action: submitManualInput) {
+                                                    HStack(spacing: 10) {
                                                         Image(systemName: "magnifyingglass")
                                                             .font(.headline)
                                                         Text("Analyze")
@@ -283,189 +194,154 @@ struct ScanView: View {
                                                             .fontWeight(.semibold)
                                                     }
                                                     .frame(maxWidth: .infinity)
-                                                    .padding(.vertical, 16)
+                                                    .padding(.vertical, 14)
                                                     .background(
-                                                        RoundedRectangle(cornerRadius: 12)
-                                                            .fill(manualInputText.isEmpty ?
-                                                                  Color(red: 0/255, green: 51/255, blue: 153/255).opacity(0.5) :
-                                                                  Color(red: 0/255, green: 51/255, blue: 153/255))
-                                                            .shadow(color: Color(red: 0/255, green: 51/255, blue: 153/255).opacity(0.3),
-                                                                    radius: 5, x: 0, y: 3)
+                                                        RoundedRectangle(cornerRadius: 10)
+                                                            .fill(
+                                                                manualInputText.isEmpty
+                                                                    ? Color(
+                                                                        red: 0 / 255,
+                                                                        green: 51 / 255,
+                                                                        blue: 153 / 255
+                                                                    ).opacity(0.5)
+                                                                    : Color(
+                                                                        red: 0 / 255,
+                                                                        green: 51 / 255,
+                                                                        blue: 153 / 255)
+                                                            )
+                                                            .shadow(
+                                                                color: Color(
+                                                                    red: 0 / 255, green: 51 / 255,
+                                                                    blue: 153 / 255
+                                                                ).opacity(0.25),
+                                                                radius: 5, x: 0, y: 2)
                                                     )
                                                     .foregroundColor(.white)
                                                 }
                                                 .disabled(manualInputText.isEmpty)
                                             }
-                                            .padding(.horizontal, 24)
+                                            .padding(.horizontal, 20)
+                                            .padding(.bottom, 16)
                                         }
-                                        .padding()
+                                        .padding(.vertical, 8)
                                     }
+                                    .frame(maxWidth: min(geometry.size.width - 40, 512) + 12)
+
+                                    Spacer()
                                 }
-                                .padding()
-                                
-                                
+                                .frame(maxWidth: .infinity)
                             }
-                            // iOS16+ method to dismiss keyboard by pulling down:
                             .scrollDismissesKeyboard(.interactively)
+                            .transition(.opacity.animation(.easeInOut(duration: 0.2)))
                         }
-                        
-                        
-                        
+
+                        // MARK: - Loading Indicator Overlay
+                        // Use viewModel states directly
+                        if viewModel.scanState == .scanning
+                            || viewModel.scanState == .backgroundScanning
+                        {
+                            ZStack {
+                                Rectangle()
+                                    .fill(.ultraThinMaterial)
+                                    .ignoresSafeArea()
+
+                                ProgressView(
+                                    viewModel.scanState == .scanning
+                                        ? "Analyzing..." : "Processing..."
+                                )
+                                .padding(20)
+                                .background(.thickMaterial)
+                                .cornerRadius(12)
+                                .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+                            }
+                            .zIndex(10)
+                            .transition(.opacity.animation(.easeInOut))
+                        }
+
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    
-                    // Bottom controls section
-                    VStack(spacing: geometry.size.width < 375 ? 8 : 16) {
-                        Spacer().frame(height: geometry.size.width < 375 ? 4 : 8)
-                        
+
+                    // MARK: - Bottom Controls
+                    VStack(spacing: geometry.size.width < 375 ? 10 : 16) {
+
+                        // --- Camera Controls ---
                         if selectedMode == .camera && viewModel.capturedImage == nil {
-                            HStack(spacing: 50) {
+                            HStack(spacing: calculateButtonSpacing(geometry: geometry)) {
                                 // Gallery button
-                                Button(action: {
+                                controlButton(icon: "photo.on.rectangle.fill", geometry: geometry) {
                                     viewModel.showPhotoLibrary = true
-                                }) {
-                                    ZStack {
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .fill(Color.white)
-                                            .frame(width: 56, height: 56)
-                                            .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
-                                        
-                                        Image(systemName: "photo.on.rectangle.fill")
-                                            .font(.system(size: 22, weight: .medium))
-                                            .foregroundColor(Color(red: 0/255, green: 51/255, blue: 153/255))
-                                    }
                                 }
-                                .disabled(!cameraService.state.isReady)
-                                
+                                .disabled(
+                                    cameraService.state != .ready
+                                        || viewModel.scanState == .scanning
+                                        || viewModel.scanState == .backgroundScanning)
+
                                 // Capture button
-                                Button(action: {
+                                captureButton(geometry: geometry) {
                                     viewModel.handleCameraButtonTap(cameraService: cameraService)
-                                }) {
-                                    ZStack {
-                                        RoundedRectangle(cornerRadius: 16)
-                                            .strokeBorder(Color(red: 0/255, green: 51/255, blue: 153/255), lineWidth: 4)
-                                            .frame(width: 78, height: 78)
-                                        
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .fill(Color(red: 0/255, green: 51/255, blue: 153/255))
-                                            .frame(width: 64, height: 64)
-                                        
-                                        Image(systemName: "viewfinder")
-                                            .font(.system(size: geometry.size.width < 375 ? 24 : 26, weight: .medium))
-                                            .foregroundColor(.white)
-                                    }
                                 }
-                                .disabled(cameraService.state != .ready)
-                                .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 3)
-                                
+                                .disabled(
+                                    cameraService.state != .ready
+                                        || viewModel.scanState == .scanning
+                                        || viewModel.scanState == .backgroundScanning)
+
                                 // Flip camera button
-                                Button(action: {
+                                controlButton(
+                                    icon: "arrow.triangle.2.circlepath.camera.fill",
+                                    geometry: geometry
+                                ) {
                                     cameraService.toggleCameraPosition()
-                                }) {
-                                    ZStack {
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .fill(Color.white)
-                                            .frame(width: geometry.size.width < 375 ? 50 : 56,
-                                                   height: geometry.size.width < 375 ? 50 : 56)
-                                            .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
-                                        
-                                        Image(systemName: "arrow.triangle.2.circlepath.camera.fill")
-                                            .font(.system(size: geometry.size.width < 375 ? 20 : 22, weight: .medium))
-                                            .foregroundColor(Color(red: 0/255, green: 51/255, blue: 153/255))
-                                    }
                                 }
+                                .disabled(
+                                    viewModel.scanState == .scanning
+                                        || viewModel.scanState == .backgroundScanning)
                             }
+                            .padding(.bottom, geometry.size.width < 375 ? 8 : 12)
+                            .transition(.opacity.animation(.easeInOut))
                         }
-                        
-                        // Toggle between camera and manual modes only if no captured image
+
+                        // --- Mode Toggle ---
+                        // Show toggle only when ready and no image is captured
                         if viewModel.capturedImage == nil && viewModel.scanState == .ready {
-                            HStack(spacing: 0) {
-                                Button(action: {
-                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                        selectedMode = .camera
-                                        isTextFieldFocused = false
-                                    }
-                                }) {
-                                    HStack(spacing: 6) {
-                                        Image(systemName: "viewfinder")
-                                            .font(.system(size: geometry.size.width < 375 ? 12 : 14, weight: .medium))
-                                        Text("Scan")
-                                            .font(geometry.size.width < 375 ? .caption : .footnote)
-                                            .fontWeight(.semibold)
-                                    }
-                                    .padding(.vertical, geometry.size.width < 375 ? 8 : 10)
-                                    .padding(.horizontal, geometry.size.width < 375 ? 12 : 16)
-                                    .foregroundColor(selectedMode == .camera ? .white : Color(.systemGray2))
-                                    .background(
-                                        ZStack {
-                                            if selectedMode == .camera {
-                                                RoundedRectangle(cornerRadius: 8)
-                                                    .fill(Color(red: 0/255, green: 51/255, blue: 153/255))
-                                                    .matchedGeometryEffect(id: "ModeBackground", in: animation)
-                                            }
-                                        }
-                                    )
-                                }
-                                
-                                Button(action: {
-                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                        selectedMode = .manual
-                                        // Directly set focus rather than delaying
-                                        isTextFieldFocused = true
-                                    }
-                                }) {
-                                    HStack(spacing: 6) {
-                                        Image(systemName: "square.and.pencil")
-                                            .font(.system(size: geometry.size.width < 375 ? 12 : 14, weight: .medium))
-                                        Text("Type")
-                                            .font(geometry.size.width < 375 ? .caption : .footnote)
-                                            .fontWeight(.semibold)
-                                    }
-                                    .padding(.vertical, geometry.size.width < 375 ? 8 : 10)
-                                    .padding(.horizontal, geometry.size.width < 375 ? 12 : 16)
-                                    .foregroundColor(selectedMode == .manual ? .white : Color(.systemGray2))
-                                    .background(
-                                        ZStack {
-                                            if selectedMode == .manual {
-                                                RoundedRectangle(cornerRadius: 8)
-                                                    .fill(Color(red: 0/255, green: 51/255, blue: 153/255))
-                                                    .matchedGeometryEffect(id: "ModeBackground", in: animation)
-                                            }
-                                        }
-                                    )
-                                }
-                            }
-                            .padding(3)
-                            .background(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .fill(Color(.systemGray6))
-                                    .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: 2)
-                            )
-                            .padding(.top, geometry.size.width < 375 ? 8 : 12)
-                            // Always add safe-area bottom inset to avoid overflow on devices like iPhone X
-                            .padding(.bottom, geometry.safeAreaInsets.bottom + (geometry.size.width < 375 ? 16 : 20))
+                            modeToggleButton(geometry: geometry)
+                                .padding(
+                                    .bottom,
+                                    geometry.safeAreaInsets.bottom > 0
+                                        ? 0 : (geometry.size.width < 375 ? 12 : 16)
+                                )
+                                .padding(.bottom, geometry.safeAreaInsets.bottom)  // Respect safe area
+                                .transition(.opacity.animation(.easeInOut))
+                        } else if viewModel.capturedImage == nil {
+                            // Add safe area spacer even if toggle is hidden (e.g., during analysis)
+                            Spacer().frame(height: geometry.safeAreaInsets.bottom)
+                                .transition(.opacity.animation(.easeInOut))
                         } else {
-                            // If the toggle is hidden, still provide bottom inset
-                            Spacer().frame(height: geometry.safeAreaInsets.bottom + (geometry.size.width < 375 ? 16 : 20))
+                            // Spacer for when photo preview is shown
+                            Spacer().frame(height: geometry.safeAreaInsets.bottom)
                         }
                     }
+                    .padding(.top, 8)
                 }
+                .ignoresSafeArea(.keyboard, edges: .bottom)  // Keep header fixed
             }
-            .animation(.easeInOut(duration: 0.3), value: selectedMode)
+            // .animation(.easeInOut(duration: 0.3), value: selectedMode)
+            .animation(.easeInOut(duration: 0.2), value: viewModel.scanState)
         }
         .onAppear {
             cameraService.checkPermissionsAndSetup()
-            #if DEBUG
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-                print("Top Safe Area: \(windowScene.windows.first?.safeAreaInsets.top ?? -1)")
-                print("Bottom Safe Area: \(windowScene.windows.first?.safeAreaInsets.bottom ?? -1)")
-            }
-            #endif
         }
-        .onChange(of: selectedMode) { newMode in
-            // Reset scan state when switching modes if ready
-            if viewModel.scanState == .ready {
-                viewModel.resetScan()
+        // Use onChange variant appropriate for your iOS target
+        .onChange(of: viewModel.scanState) { newState in  // For iOS 14/15/16
+            // .onChange(of: viewModel.scanState) { oldState, newState in // For iOS 17+
+            showResultsHapticTrigger = false
+            showErrorHapticTrigger = false
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 100_000_000)
+                if case .result = newState {
+                    showResultsHapticTrigger = true
+                } else if case .error = newState {
+                    showErrorHapticTrigger = true
+                }
             }
         }
         .sheet(isPresented: $viewModel.showPhotoLibrary) {
@@ -474,8 +350,7 @@ struct ScanView: View {
                 isPresented: $viewModel.showPhotoLibrary,
                 sourceType: .photoLibrary
             ) {
-                // Start background analysis once an image is selected
-                viewModel.startBackgroundAnalysis()
+                // Action handled by viewModel's capturedImage observer
             }
         }
         .sheet(isPresented: $viewModel.showPermissionRequest) {
@@ -485,24 +360,211 @@ struct ScanView: View {
                 }
             }
         }
+        // Ensure sheetDestination is accessible here
         .sheet(item: sheetDestination) { destination in
             switch destination {
             case .results(let response):
-                ResultsView(response: response, onDismiss: {
-                    DispatchQueue.main.async {
-                        viewModel.resetScan()
-                        manualInputText = ""
-                    }
-                })
+                ResultsView(
+                    response: response,
+                    onDismiss: {
+                        // Action handled by sheetDestination binding 'set'
+                    })
             case .error(let message):
-                ErrorView(message: message, onDismiss: {
-                    viewModel.resetScan()
-                })
+                ErrorView(
+                    message: message,
+                    onDismiss: {
+                        // Action handled by sheetDestination binding 'set'
+                    })
             }
         }
     }
-    
-    // Helper to determine which sheet to show
+
+    // MARK: - Helper Functions / Subviews
+
+    private func submitManualInput() {
+        if !manualInputText.isEmpty {
+            isTextFieldFocused = false
+            viewModel.analyzeManualText(manualInputText)
+        }
+    }
+
+    private func calculateButtonSpacing(geometry: GeometryProxy) -> CGFloat {
+        let availableWidth = geometry.size.width - (2 * 20)
+        let buttonCount: CGFloat = 3
+        let totalButtonWidth =
+            (2 * controlButtonSize(geometry: geometry)) + captureButtonSize(geometry: geometry)
+        let spacing = max(20, (availableWidth - totalButtonWidth) / (buttonCount - 1))
+        return min(spacing, 60)
+    }
+
+    // Dynamic Sizes based on geometry
+    private func controlButtonSize(geometry: GeometryProxy) -> CGFloat {
+        geometry.size.width < 375 ? 50 : 56
+    }
+    private func captureButtonSize(geometry: GeometryProxy) -> CGFloat {
+        geometry.size.width < 375 ? 72 : 78
+    }
+    private func innerCaptureButtonSize(geometry: GeometryProxy) -> CGFloat {
+        geometry.size.width < 375 ? 58 : 64
+    }
+    private func iconSize(geometry: GeometryProxy) -> CGFloat {
+        geometry.size.width < 375 ? 20 : 22
+    }
+    private func captureIconSize(geometry: GeometryProxy) -> CGFloat {
+        geometry.size.width < 375 ? 24 : 26
+    }
+
+    // Refactored Control Button
+    @ViewBuilder
+    private func controlButton(icon: String, geometry: GeometryProxy, action: @escaping () -> Void)
+        -> some View
+    {
+        let size = controlButtonSize(geometry: geometry)
+        Button(action: action) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(.regularMaterial)  // Use material
+                    .frame(width: size, height: size)
+                    .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 3)
+
+                Image(systemName: icon)
+                    .font(.system(size: iconSize(geometry: geometry), weight: .medium))
+                    .foregroundColor(Color(red: 0 / 255, green: 51 / 255, blue: 153 / 255))
+            }
+        }
+    }
+
+    // Refactored Capture Button
+    @ViewBuilder
+    private func captureButton(geometry: GeometryProxy, action: @escaping () -> Void) -> some View {
+        let outerSize = captureButtonSize(geometry: geometry)
+        let innerSize = innerCaptureButtonSize(geometry: geometry)
+        Button(action: action) {
+            ZStack {
+                Circle()
+                    .strokeBorder(
+                        Color(red: 0 / 255, green: 51 / 255, blue: 153 / 255).opacity(0.5),
+                        lineWidth: 3
+                    )
+                    .frame(width: outerSize, height: outerSize)
+
+                Circle()
+                    .fill(Color(red: 0 / 255, green: 51 / 255, blue: 153 / 255))
+                    .frame(width: innerSize, height: innerSize)
+
+                Image(systemName: "viewfinder")
+                    .font(.system(size: captureIconSize(geometry: geometry), weight: .semibold))
+                    .foregroundColor(.white)
+            }
+        }
+        .shadow(color: Color.black.opacity(0.15), radius: 8, x: 0, y: 4)
+    }
+
+    // Refactored Mode Toggle Button
+    @ViewBuilder
+    private func modeToggleButton(geometry: GeometryProxy) -> some View {
+        HStack(spacing: 0) {
+            ForEach(InputMode.allCases, id: \.self) { mode in
+                Button {
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) {
+                        selectedMode = mode
+                        isTextFieldFocused = (mode == .manual)
+                    }
+                } label: {
+                    modeToggleLabel(mode: mode, geometry: geometry)
+                }
+            }
+        }
+        .padding(4)
+        .background(
+            Capsule()
+                .fill(.thinMaterial)
+                .shadow(color: Color.black.opacity(0.06), radius: 5, x: 0, y: 2)
+        )
+        .padding(.horizontal)
+    }
+
+    // Label for Mode Toggle
+    @ViewBuilder
+    private func modeToggleLabel(mode: InputMode, geometry: GeometryProxy) -> some View {
+        let isSelected = selectedMode == mode
+        let iconName = (mode == .camera) ? "camera.fill" : "square.and.pencil"
+        let text = (mode == .camera) ? "Photo" : "Text"
+        let iconFontSize = geometry.size.width < 375 ? 12.0 : 14.0
+        let textFont: Font = geometry.size.width < 375 ? .caption : .footnote
+
+        HStack(spacing: 6) {
+            Image(systemName: iconName)
+                .font(.system(size: iconFontSize, weight: .medium))
+            Text(text)
+                .font(textFont)
+                .fontWeight(.semibold)
+        }
+        .padding(.vertical, geometry.size.width < 375 ? 9 : 11)
+        .padding(.horizontal, geometry.size.width < 375 ? 14 : 18)
+        .frame(minWidth: geometry.size.width * 0.3)
+        .foregroundColor(isSelected ? .white : .secondary)
+        .background {
+            if isSelected {
+                Capsule()
+                    .fill(Color(red: 0 / 255, green: 51 / 255, blue: 153 / 255))
+                    .matchedGeometryEffect(id: "ModeBackground", in: animation)
+                    .shadow(
+                        color: Color(red: 0 / 255, green: 51 / 255, blue: 153 / 255).opacity(0.3),
+                        radius: 4, x: 0, y: 2)
+            }
+        }
+    }
+
+    // Overlay for Camera State Feedback
+    @ViewBuilder
+    private func cameraStateOverlay() -> some View {
+        // Ensure overlay shows only when appropriate (not ready AND no image preview)
+        if cameraService.state != .ready && viewModel.capturedImage == nil {
+            ZStack {
+                Color.black.opacity(0.4).blur(radius: 3)  // Background dim/blur
+
+                VStack(spacing: 5) {
+                    // Check the specific state using a switch
+                    switch cameraService.state {
+                    case .initializing:
+                        ProgressView()  // Spinner for initializing
+                        Text("Initializing Camera...")
+
+                    case .error(let cameraError):  // Check if state is .error and extract the inner Camera.Error
+                        // Now check the specific type of Camera.Error
+                        switch cameraError {
+                        case .notAuthorized:
+                            // UI for permission denied
+                            Image(systemName: "exclamationmark.triangle.fill").foregroundColor(
+                                .yellow)
+                            Text("Camera Access Needed")
+                        case .setupFailed, .captureFailed, .noCamera:
+                            // UI for other camera errors
+                            Image(systemName: "xmark.octagon.fill").foregroundColor(.red)
+                            // Display the specific error message from Camera.Error
+                            Text(cameraError.localizedDescription)
+                                .multilineTextAlignment(.center)  // Allow wrapping if message is long
+                        }
+
+                    // No specific overlay needed for .ready or .capturing in this View's logic
+                    case .ready, .capturing:
+                        EmptyView()  // Explicitly handle other cases
+                    }
+                }
+                .foregroundColor(.white)  // Text color for overlay
+                .font(.caption)  // Font size for overlay text
+                .padding(10)  // Padding inside the overlay box
+                .background(.ultraThinMaterial)  // Background material for the box
+                .cornerRadius(8)  // Rounded corners for the box
+                .shadow(radius: 3)  // Subtle shadow for the box
+            }
+            .transition(.opacity.animation(.easeInOut))  // Animate the overlay's appearance
+        }
+    }
+
+    // *** Ensure this is defined within struct ScanView scope ***
+    // Computed binding for sheet presentation logic
     private var sheetDestination: Binding<SheetDestination?> {
         Binding<SheetDestination?>(
             get: {
@@ -511,44 +573,45 @@ struct ScanView: View {
                     return .results(response)
                 case .error(let message):
                     return .error(message)
-                default:
+                case .ready, .scanning, .backgroundScanning:
                     return nil
                 }
             },
-            set: { _ in }
+            set: { newValue in
+                if newValue == nil {
+                    // Reset state when sheet is dismissed, clear text only on result dismiss
+                    let wasResult = if case .result = viewModel.scanState { true } else { false }
+                    viewModel.resetScan()
+                    if wasResult {
+                        manualInputText = ""
+                    }
+                }
+            }
         )
     }
 }
 
 // Enum to handle different sheet destinations
-enum SheetDestination: Identifiable {
-    case results(BuyEuropeanResponse)
+// Ensure this is defined, either here or globally, but only once accessible to ScanView
+enum SheetDestination: Identifiable, Equatable {
+    case results(BuyEuropeanResponse)  // Assumes correct BuyEuropeanResponse is now resolved
     case error(String)
-    
+
     var id: String {
         switch self {
         case .results(let response):
-            return "results-\(response.id)"
+            return "results-\(response.id)"  // Assumes BuyEuropeanResponse has stable `id`
         case .error(let message):
-            return "error-\(message)"
+            // Consider hashing message or using a UUID if messages aren't unique enough for ID
+            return "error-\(message.hashValue)"
         }
+    }
+
+    // Equatable needed for Binding item comparison
+    static func == (lhs: SheetDestination, rhs: SheetDestination) -> Bool {
+        lhs.id == rhs.id
     }
 }
 
-struct ScanView_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            ScanView()
-                .previewDevice("iPhone 14 Pro")
-                .previewDisplayName("iPhone 14 Pro")
-            
-            ScanView()
-                .previewDevice("iPhone SE (3rd generation)")
-                .previewDisplayName("iPhone SE (3rd Gen)")
-            
-            ScanView()
-                .previewDevice("iPhone 11")
-                .previewDisplayName("iPhone 11")
-        }
-    }
-}
+// REMOVED the placeholder BuyEuropeanResponse definition from here.
+// Ensure it's defined properly in your main models file.
