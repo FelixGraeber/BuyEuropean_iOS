@@ -16,22 +16,104 @@ struct ScanView: View {
     @State private var isShowingResults = false
     @State private var isShowingError = false
     @State private var manualInputText = ""
-    @State private var isManualInputExpanded = false
+    @State private var selectedMode: InputMode = .camera
     @StateObject private var cameraService = CameraService()
     @State private var showingActionSheet = false
-    @State private var isTextInputExpanded = false
+    
+    // Animation states
+    @State private var animateModeSwitching = false
+    @Namespace private var animation
+    
+    enum InputMode {
+        case camera
+        case manual
+    }
     
     var body: some View {
         ZStack {
-            // Background and camera view
-            if !isTextInputExpanded {
-                Color.black.edgesIgnoringSafeArea(.all)
-                
-                VStack(spacing: 0) {
-                // Top area with title/logo - Only show when image is captured
-                if viewModel.capturedImage != nil {
+            // Background color based on selected mode
+            (selectedMode == .camera ? Color.black : Color(.systemBackground))
+                .edgesIgnoringSafeArea(.all)
+            
+            VStack(spacing: 0) {
+                // Top area with mode switcher - hide when image is captured
+                if viewModel.capturedImage == nil && viewModel.scanState == .ready {
+                    VStack(spacing: 16) {
+                        // Title
+                        Text("BuyEuropean")
+                            .font(.headline)
+                            .fontWeight(.bold)
+                            .foregroundColor(selectedMode == .camera ? .white : .primary)
+                            .padding(.top)
+                        
+                        // Mode switcher
+                        HStack(spacing: 0) {
+                            // Camera mode button
+                            Button(action: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                    selectedMode = .camera
+                                }
+                            }) {
+                                VStack(spacing: 8) {
+                                    Image(systemName: "camera.fill")
+                                        .font(.title3)
+                                    
+                                    Text("Scan")
+                                        .font(.subheadline)
+                                        .fontWeight(.medium)
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .foregroundColor(selectedMode == .camera ? .white : .gray)
+                                .background(
+                                    ZStack {
+                                        if selectedMode == .camera {
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .fill(Color.blue.opacity(0.3))
+                                                .matchedGeometryEffect(id: "ModeBackground", in: animation)
+                                        }
+                                    }
+                                )
+                            }
+                            
+                            // Manual mode button
+                            Button(action: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                    selectedMode = .manual
+                                }
+                            }) {
+                                VStack(spacing: 8) {
+                                    Image(systemName: "keyboard")
+                                        .font(.title3)
+                                    
+                                    Text("Type")
+                                        .font(.subheadline)
+                                        .fontWeight(.medium)
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .foregroundColor(selectedMode == .manual ? .primary : .gray)
+                                .background(
+                                    ZStack {
+                                        if selectedMode == .manual {
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .fill(Color.blue.opacity(0.15))
+                                                .matchedGeometryEffect(id: "ModeBackground", in: animation)
+                                        }
+                                    }
+                                )
+                            }
+                        }
+                        .padding(4)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(selectedMode == .camera ? Color.white.opacity(0.15) : Color(.systemGray6))
+                        )
+                        .padding(.horizontal, 40)
+                    }
+                } else if viewModel.capturedImage != nil {
+                    // Back button when image is captured
                     HStack {
-                        // Back button
                         Button(action: {
                             // Cancel background analysis and reset
                             viewModel.cancelBackgroundAnalysis()
@@ -60,63 +142,133 @@ struct ScanView: View {
                     .padding(.top)
                 }
                 
-                // Main content area - camera preview or captured image
+                // Main content area based on selected mode
                 ZStack {
-                    if let image = viewModel.capturedImage {
-                        Image(uiImage: image)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    } else {
-                        // Camera preview with state overlays
-                        ZStack {
-                            CameraPreview(session: cameraService.session)
+                    // CAMERA MODE CONTENT
+                    if selectedMode == .camera {
+                        if let image = viewModel.capturedImage {
+                            // Display captured image
+                            Image(uiImage: image)
+                                .resizable()
+                                .scaledToFit()
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .edgesIgnoringSafeArea(.all)
-                            
-                            // Camera state overlays
-                            switch cameraService.state {
-                            case .initializing:
-                                Color.black.opacity(0.8)
-                                    .overlay(
-                                        VStack {
-                                            ProgressView()
-                                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                                                .scaleEffect(2)
-                                            Text("Initializing camera...")
-                                                .foregroundColor(.white)
-                                                .padding(.top)
-                                        }
-                                    )
-                            case .error(let error):
-                                Color.black.opacity(0.8)
-                                    .overlay(
-                                        VStack(spacing: 16) {
-                                            Image(systemName: "exclamationmark.triangle.fill")
-                                                .font(.system(size: 40))
-                                                .foregroundColor(.yellow)
-                                            Text(error.localizedDescription)
-                                                .foregroundColor(.white)
-                                                .multilineTextAlignment(.center)
-                                                .padding(.horizontal)
-                                            Button("Try Again") {
-                                                cameraService.checkPermissionsAndSetup()
+                        } else {
+                            // Camera preview with state overlays
+                            ZStack {
+                                CameraPreview(session: cameraService.session)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .edgesIgnoringSafeArea(.all)
+                                
+                                // Camera state overlays
+                                switch cameraService.state {
+                                case .initializing:
+                                    Color.black.opacity(0.8)
+                                        .overlay(
+                                            VStack {
+                                                ProgressView()
+                                                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                                    .scaleEffect(2)
+                                                Text("Initializing camera...")
+                                                    .foregroundColor(.white)
+                                                    .padding(.top)
                                             }
-                                            .foregroundColor(.white)
-                                            .padding()
-                                            .background(Color.blue)
-                                            .cornerRadius(8)
-                                        }
-                                    )
-                            case .capturing:
-                                Color.white.opacity(0.1)
-                            default:
-                                EmptyView()
+                                        )
+                                case .error(let error):
+                                    Color.black.opacity(0.8)
+                                        .overlay(
+                                            VStack(spacing: 16) {
+                                                Image(systemName: "exclamationmark.triangle.fill")
+                                                    .font(.system(size: 40))
+                                                    .foregroundColor(.yellow)
+                                                Text(error.localizedDescription)
+                                                    .foregroundColor(.white)
+                                                    .multilineTextAlignment(.center)
+                                                    .padding(.horizontal)
+                                                Button("Try Again") {
+                                                    cameraService.checkPermissionsAndSetup()
+                                                }
+                                                .foregroundColor(.white)
+                                                .padding()
+                                                .background(Color.blue)
+                                                .cornerRadius(8)
+                                            }
+                                        )
+                                case .capturing:
+                                    Color.white.opacity(0.1)
+                                default:
+                                    EmptyView()
+                                }
                             }
                         }
                     }
+                    // MANUAL INPUT MODE CONTENT
+                    else if selectedMode == .manual {
+                        VStack(spacing: 24) {
+                            Spacer()
+                            
+                            // European flag icon
+                            Image(systemName: "flag.fill")
+                                .font(.system(size: 60))
+                                .foregroundColor(Color.blue)
+                                .padding()
+                                .background(
+                                    Circle()
+                                        .fill(Color.blue.opacity(0.1))
+                                        .frame(width: 120, height: 120)
+                                )
+                                .padding(.bottom, 20)
+                            
+                            // Text prompt
+                            Text("Enter a brand or product name")
+                                .font(.headline)
+                                .foregroundColor(.primary)
+                            
+                            // Text input field
+                            VStack {
+                                TextField("e.g., iPhone, Samsung, Nestlé, Zara...", text: $manualInputText)
+                                    .font(.system(size: 17))
+                                    .padding()
+                                    .background(Color(.systemGray6))
+                                    .cornerRadius(12)
+                                    .padding(.horizontal)
+                                    .submitLabel(.search)
+                                    .onSubmit {
+                                        if !manualInputText.isEmpty {
+                                            viewModel.analyzeManualText(manualInputText)
+                                        }
+                                    }
+                                
+                                // Analyze button
+                                Button(action: {
+                                    if !manualInputText.isEmpty {
+                                        viewModel.analyzeManualText(manualInputText)
+                                    }
+                                }) {
+                                    HStack {
+                                        Image(systemName: "magnifyingglass")
+                                        Text("Analyze")
+                                            .fontWeight(.semibold)
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(manualInputText.isEmpty ? Color.blue.opacity(0.5) : Color.blue)
+                                    )
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal)
+                                    .padding(.top, 12)
+                                }
+                                .disabled(manualInputText.isEmpty)
+                            }
+                            
+                            Spacer()
+                            Spacer()
+                        }
+                        .padding()
+                    }
                     
-                    // Scanning overlay
+                    // Scanning overlay (shown for both modes)
                     if case .scanning = viewModel.scanState {
                         Color.black.opacity(0.7)
                             .edgesIgnoringSafeArea(.all)
@@ -138,12 +290,12 @@ struct ScanView: View {
                 // Tagline
                 Text("Vote with your Money.\nBuy European.")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(selectedMode == .camera ? .white : .primary)
                     .multilineTextAlignment(.center)
                     .padding(.vertical)
                 
-                // Bottom navigation or action buttons
-                if viewModel.capturedImage == nil {
+                // Bottom navigation or action buttons for camera mode
+                if selectedMode == .camera && viewModel.capturedImage == nil {
                     // Camera mode buttons
                     HStack(spacing: 60) {
                         // Gallery button
@@ -194,7 +346,7 @@ struct ScanView: View {
                         }
                     }
                     .padding(.bottom, 30)
-                } else {
+                } else if viewModel.capturedImage != nil {
                     // Full-width Analyze Image button for review screen
                     Button(action: {
                         // Use handleCameraButtonTap which will check for cached results
@@ -217,26 +369,16 @@ struct ScanView: View {
                     .padding(.bottom, 30)
                 }
             }
-            
-            }
-            
-            // Floating text input button - always visible when no image is captured
-            if viewModel.capturedImage == nil {
-                FloatingTextInput(
-                    text: $manualInputText,
-                    isExpanded: $isTextInputExpanded
-                ) {
-                    // Handle text submission
-                    if !manualInputText.isEmpty {
-                        viewModel.analyzeManualText(manualInputText)
-                        // Don't clear text here - FloatingTextInput handles animation
-                        // and we'll reset after analysis completes
-                    }
-                }
-            }
+            .animation(.easeInOut(duration: 0.3), value: selectedMode)
         }
         .onAppear {
             cameraService.checkPermissionsAndSetup()
+        }
+        .onChange(of: selectedMode) { newMode in
+            // Reset scan state when switching modes
+            if viewModel.scanState == .ready {
+                viewModel.resetScan()
+            }
         }
         .sheet(isPresented: $viewModel.showPhotoLibrary) {
             ImagePicker(
@@ -263,6 +405,8 @@ struct ScanView: View {
                     DispatchQueue.main.async {
                         // Reset the scan state which will cause the sheet to dismiss
                         viewModel.resetScan()
+                        // Reset manual input text after analysis
+                        manualInputText = ""
                     }
                 })
             case .error(let message):
