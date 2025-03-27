@@ -15,6 +15,18 @@ struct ResultsView: View {
     private let sectionSpacing: CGFloat = 24
     private let horizontalPadding: CGFloat = 16 // Consistent horizontal padding
 
+    // App Store Link (can be defined directly in ShareLink if preferred)
+    private let appStoreLink = "https://apps.apple.com/de/app/buyeuropean/id6743128862?l=en-GB"
+
+    // Share Text (can be defined directly in ShareLink if preferred)
+    private var shareText: String {
+        """
+        Check out the BuyEuropean app that quickly identifies products from European companies.
+        Vote with your money and support European businesses and values.
+        Download the app: \(appStoreLink)
+        """
+    }
+
     init(response: BuyEuropeanResponse, onDismiss: @escaping () -> Void) {
         self.response = response
         self.onDismiss = onDismiss
@@ -25,7 +37,7 @@ struct ResultsView: View {
     }
 
     var body: some View {
-        // Use ZStack for background layer
+        // Use ZStack for background layer (overlay no longer needed)
         ZStack {
             // Use grouped background for the main area
             Color(.systemGroupedBackground)
@@ -34,9 +46,13 @@ struct ResultsView: View {
             VStack(spacing: 0) {
                 // MARK: - Header Bar
                 HStack {
-                    // Invisible spacer for balance - keep if layout requires it
-                    // Alternatively, use .toolbar placement if inside NavigationView
-                     Spacer().frame(width: 60) // Approximate width of Done button
+                    // ShareLink (Replaces Button)
+                    ShareLink(item: shareText) { // Provide the text directly
+                        Image(systemName: "square.and.arrow.up")
+                            .font(.title3) // Match Done button size
+                    }
+                    .frame(width: 60, alignment: .leading) // Ensure consistent frame
+                    .tint(Color(red: 0/255, green: 51/255, blue: 153/255)) // Use brand color
 
                     Spacer()
 
@@ -119,6 +135,7 @@ struct ResultsView: View {
                     .padding(.bottom, sectionSpacing) // Add padding at the very bottom
                 } // ScrollView
             } // Main VStack
+
         } // ZStack
         // Consider adding .ignoresSafeArea(.keyboard) if feedback includes text editor
     }
@@ -136,39 +153,5 @@ struct CenteredMessageView: View {
             .padding(.vertical) // Add vertical padding
             .padding(.horizontal, 30) // More horizontal padding for centering effect
             .frame(maxWidth: .infinity, alignment: .center)
-    }
-}
-
-// MARK: - Preview
-struct ResultsView_Previews: PreviewProvider {
-    static let sampleResponse = BuyEuropeanResponse(
-        id: 123, // Ensure ID is provided for FeedbackViewModel init
-        classification: .europeanAlly,
-        identifiedProductName: "Sample Product X",
-        identifiedCompany: "Global Corp",
-        identifiedHeadquarters: "United States",
-        identificationRationale: "This product is linked to Global Corp, headquartered in the USA, considered an ally.",
-        potentialAlternatives: [
-            EuropeanAlternative(productName: "Euro Alternative Alpha", company: "EuroCompany A", description: "A great alternative from Germany.", country: "Germany"),
-            EuropeanAlternative(productName: "Euro Alternative Beta", company: "EuroCompany B", description: "Another solid choice from France.", country: "France")
-        ]
-    )
-
-    static let sampleEuropeanResponse = BuyEuropeanResponse(
-         id: 456,
-         classification: .europeanCountry,
-         identifiedProductName: "Euro Product Y",
-         identifiedCompany: "Euro Fabrik",
-         identifiedHeadquarters: "Germany",
-         identificationRationale: "Made by Euro Fabrik in Germany.",
-         potentialAlternatives: [] // No alternatives needed
-     )
-
-    static var previews: some View {
-        ResultsView(response: sampleResponse, onDismiss: {})
-            .previewDisplayName("Ally Example")
-
-         ResultsView(response: sampleEuropeanResponse, onDismiss: {})
-            .previewDisplayName("European Example")
     }
 }
