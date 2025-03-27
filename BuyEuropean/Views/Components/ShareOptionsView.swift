@@ -145,24 +145,3 @@ struct ShareOptionsView: View {
         }
     }
 }
-
-#Preview {
-    ZStack {
-        Color(.systemGroupedBackground)
-            .ignoresSafeArea()
-        
-        ShareOptionsView(
-            isVisible: .constant(true),
-            onShare: {
-                UIActivityViewController(
-                    activityItems: ["Sample share text"],
-                    applicationActivities: nil
-                )
-            },
-            onCopyText: {
-                "Sample text for clipboard"
-            }
-        )
-        .padding()
-    }
-}

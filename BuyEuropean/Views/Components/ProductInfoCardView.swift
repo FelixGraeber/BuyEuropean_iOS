@@ -1,10 +1,3 @@
-//
-//  ProductInfoCardView.swift
-//  BuyEuropean
-//
-//  Created by Felix Graeber on 11.03.25.
-//
-
 import SwiftUI
 
 struct ProductInfoCardView: View {
@@ -13,167 +6,145 @@ struct ProductInfoCardView: View {
     let headquarters: String
     let rationale: String
     let countryFlag: String
+
     @State private var isRationaleExpanded = false
     @State private var isAnimated = false
-    
+
+    // Constants for styling
+    private let cornerRadius: CGFloat = 16
+    private let iconSize: CGFloat = 18
+    private let iconCircleSize: CGFloat = 36
+    private let iconCircleOpacity: Double = 0.12 // Slightly increased opacity
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            // Product info
             infoRow(
                 icon: "tag.fill",
-                iconColor: Color.blue,
-                title: "PRODUCT",
+                iconColor: .blue,
+                title: "Product", // Use sentence case for titles
                 value: product
             )
-            
-            // Company info
+
             infoRow(
                 icon: "building.2.fill",
-                iconColor: Color.purple,
-                title: "COMPANY",
+                iconColor: .purple,
+                title: "Company",
                 value: company
             )
-            
-            // Headquarters info with flag
-            HStack(alignment: .top, spacing: 12) {
-                // Icon container
-                ZStack {
-                    Circle()
-                        .fill(Color.green.opacity(0.2))
-                        .frame(width: 36, height: 36)
-                    
-                    Image(systemName: "mappin.circle.fill")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.green)
-                }
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("COUNTRY (HEADQUARTER)")
-                        .font(.caption)
-                        .fontWeight(.semibold)
-                        .foregroundColor(Color(.secondaryLabel))
-                    
-                    HStack(alignment: .center, spacing: 8) {
-                        Text(headquarters)
-                            .font(.body)
-                            .fontWeight(.medium)
-                        
-                        Text(countryFlag)
-                            .font(.title2)
-                    }
-                }
-            }
-            .padding(.vertical, 4)
-            
-            // Rationale
-            VStack(alignment: .leading, spacing: 8) {
-                HStack(alignment: .top, spacing: 12) {
-                    // Icon container
-                    ZStack {
-                        Circle()
-                            .fill(Color.orange.opacity(0.2))
-                            .frame(width: 36, height: 36)
-                        
-                        Image(systemName: "info.circle.fill")
-                            .font(.system(size: 18, weight: .semibold))
-                            .foregroundColor(.orange)
-                    }
-                    
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("IDENTIFICATION RATIONALE")
-                            .font(.caption)
-                            .fontWeight(.semibold)
-                            .foregroundColor(Color(.secondaryLabel))
-                        
-                        if isRationaleExpanded || rationale.count < 100 {
-                            Text(rationale)
-                                .font(.body)
-                                .fixedSize(horizontal: false, vertical: true)
-                        } else {
-                            Text(rationale.prefix(100) + "...")
-                                .font(.body)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
-                        
-                        if rationale.count >= 100 {
-                            Button(action: {
-                                withAnimation {
-                                    isRationaleExpanded.toggle()
-                                }
-                            }) {
-                                Text(isRationaleExpanded ? "Show Less" : "Read More")
-                                    .font(.footnote)
-                                    .fontWeight(.medium)
-                                    .foregroundColor(.blue)
-                            }
-                            .padding(.top, 4)
-                        }
-                    }
-                }
-            }
-            .padding(.vertical, 4)
+
+            headquartersRow() // Extracted subview
+
+            rationaleSection() // Extracted subview
         }
-        .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
+        .padding() // Keep default padding inside card
+        .background(Color(.systemBackground)) // Use system background for card
+        .cornerRadius(cornerRadius) // Use standard corner radius
+        .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4) // Adjusted shadow
         .opacity(isAnimated ? 1 : 0)
-        .offset(y: isAnimated ? 0 : 20)
+        .offset(y: isAnimated ? 0 : 15) // Slightly reduced offset
         .onAppear {
-            withAnimation(.easeOut(duration: 0.5)) {
+             // Use withAnimation directly here for onAppear effect
+            withAnimation(.easeOut(duration: 0.4).delay(0.05)) {
                 isAnimated = true
             }
         }
     }
-    
+
+    // MARK: - Subviews
+
     private func infoRow(icon: String, iconColor: Color, title: String, value: String) -> some View {
         HStack(alignment: .top, spacing: 12) {
-            // Icon container
-            ZStack {
-                Circle()
-                    .fill(iconColor.opacity(0.2))
-                    .frame(width: 36, height: 36)
-                
-                Image(systemName: icon)
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(iconColor)
-            }
-            
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title)
+            iconView(systemName: icon, color: iconColor) // Use helper
+
+            VStack(alignment: .leading, spacing: 2) { // Reduced spacing
+                Text(title.uppercased()) // Keep uppercase if desired, or use sentence case
                     .font(.caption)
-                    .fontWeight(.semibold)
-                    .foregroundColor(Color(.secondaryLabel))
-                
+                    .fontWeight(.medium) // Use medium weight
+                    .foregroundColor(.secondary) // Standard secondary color
                 Text(value)
                     .font(.body)
-                    .fontWeight(.medium)
+                    // .fontWeight(.medium) // Default weight for body is fine
+                    .foregroundColor(.primary) // Standard primary color
             }
+            Spacer() // Ensure row takes full width if needed
         }
-        .padding(.vertical, 4)
     }
-}
 
-#Preview {
-    ScrollView {
-        VStack(spacing: 20) {
-            ProductInfoCardView(
-                product: "iPhone 13 Pro",
-                company: "Apple Inc.",
-                headquarters: "United States",
-                rationale: "This product is manufactured by Apple Inc., which is headquartered in Cupertino, California, United States. Apple is a multinational technology company that designs, develops, and sells consumer electronics, computer software, and online services.",
-                countryFlag: "🇺🇸"
-            )
-            
-            ProductInfoCardView(
-                product: "Galaxy S21",
-                company: "Samsung Electronics",
-                headquarters: "South Korea",
-                rationale: "This product is manufactured by Samsung Electronics, which is headquartered in Suwon, South Korea. Samsung is a multinational electronics company.",
-                countryFlag: "🇰🇷"
-            )
+    private func headquartersRow() -> some View {
+        HStack(alignment: .top, spacing: 12) {
+            iconView(systemName: "mappin.circle.fill", color: .green)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Country (Headquarters)".uppercased())
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .foregroundColor(.secondary)
+
+                HStack(alignment: .firstTextBaseline, spacing: 8) { // Align text baselines
+                    Text(headquarters)
+                        .font(.body)
+                        .foregroundColor(.primary)
+                    Text(countryFlag)
+                         .font(.title3) // Slightly smaller flag?
+                         .baselineOffset(-2) // Adjust baseline if needed
+                }
+            }
+             Spacer()
         }
-        .padding()
     }
-    .background(Color(.systemGroupedBackground))
+
+     private func rationaleSection() -> some View {
+        HStack(alignment: .top, spacing: 12) {
+            iconView(systemName: "info.circle.fill", color: .orange)
+
+            VStack(alignment: .leading, spacing: 4) { // Increased spacing for rationale text
+                Text("Identification Rationale".uppercased())
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .foregroundColor(.secondary)
+
+                // Use a Group for conditional content
+                Group {
+                    if isRationaleExpanded || rationale.count < 100 {
+                        Text(rationale)
+                    } else {
+                        Text(rationale.prefix(100) + "...")
+                    }
+                }
+                .font(.body)
+                .foregroundColor(.primary)
+                .lineSpacing(4) // Add line spacing for readability
+                // Animate size changes explicitly if needed, though VStack should handle it
+                // .animation(.easeInOut, value: isRationaleExpanded)
+
+                // Only show button if text is long enough
+                if rationale.count >= 100 {
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.3)) { // Animate the toggle
+                            isRationaleExpanded.toggle()
+                        }
+                    } label: {
+                         Text(isRationaleExpanded ? "Show Less" : "Read More")
+                             .font(.footnote)
+                             .fontWeight(.medium)
+                             .padding(.top, 4) // Add padding above button
+                    }
+                    .tint(.blue) // Use standard tint for links/buttons
+                }
+            }
+             Spacer()
+        }
+    }
+
+    // Helper for Icon Views
+    private func iconView(systemName: String, color: Color) -> some View {
+        ZStack {
+            Circle()
+                .fill(color.opacity(iconCircleOpacity))
+                .frame(width: iconCircleSize, height: iconCircleSize)
+            Image(systemName: systemName)
+                .font(.system(size: iconSize, weight: .medium)) // Use medium weight
+                .foregroundColor(color)
+        }
+    }
 }
