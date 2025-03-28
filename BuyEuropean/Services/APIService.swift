@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import CoreLocation
 
 // Import models - use direct model import 
 import SwiftUI // For SwiftUI support
@@ -43,7 +44,13 @@ class APIService {
     
     private let baseURL = "https://buy-e-ubackend-felixgraeber.replit.app"
     
+    private var locationManager: LocationManager?
+
     private init() {}
+    
+    func setLocationManager(_ manager: LocationManager) {
+        self.locationManager = manager
+    }
     
     func analyzeProduct(imageBase64: String, prompt: String? = nil) async throws -> BuyEuropeanResponse {
         guard let url = URL(string: "\(baseURL)/analyze-product") else {
@@ -144,16 +151,42 @@ class APIService {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        var userLocationToSend: UserLocation? = nil
+
+        // Check if location manager is available and authorized (no setting check)
+        if let lm = locationManager, lm.isAuthorized {
+            if let city = lm.currentCity, let country = lm.currentCountry {
+                 userLocationToSend = UserLocation(city: city, country: country)
+                 print("API Service: Authorized. Will send location - City: \(city), Country: \(country)")
+            } else {
+                print("API Service: Authorized but city/country not yet available.")
+                // Optionally trigger update here if needed, but requestSingleLocationUpdate below handles it
+            }
+        } else {
+             print("API Service: Location not authorized.")
+        }
         
+        // Trigger a location update *after* deciding what to send, only if authorized.
+        // This helps keep the location fresh for the next call.
+        if let lm = locationManager, lm.isAuthorized {
+             lm.requestSingleLocationUpdate()
+             print("API Service: Authorized. Requested location update for next time.")
+        }
+
         let requestBody = AnalyzeTextRequest(
             product_text: text,
             prompt: prompt,
-            userLocation: nil
+            userLocation: userLocationToSend // Pass the prepared location object
         )
         
         do {
             let encoder = JSONEncoder()
             request.httpBody = try encoder.encode(requestBody)
+            // Debugging: Print the request body
+            if let bodyData = request.httpBody, let bodyString = String(data: bodyData, encoding: .utf8) {
+                 print("API Request Body: \(bodyString)")
+            }
         } catch {
             throw APIError.encodingError(error)
         }
@@ -166,6 +199,10 @@ class APIService {
             }
             
             guard (200...299).contains(httpResponse.statusCode) else {
+                 // Print error response body if available
+                 if let errorBody = String(data: data, encoding: .utf8) {
+                      print("API Error Response Body: \(errorBody)")
+                 }
                 throw APIError.serverError(httpResponse.statusCode)
             }
             
@@ -173,6 +210,11 @@ class APIService {
                 let decoder = JSONDecoder()
                 return try decoder.decode(BuyEuropeanResponse.self, from: data)
             } catch {
+                // Print decoding error data if available
+                 print("API Decoding Error: \(error.localizedDescription)")
+                 if let responseBody = String(data: data, encoding: .utf8) {
+                      print("API Response Body (Failed Decode): \(responseBody)")
+                 }
                 throw APIError.decodingError(error)
             }
         } catch let urlError as URLError {

@@ -29,9 +29,22 @@
 		DC67019D2D7FA8F0004492E6 /* BuyEuropeanUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BuyEuropeanUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		DCC72FCD2D961D7700F69A07 /* Exceptions for "BuyEuropean" folder in "BuyEuropean" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = DC6701822D7FA8EF004492E6 /* BuyEuropean */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		DC6701852D7FA8EF004492E6 /* BuyEuropean */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				DCC72FCD2D961D7700F69A07 /* Exceptions for "BuyEuropean" folder in "BuyEuropean" target */,
+			);
 			path = BuyEuropean;
 			sourceTree = "<group>";
 		};
@@ -399,6 +412,7 @@
 				DEVELOPMENT_TEAM = 3DQ8523UZ9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/BuyEuropean/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = BuyEuropean;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
 				INFOPLIST_KEY_NSCameraUsageDescription = "BuyEuropean needs camera access to scan product barcodes and packaging, helping you identify and support European-made products.";
@@ -434,6 +448,7 @@
 				DEVELOPMENT_TEAM = 3DQ8523UZ9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/BuyEuropean/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = BuyEuropean;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
 				INFOPLIST_KEY_NSCameraUsageDescription = "BuyEuropean needs camera access to scan product barcodes and packaging, helping you identify and support European-made products.";
