@@ -415,7 +415,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/BuyEuropean/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = BuyEuropean;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
-				INFOPLIST_KEY_NSCameraUsageDescription = "BuyEuropean needs camera access to scan product barcodes and packaging, helping you identify and support European-made products.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "BuyEuropean needs camera access to take photos of your product or brand.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -451,7 +451,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/BuyEuropean/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = BuyEuropean;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
-				INFOPLIST_KEY_NSCameraUsageDescription = "BuyEuropean needs camera access to scan product barcodes and packaging, helping you identify and support European-made products.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "BuyEuropean needs camera access to take photos of your product or brand.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
