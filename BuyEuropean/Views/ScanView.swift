@@ -333,7 +333,14 @@ struct ScanView: View {
             .animation(.default, value: cameraService.state)
         }
         .onAppear {
-            cameraService.checkPermissionsAndSetup()
+            // Check initial permission status WITHOUT requesting
+            // Use the correct property and enum case from PermissionService
+            if permissionService.cameraPermissionStatus == .granted {
+                 // If already granted, setup the camera immediately
+                cameraService.checkPermissionsAndSetup()
+            }
+            // If .notDetermined, the viewModel's init logic will show the permission sheet.
+            // If .denied or .restricted, the cameraService state overlay might handle showing an error.
         }
         // Use onChange variant appropriate for your iOS target
         .onChange(of: viewModel.scanState) { newState in  // For iOS 14/15/16
