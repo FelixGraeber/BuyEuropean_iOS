@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Combine
+import CoreLocation
 
 #if canImport(UIKit)
 import UIKit
@@ -48,10 +49,12 @@ class ScanViewModel: ObservableObject, @unchecked Sendable {
     @Published var showPhotoLibrary = false
     @Published var errorMessage: String?
     @Published var showPermissionRequest = false
+    @Published var showLocationPermissionSheet = false
     
     private let apiService = APIService.shared
     private let imageService = ImageService.shared
     private let permissionService = PermissionService.shared
+    private let locationService = LocationService.shared
     
     // Task to keep track of background processing
     private var backgroundAnalysisTask: Task<Void, Never>?
@@ -71,6 +74,21 @@ class ScanViewModel: ObservableObject, @unchecked Sendable {
     
     func requestCameraPermission() async -> Bool {
         return await permissionService.requestCameraPermission()
+    }
+    
+    func checkLocationPermission() {
+        print("[ViewModel] Checking location permission. Current status: \(locationService.authorizationStatus)")
+        if locationService.authorizationStatus == .notDetermined {
+            print("[ViewModel] Location status is notDetermined. Setting showLocationPermissionSheet = true")
+            showLocationPermissionSheet = true
+        } else {
+            print("[ViewModel] Location status is \(locationService.authorizationStatus). Not showing sheet.")
+        }
+    }
+    
+    func requestLocationPermission() async {
+        print("[ViewModel] Requesting location permission via LocationService.")
+        locationService.requestWhenInUseAuthorization()
     }
     
     func handleCameraButtonTap(cameraService: CameraService? = nil) {

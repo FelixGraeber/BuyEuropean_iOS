@@ -19,11 +19,6 @@ struct BuyEuropeanApp: App {
              ScanView() // Or ContentView() if that's the intended root
                  .environmentObject(serviceRegistry) // Pass the whole registry
                  .environmentObject(serviceRegistry.locationManager) // Pass the specific manager
-                 .onAppear {
-                      // Request permission on launch if status is notDetermined
-                      // Also requests initial location if already authorized
-                      serviceRegistry.locationManager.requestLocationPermissionIfNeeded()
-                 }
         }
     }
 }

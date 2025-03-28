@@ -333,13 +333,20 @@ struct ScanView: View {
             .animation(.default, value: cameraService.state)
         }
         .onAppear {
+            print("[ScanView] .onAppear triggered.")
             // Check initial permission status WITHOUT requesting
             // Use the correct property and enum case from PermissionService
             if permissionService.cameraPermissionStatus == .granted {
+                print("[ScanView] Camera permission already granted.")
                  // If already granted, setup the camera immediately
                 cameraService.checkPermissionsAndSetup()
+                // THEN check for location permission
+                print("[ScanView] Calling viewModel.checkLocationPermission() from .onAppear")
+                viewModel.checkLocationPermission()
+            } else {
+                 print("[ScanView] Camera permission is \(permissionService.cameraPermissionStatus). Not setting up camera yet.")
             }
-            // If .notDetermined, the viewModel's init logic will show the permission sheet.
+            // If .notDetermined, the viewModel's init logic will show the camera permission sheet.
             // If .denied or .restricted, the cameraService state overlay might handle showing an error.
         }
         // Use onChange variant appropriate for your iOS target
@@ -368,9 +375,24 @@ struct ScanView: View {
         }
         .sheet(isPresented: $viewModel.showPermissionRequest) {
             CameraPermissionView {
+                print("[ScanView] CameraPermissionView 'Continue' tapped.")
                 if await viewModel.requestCameraPermission() {
+                    print("[ScanView] Camera permission GRANTED via sheet.")
                     cameraService.checkPermissionsAndSetup()
+                    // After camera permission granted and setup, check location permission
+                     print("[ScanView] Calling viewModel.checkLocationPermission() from Camera sheet completion.")
+                    viewModel.checkLocationPermission()
+                } else {
+                    print("[ScanView] Camera permission DENIED via sheet.")
                 }
+            }
+        }
+        // Add sheet for Location Permission
+        .sheet(isPresented: $viewModel.showLocationPermissionSheet) {
+            LocationPermissionView {
+                 print("[ScanView] LocationPermissionView 'Allow Location Access' tapped.")
+                // Call the view model function to request location permission
+                await viewModel.requestLocationPermission()
             }
         }
         // Ensure sheetDestination is accessible here

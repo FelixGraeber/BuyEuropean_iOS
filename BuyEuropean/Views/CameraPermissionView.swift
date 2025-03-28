@@ -16,7 +16,7 @@ struct CameraPermissionView: View {
                 .font(.title2)
                 .fontWeight(.bold)
             
-            Text("BuyEuropean needs camera access to scan product barcodes and packaging. This helps you make informed decisions about European products.")
+            Text("BuyEuropean needs camera access to take photos of your product or brand.")
                 .multilineTextAlignment(.center)
                 .foregroundColor(.secondary)
                 .padding(.horizontal)
