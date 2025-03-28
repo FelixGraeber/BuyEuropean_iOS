@@ -61,11 +61,39 @@ class APIService {
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        let requestBody = AnalyzeProductRequest(image: imageBase64, prompt: prompt)
+        var userLocationToSend: UserLocation? = nil
+
+        // Check if location manager is available and authorized
+        if let lm = locationManager, lm.isAuthorized {
+            if let city = lm.currentCity, let country = lm.currentCountry {
+                 userLocationToSend = UserLocation(city: city, country: country)
+                 print("API Service (Product): Authorized. Will send location - City: \(city), Country: \(country)")
+            } else {
+                print("API Service (Product): Authorized but city/country not yet available.")
+            }
+        } else {
+             print("API Service (Product): Location not authorized.")
+        }
+        
+        // Trigger a location update *after* deciding what to send, only if authorized.
+        if let lm = locationManager, lm.isAuthorized {
+             lm.requestSingleLocationUpdate()
+             print("API Service (Product): Authorized. Requested location update for next time.")
+        }
+
+        let requestBody = AnalyzeProductRequest(
+            image: imageBase64, 
+            prompt: prompt,
+            userLocation: userLocationToSend // Pass the location object
+        )
         
         do {
             let encoder = JSONEncoder()
             request.httpBody = try encoder.encode(requestBody)
+            // Debugging: Print the request body
+            if let bodyData = request.httpBody, let bodyString = String(data: bodyData, encoding: .utf8) {
+                 print("API Request Body (Product): \(bodyString)")
+            }
         } catch {
             throw APIError.encodingError(error)
         }
@@ -79,6 +107,10 @@ class APIService {
             }
             
             guard (200...299).contains(httpResponse.statusCode) else {
+                 // Print error response body if available
+                 if let errorBody = String(data: data, encoding: .utf8) {
+                      print("API Error Response Body (Product): \(errorBody)")
+                 }
                 throw APIError.serverError(httpResponse.statusCode)
             }
             
@@ -86,6 +118,11 @@ class APIService {
                 let decoder = JSONDecoder()
                 return try decoder.decode(BuyEuropeanResponse.self, from: data)
             } catch {
+                 // Print decoding error data if available
+                 print("API Decoding Error (Product): \(error.localizedDescription)")
+                 if let responseBody = String(data: data, encoding: .utf8) {
+                      print("API Response Body (Failed Decode - Product): \(responseBody)")
+                 }
                 throw APIError.decodingError(error)
             }
         } catch let urlError as URLError {

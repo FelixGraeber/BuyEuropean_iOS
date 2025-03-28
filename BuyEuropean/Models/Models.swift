@@ -115,6 +115,7 @@ struct BuyEuropeanResponse: Codable, Equatable {
 struct AnalyzeProductRequest: Codable {
     let image: String // Base64-encoded image
     let prompt: String? // Optional additional prompt
+    let userLocation: UserLocation? // Add optional user location
 }
 
 struct UserLocation: Codable {
