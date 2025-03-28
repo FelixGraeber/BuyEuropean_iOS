@@ -18,7 +18,7 @@ struct LocationPermissionView: View {
                 .fontWeight(.bold)
 
             // Updated explanation text
-            Text("BuyEuropean uses your location to provide more relevant product alternatives based on your region. Your location is never stored or shared.")
+            Text("BuyEuropean uses your location to provide more relevant product alternatives based on your region. Your location is never stored or shared. This is optional and you can turn it off in the settings.")
                 .multilineTextAlignment(.center)
                 .foregroundColor(.secondary)
                 .padding(.horizontal)
