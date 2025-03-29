@@ -56,12 +56,3 @@ struct LocationPermissionView: View {
         .padding()
     }
 }
-
-// Preview (optional)
-#if DEBUG
-struct LocationPermissionView_Previews: PreviewProvider {
-    static var previews: some View {
-        LocationPermissionView(onRequestPermission: {})
-    }
-}
-#endif 

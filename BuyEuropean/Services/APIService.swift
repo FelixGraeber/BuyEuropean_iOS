@@ -53,7 +53,7 @@ class APIService {
     }
     
     func analyzeProduct(imageBase64: String, prompt: String? = nil) async throws -> BuyEuropeanResponse {
-        guard let url = URL(string: "\(baseURL)/analyze-product") else {
+        guard let url = URL(string: "\(baseURL)/v2/analyze-product") else {
             throw APIError.invalidURL
         }
         
@@ -181,7 +181,7 @@ class APIService {
     }
     
     func analyzeText(text: String, prompt: String? = nil) async throws -> BuyEuropeanResponse {
-        guard let url = URL(string: "\(baseURL)/analyze-text") else {
+        guard let url = URL(string: "\(baseURL)/v2/analyze-text") else {
             throw APIError.invalidURL
         }
         

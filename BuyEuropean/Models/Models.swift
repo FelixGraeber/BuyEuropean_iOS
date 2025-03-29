@@ -88,15 +88,21 @@ struct EuropeanAlternative: Identifiable, Codable, Equatable {
 
 struct BuyEuropeanResponse: Codable, Equatable {
     let id: Int?
-    let thinking: String
-    let identifiedProductName: String
-    let identifiedCompany: String
-    let identifiedHeadquarters: String
-    let identificationRationale: String
-    let rawCountry: String
-    let classification: Classification
-    let potentialAlternativeThinking: String
+    let thinking: String?
+    let identifiedProductName: String?
+    let identifiedCompany: String?
+    let identifiedHeadquarters: String?
+    let ultimateParentCompany: String?
+    let ultimateParentCompanyHeadquarters: String?
+    let identificationRationale: String?
+    let rawCountry: String?
+    let classification: Classification?
+    let potentialAlternativeThinking: String?
+    let potentialAlternative: String?
     let potentialAlternatives: [EuropeanAlternative]?
+    let inputTokens: Int?
+    let outputTokens: Int?
+    let totalTokens: Int?
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -104,11 +110,17 @@ struct BuyEuropeanResponse: Codable, Equatable {
         case identifiedProductName = "identified_product_name"
         case identifiedCompany = "identified_company"
         case identifiedHeadquarters = "identified_headquarters"
+        case ultimateParentCompany = "ultimate_parent_company"
+        case ultimateParentCompanyHeadquarters = "ultimate_parent_company_headquarters"
         case identificationRationale = "identification_rationale"
         case rawCountry = "raw_country"
         case classification
         case potentialAlternativeThinking = "potential_alternative_thinking"
+        case potentialAlternative = "potential_alternative"
         case potentialAlternatives = "potential_alternatives"
+        case inputTokens = "input_tokens"
+        case outputTokens = "output_tokens"
+        case totalTokens = "total_tokens"
     }
 }
 
