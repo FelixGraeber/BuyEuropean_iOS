@@ -160,12 +160,8 @@ class ScanViewModel: ObservableObject, @unchecked Sendable {
                 return
             }
             
-            // Ensure image is cropped to square if needed - always square for the 512x512 requirement
-            let squareImage = self.imageService.ensureSquareImage(image: image)
-            
-            // Resize image to exactly 512x512 for the API requirement
-            // Force exact 512x512 dimensions rather than using maxDimension
-            let resizedImage = self.imageService.resizeImage(image: squareImage, maxDimension: 512)
+            // Resize image to have the longest side of 768 pixels while maintaining aspect ratio
+            let resizedImage = self.imageService.resizeImage(image: image, maxDimension: 768)
             
             // Compress the resized image to reduce file size
             guard let base64Image = self.imageService.convertImageToBase64(image: resizedImage, compressionQuality: 0.6) else {
@@ -247,12 +243,8 @@ class ScanViewModel: ObservableObject, @unchecked Sendable {
             return
         }
         
-        // Ensure image is a perfect 512x512 square
-        let squareImage = imageService.ensureSquareImage(image: image)
-        
-        // Resize image to exactly 512x512 for the API requirement
-        // Using fixed 512x512 size for consistency with square design theme
-        let resizedImage = imageService.resizeImage(image: squareImage, maxDimension: 512)
+        // Resize image to have the longest side of 768 pixels while maintaining aspect ratio
+        let resizedImage = imageService.resizeImage(image: image, maxDimension: 768)
         
         // Compress the resized image to reduce file size
         guard let base64Image = imageService.convertImageToBase64(image: resizedImage, compressionQuality: 0.6) else {

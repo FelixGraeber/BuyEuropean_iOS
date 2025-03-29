@@ -102,6 +102,13 @@ class APIService {
             _ = try JSONSerialization.data(withJSONObject: [:], options: [])
             let (data, response) = try await URLSession.shared.data(for: request, delegate: nil)
             
+            // Log the raw response data
+            if let responseString = String(data: data, encoding: .utf8) {
+                print("API Response Body (Product): \(responseString)")
+            } else {
+                print("API Response Body (Product): Could not decode data as UTF-8 string.")
+            }
+            
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw APIError.invalidResponse
             }
@@ -153,6 +160,13 @@ class APIService {
         do {
             _ = try JSONSerialization.data(withJSONObject: [:], options: [])
             let (data, response) = try await URLSession.shared.data(for: request)
+            
+            // Log the raw response data
+            if let responseString = String(data: data, encoding: .utf8) {
+                print("API Response Body (Feedback): \(responseString)")
+            } else {
+                print("API Response Body (Feedback): Could not decode data as UTF-8 string.")
+            }
             
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw APIError.invalidResponse
@@ -230,6 +244,13 @@ class APIService {
         
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
+            
+            // Log the raw response data
+            if let responseString = String(data: data, encoding: .utf8) {
+                print("API Response Body (Text): \(responseString)")
+            } else {
+                print("API Response Body (Text): Could not decode data as UTF-8 string.")
+            }
             
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw APIError.invalidResponse

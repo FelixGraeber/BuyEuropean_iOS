@@ -24,7 +24,7 @@ class ImageService {
     }
     
     /// Resizes the image to a maximum dimension while preserving aspect ratio
-    func resizeImage(image: UIImage, maxDimension: CGFloat = 512) -> UIImage {
+    func resizeImage(image: UIImage, maxDimension: CGFloat = 768) -> UIImage {
         let originalSize = image.size
         var newSize: CGSize
         
