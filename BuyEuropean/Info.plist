@@ -58,6 +58,8 @@
     <!-- === LOCATION PERMISSION === -->
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>BuyEuropean uses your location to provide more relevant product alternatives based on your region.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>This app requires access to the camera to capture photos for analysis.</string>
 
 </dict>
 </plist>

@@ -12,8 +12,13 @@ import SwiftUI
 // BuyEuropeanResponse (DEFINED ONLY ONCE IN YOUR PROJECT), APIService, ImageService, APIError
 
 struct ScanView: View {
+    enum InputMode: CaseIterable {
+        case camera
+        case manual
+    }
     @StateObject private var viewModel = ScanViewModel()
     @StateObject private var permissionService = PermissionService.shared
+    @Environment(\.scenePhase) private var scenePhase
     // State vars derived from viewModel for sheet/haptic triggers
     @State private var showResultsHapticTrigger = false
     @State private var showErrorHapticTrigger = false
@@ -43,10 +48,7 @@ struct ScanView: View {
         #endif
     }
 
-    enum InputMode: CaseIterable {
-        case camera
-        case manual
-    }
+ 
 
     var body: some View {
         ZStack {
@@ -138,6 +140,15 @@ struct ScanView: View {
                                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 }
                             }
+                            .onChange(of: scenePhase) { newPhase in
+                                if newPhase == .active {
+                                    print("[ScanView] App became active. Checking camera setup.")
+                                    cameraService.checkPermissionsAndSetup()
+                                } else if newPhase == .background {
+                                    print("[ScanView] App went to background. Stopping camera session.")
+                                    cameraService.stopSession()
+}
+}
                             .transition(.opacity.animation(.easeInOut(duration: 0.25)))
                         }
                         // --- MANUAL INPUT MODE ---
@@ -615,7 +626,12 @@ struct ScanView: View {
             set: { newValue in
                 if newValue == nil {
                     // Reset state when sheet is dismissed, clear text only on result dismiss
-                    let wasResult = if case .result = viewModel.scanState { true } else { false }
+                    let wasResult: Bool
+                    if case .result = viewModel.scanState {
+                        wasResult = true
+                    } else {
+                        wasResult = false
+                    }
                     viewModel.resetScan()
                     if wasResult {
                         manualInputText = ""
