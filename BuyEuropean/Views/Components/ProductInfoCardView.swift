@@ -91,7 +91,7 @@ struct ProductInfoCardView: View {
                     .foregroundColor(.secondary)
 
                 HStack(alignment: .firstTextBaseline, spacing: 8) { // Align text baselines
-                    Text(headquarters)
+                    Text(headquarters.localizedCountryNameFromAlpha3()) // Convert alpha-3 code to full name
                         .font(.body)
                         .foregroundColor(.primary)
                     Text(countryFlag)
