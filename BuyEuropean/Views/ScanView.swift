@@ -392,9 +392,10 @@ struct ScanView: View {
         // Ensure sheetDestination is accessible here
         .sheet(item: sheetDestination) { destination in
             switch destination {
-            case .results(let response):
+            case .results(let response, let image):
                 ResultsView(
                     response: response,
+                    analysisImage: image,
                     onDismiss: {
                         viewModel.scanState = .ready // Set to ready state to dismiss sheet
                     })
@@ -598,8 +599,8 @@ struct ScanView: View {
         Binding<SheetDestination?>(
             get: {
                 switch viewModel.scanState {
-                case .result(let response):
-                    return .results(response)
+                case .result(let response, let image):
+                    return .results(response, image)
                 case .error(let message):
                     return .error(message)
                 case .ready, .scanning, .backgroundScanning:
@@ -628,12 +629,12 @@ struct ScanView: View {
 // Enum to handle different sheet destinations
 // Ensure this is defined, either here or globally, but only once accessible to ScanView
 enum SheetDestination: Identifiable, Equatable {
-    case results(BuyEuropeanResponse)  // Assumes correct BuyEuropeanResponse is now resolved
+    case results(BuyEuropeanResponse, UIImage?)
     case error(String)
 
     var id: String {
         switch self {
-        case .results(let response):
+        case .results(let response, _):
             return "results-\(response.id)"  // Assumes BuyEuropeanResponse has stable `id`
         case .error(let message):
             // Consider hashing message or using a UUID if messages aren't unique enough for ID

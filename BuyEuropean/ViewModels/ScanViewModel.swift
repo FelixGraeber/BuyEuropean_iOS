@@ -26,7 +26,7 @@ enum ScanState: Equatable {
     case ready
     case scanning
     case backgroundScanning
-    case result(BuyEuropeanResponse)
+    case result(BuyEuropeanResponse, UIImage?)
     case error(String)
     
     static func == (lhs: ScanState, rhs: ScanState) -> Bool {
@@ -35,8 +35,8 @@ enum ScanState: Equatable {
              (.scanning, .scanning),
              (.backgroundScanning, .backgroundScanning):
             return true
-        case let (.result(lhsResponse), .result(rhsResponse)):
-            return lhsResponse == rhsResponse
+        case let (.result(lhsResponse, lhsImage), .result(rhsResponse, rhsImage)):
+            return lhsResponse == rhsResponse && lhsImage == rhsImage
         case let (.error(lhsError), .error(rhsError)):
             return lhsError == rhsError
         default:
@@ -131,15 +131,15 @@ class ScanViewModel: ObservableObject, @unchecked Sendable {
     }
     
     func analyzeImage() async {
-        // If we already have a result from background processing, just return
-        if case .result = scanState {
+        let imageToAnalyze = capturedImage
+        
+        if case let .result(_, existingImage) = scanState, existingImage == imageToAnalyze {
             return
         }
         
-        // Cancel any background task and start a new foreground one
         cancelBackgroundAnalysis()
         
-        guard let image = capturedImage else {
+        guard let image = imageToAnalyze else {
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
                 self.errorMessage = "No image selected"
@@ -148,10 +148,8 @@ class ScanViewModel: ObservableObject, @unchecked Sendable {
             return
         }
         
-        // Resize image to have the longest side of 768 pixels while maintaining aspect ratio
         let resizedImage = imageService.resizeImage(image: image, maxDimension: 768)
         
-        // Compress the resized image to reduce file size
         guard let base64Image = imageService.convertImageToBase64(image: resizedImage, compressionQuality: 0.6) else {
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
@@ -171,7 +169,7 @@ class ScanViewModel: ObservableObject, @unchecked Sendable {
             
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
-                self.scanState = .result(response)
+                self.scanState = .result(response, imageToAnalyze)
             }
         } catch let error as APIError {
             DispatchQueue.main.async { [weak self] in
@@ -214,7 +212,8 @@ class ScanViewModel: ObservableObject, @unchecked Sendable {
                 )
                 
                 await MainActor.run {
-                    self.scanState = .result(response)
+                    // Ensure image is nil for text analysis results
+                    self.scanState = .result(response, nil)
                 }
             } catch let error as APIError {
                 await MainActor.run {

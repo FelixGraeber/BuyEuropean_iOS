@@ -16,6 +16,7 @@ import UIKit
 class ResultsViewModel: ObservableObject {
     // Data
     private let response: BuyEuropeanResponse
+    let analysisImage: UIImage?
     
     // UI state
     @Published var showFeedback = false
@@ -24,8 +25,9 @@ class ResultsViewModel: ObservableObject {
     // Generated ID for feedback
     let analysisId: String
     
-    init(response: BuyEuropeanResponse) {
+    init(response: BuyEuropeanResponse, analysisImage: UIImage?) {
         self.response = response
+        self.analysisImage = analysisImage
         
         // Generate a unique ID for this analysis result
         self.analysisId = UUID().uuidString

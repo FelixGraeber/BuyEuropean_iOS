@@ -15,6 +15,7 @@ import SwiftUI
 struct FeedbackView: View {
     @ObservedObject var viewModel: FeedbackViewModel
     @State private var isAnimated = false // For success animation
+    @State private var sharePhotoConsent: Bool = false // State for consent toggle
 
     // Styling constants
     private let cornerRadius: CGFloat = 16
@@ -134,6 +135,13 @@ struct FeedbackView: View {
             }
              .toggleStyle(CheckboxToggleStyle(tintColor: brandColor)) // Apply custom style with brand color
 
+            // Add the consent toggle here
+            if viewModel.analysisImage != nil { // Only show if there is an image
+                Toggle("Share photo to improve analysis (optional)", isOn: $sharePhotoConsent)
+                    .toggleStyle(CheckboxToggleStyle(tintColor: brandColor))
+                    .padding(.top, 8) // Add some space above
+            }
+
             // Additional Feedback TextEditor
             VStack(alignment: .leading, spacing: 6) {
                 Text("Additional details (optional)")
@@ -165,7 +173,7 @@ struct FeedbackView: View {
             HStack {
                 Spacer()
                 Button(action: {
-                    viewModel.submitFeedback()
+                    viewModel.submitFeedback(sharePhotoConsent: sharePhotoConsent)
                 }) {
                     if viewModel.isSubmitting {
                         ProgressView()

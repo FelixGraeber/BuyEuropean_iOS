@@ -16,6 +16,7 @@ struct FeedbackModel: Codable {
     var wrongClassification: Bool
     var wrongAlternatives: Bool
     var feedbackText: String
+    var imageData: String?
     
     enum CodingKeys: String, CodingKey {
         case analysisId = "analysis_id"
@@ -26,6 +27,7 @@ struct FeedbackModel: Codable {
         case wrongClassification = "wrong_classification"
         case wrongAlternatives = "wrong_alternatives"
         case feedbackText = "feedback_text"
+        case imageData = "image_data"
     }
     
     init(analysisId: String, isPositive: Bool = true) {
@@ -37,5 +39,6 @@ struct FeedbackModel: Codable {
         self.wrongClassification = false
         self.wrongAlternatives = false
         self.feedbackText = ""
+        self.imageData = nil
     }
 }
