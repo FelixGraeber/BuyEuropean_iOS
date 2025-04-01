@@ -13,7 +13,7 @@ struct ClassificationBadgeView: View {
             // Main badge - Using Capsule shape for a more modern look
             Text(style.title)
                 .font(.headline) // Keep headline
-                .fontWeight(.semibold) // Use semibold for badge text
+                .fontWeight(.bold) // Use semibold for badge text
                 .foregroundColor(.white) // White text for contrast on color
                 .padding(.horizontal, 24)
                 .padding(.vertical, 10) // Slightly less vertical padding for capsule
