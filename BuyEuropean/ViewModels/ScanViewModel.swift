@@ -14,7 +14,7 @@ import UIKit
 #endif
 
 // Import our models and services
-@_implementationOnly import Foundation
+import Foundation
 
 // Forward declaration of BuyEuropeanResponse to resolve circular dependency
 // The actual type is defined in Models.swift

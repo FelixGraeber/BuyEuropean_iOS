@@ -33,15 +33,8 @@ class LocationService: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     // Update status without initializing the location manager
     private func updateAuthorizationStatusWithoutManager() {
-        let currentStatus: CLAuthorizationStatus
-        
-        if #available(iOS 14.0, *) {
-            // Use the class method instead of instance property
-            currentStatus = CLLocationManager.authorizationStatus()
-        } else {
-            currentStatus = CLLocationManager.authorizationStatus()
-        }
-        
+        let currentStatus = CLLocationManager().authorizationStatus
+
         DispatchQueue.main.async {
             switch currentStatus {
             case .notDetermined:
@@ -61,11 +54,7 @@ class LocationService: NSObject, ObservableObject, CLLocationManagerDelegate {
         let currentStatus: CLAuthorizationStatus
         
         if isLocationManagerInitialized {
-            if #available(iOS 14.0, *) {
-                currentStatus = locationManager.authorizationStatus
-            } else {
-                currentStatus = CLLocationManager.authorizationStatus()
-            }
+            currentStatus = locationManager.authorizationStatus
             
             DispatchQueue.main.async {
                 switch currentStatus {
@@ -110,4 +99,4 @@ class LocationService: NSObject, ObservableObject, CLLocationManagerDelegate {
             updateAuthorizationStatus()
         }
     }
-} 
+}

@@ -2,7 +2,7 @@ import Foundation
 import Combine
 import CoreLocation
 
-// Import models - use direct model import 
+// Import models - use direct model import
 import SwiftUI // For SwiftUI support
 // These models should be accessible from the module
 // BuyEuropeanResponse, AnalyzeProductRequest, AnalyzeTextRequest are defined in Models.swift
@@ -82,7 +82,7 @@ class APIService {
         }
 
         let requestBody = AnalyzeProductRequest(
-            image: imageBase64, 
+            image: imageBase64,
             prompt: prompt,
             userLocation: userLocationToSend // Pass the location object
         )
@@ -175,13 +175,9 @@ class APIService {
             guard (200...299).contains(httpResponse.statusCode) else {
                 // If we get an error response with data, try to decode it for more details
                 if !data.isEmpty {
-                    do {
-                        if let errorResponse = try? JSONDecoder().decode([String: String].self, from: data),
-                           let errorMessage = errorResponse["error"] {
-                            print("Server error: \(errorMessage)")
-                        }
-                    } catch {
-                        print("Failed to decode error response")
+                    if let errorResponse = try? JSONDecoder().decode([String: String].self, from: data),
+                       let errorMessage = errorResponse["error"] {
+                        print("Server error: \(errorMessage)")
                     }
                 }
                 throw APIError.serverError(httpResponse.statusCode)

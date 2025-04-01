@@ -25,14 +25,14 @@ class ResultsViewModel: ObservableObject {
         
         // Generate a unique ID for this analysis result
         self.analysisId = UUID().uuidString
-        print("Initialized ResultsViewModel. Classification: \(response.classification.rawValue ?? "nil")") // Debug print
+        print("Initialized ResultsViewModel. Classification: \(response.classification.rawValue)") // Debug print
     }
     
     // MARK: - Computed Properties for View
     
     // Safely unwrapped classification or default
     var displayClassification: Classification {
-        response.classification ?? .unknown
+        response.classification
     }
     
     // Get the style for the current classification
@@ -52,12 +52,12 @@ class ResultsViewModel: ObservableObject {
     }
     
     // Product details with defaults
-    var productName: String { response.identifiedProductName ?? "N/A" }
+    var productName: String { response.identifiedProductName }
     var companyName: String { response.identifiedCompany ?? "N/A" }
     var headquartersCountry: String { response.identifiedCompanyHeadquarters ?? "N/A" }
     var parentCompany: String? { response.ultimateParentCompany }
     var parentCompanyHeadquarters: String? { response.ultimateParentCompanyHeadquarters }
-    var identificationRationale: String { response.identificationRationale ?? "No rationale provided." }
+    var identificationRationale: String { response.identificationRationale }
     
     // Alternatives logic, handling nil classification
     var shouldShowAlternatives: Bool {
