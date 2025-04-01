@@ -13,6 +13,10 @@ import CoreLocation
 import UIKit
 #endif
 
+// Assume necessary types are available globally or via target membership
+// import Models
+// import Services
+
 // Import our models and services
 import Foundation
 

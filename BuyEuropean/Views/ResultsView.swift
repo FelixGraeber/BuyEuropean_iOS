@@ -92,8 +92,11 @@ struct ResultsView: View {
                                 company: viewModel.companyName, // Use ViewModel
                                 headquarters: viewModel.headquartersCountry, // Use ViewModel
                                 rationale: viewModel.identificationRationale, // Use ViewModel
-                                countryFlag: viewModel.countryFlag(for: viewModel.headquartersCountry) // Use ViewModel
-                                // TODO: Consider adding ultimate parent company info here if viewModel.parentCompany != nil
+                                countryFlag: viewModel.countryFlag(for: viewModel.headquartersCountry), // Use ViewModel
+                                // Add the required arguments from the viewModel
+                                parentCompany: viewModel.parentCompany,
+                                parentCompanyFlag: viewModel.parentCompanyFlag,
+                                shouldShowParentCompany: viewModel.shouldShowParentCompany
                             )
                             .padding(.horizontal, horizontalPadding)
                         } else {

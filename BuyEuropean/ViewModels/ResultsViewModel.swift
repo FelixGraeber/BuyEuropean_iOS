@@ -9,6 +9,10 @@ import SwiftUI
 import Combine
 import UIKit
 
+// Assume Models and Utilities are available globally or via target membership
+// import Models
+// import Utilities 
+
 class ResultsViewModel: ObservableObject {
     // Data
     private let response: BuyEuropeanResponse
@@ -58,6 +62,18 @@ class ResultsViewModel: ObservableObject {
     var parentCompany: String? { response.ultimateParentCompany }
     var parentCompanyHeadquarters: String? { response.ultimateParentCompanyHeadquarters }
     var identificationRationale: String { response.identificationRationale }
+    
+    // Computed property to determine if parent company info should be shown
+    var shouldShowParentCompany: Bool {
+        guard let parent = parentCompany, !parent.isEmpty else { return false }
+        // Show if parent company exists and is different from the identified company
+        return parent != companyName
+    }
+    
+    // Computed property for the parent company headquarters flag
+    var parentCompanyFlag: String {
+        countryFlag(for: parentCompanyHeadquarters)
+    }
     
     // Alternatives logic, handling nil classification
     var shouldShowAlternatives: Bool {

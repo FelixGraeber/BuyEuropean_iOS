@@ -6,6 +6,11 @@ struct ProductInfoCardView: View {
     let headquarters: String
     let rationale: String
     let countryFlag: String
+    
+    // Add properties for parent company info
+    let parentCompany: String?
+    let parentCompanyFlag: String
+    let shouldShowParentCompany: Bool
 
     @State private var isRationaleExpanded = false
     @State private var isAnimated = false
@@ -34,6 +39,11 @@ struct ProductInfoCardView: View {
 
             headquartersRow() // Extracted subview
 
+            // Conditionally display Parent Company row
+            if shouldShowParentCompany {
+                parentCompanyRow() // Extracted subview for parent company
+            }
+            
             rationaleSection() // Extracted subview
         }
         .padding() // Keep default padding inside card
@@ -87,6 +97,30 @@ struct ProductInfoCardView: View {
                     Text(countryFlag)
                          .font(.title3) // Slightly smaller flag?
                          .baselineOffset(-2) // Adjust baseline if needed
+                }
+            }
+             Spacer()
+        }
+    }
+
+    // New subview for Parent Company
+    private func parentCompanyRow() -> some View {
+        HStack(alignment: .top, spacing: 12) {
+            iconView(systemName: "building.columns.fill", color: .brown) // Example icon
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Ultimate Parent Company".uppercased())
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .foregroundColor(.secondary)
+
+                HStack(alignment: .firstTextBaseline, spacing: 8) { // Align text baselines
+                    Text(parentCompany ?? "N/A") // Display parent company name
+                        .font(.body)
+                        .foregroundColor(.primary)
+                    Text(parentCompanyFlag) // Display parent company flag
+                         .font(.title3)
+                         .baselineOffset(-2)
                 }
             }
              Spacer()
