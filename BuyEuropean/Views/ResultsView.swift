@@ -95,6 +95,7 @@ struct ResultsView: View {
                                 countryFlag: viewModel.countryFlag(for: viewModel.headquartersCountry), // Use ViewModel
                                 // Add the required arguments from the viewModel
                                 parentCompany: viewModel.parentCompany,
+                                parentCompanyHeadquarters: viewModel.parentCompanyHeadquarters, // Pass the HQ code
                                 parentCompanyFlag: viewModel.parentCompanyFlag,
                                 shouldShowParentCompany: viewModel.shouldShowParentCompany
                             )
@@ -149,7 +150,7 @@ struct ResultsView: View {
                             } // Alternatives VStack
                         } else if viewModel.isProductAnalysis {
                              // Show message only if it was a product analysis but no alternatives are shown
-                             CenteredMessageView(message: "No specific European alternatives were identified for this product.")
+                             CenteredMessageView(message: "No European alternatives needed.")
                                 .padding(.horizontal, horizontalPadding)
                         }
 

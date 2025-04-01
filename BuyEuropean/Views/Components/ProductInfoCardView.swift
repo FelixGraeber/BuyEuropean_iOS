@@ -3,57 +3,54 @@ import SwiftUI
 struct ProductInfoCardView: View {
     let product: String
     let company: String
-    let headquarters: String
+    let headquarters: String // Assumed to be Alpha-3 Country Code
     let rationale: String
     let countryFlag: String
-    
+
     // Add properties for parent company info
     let parentCompany: String?
+    let parentCompanyHeadquarters: String? // Add HQ code
     let parentCompanyFlag: String
     let shouldShowParentCompany: Bool
 
-    @State private var isRationaleExpanded = false
+    // Removed isRationaleExpanded state
     @State private var isAnimated = false
 
     // Constants for styling
     private let cornerRadius: CGFloat = 16
     private let iconSize: CGFloat = 18
     private let iconCircleSize: CGFloat = 36
-    private let iconCircleOpacity: Double = 0.12 // Slightly increased opacity
+    private let iconCircleOpacity: Double = 0.12
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
+            // 1. Product Row (Unchanged)
             infoRow(
                 icon: "tag.fill",
                 iconColor: .blue,
-                title: "Product", // Use sentence case for titles
+                title: "Product",
                 value: product
             )
 
-            infoRow(
-                icon: "building.2.fill",
-                iconColor: .purple,
-                title: "Company",
-                value: company
-            )
+            // 2. Combined Company & Country Row
+            companyAndCountryRow()
 
-            headquartersRow() // Extracted subview
-
-            // Conditionally display Parent Company row
+            // 3. Conditionally display Combined Parent Company Row
             if shouldShowParentCompany {
-                parentCompanyRow() // Extracted subview for parent company
+                parentCompanyAndCountryRow()
             }
-            
-            rationaleSection() // Extracted subview
+
+            // 4. Rationale Section (Always expanded)
+            rationaleSection()
         }
-        .padding() // Keep default padding inside card
-        .background(Color(.systemBackground)) // Use system background for card
-        .cornerRadius(cornerRadius) // Use standard corner radius
-        .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4) // Adjusted shadow
+        .padding()
+        // Use Color(.systemBackground) for SwiftUI equivalent
+        .background(Color(.systemBackground))
+        .cornerRadius(cornerRadius)
+        .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
         .opacity(isAnimated ? 1 : 0)
-        .offset(y: isAnimated ? 0 : 15) // Slightly reduced offset
+        .offset(y: isAnimated ? 0 : 15)
         .onAppear {
-             // Use withAnimation directly here for onAppear effect
             withAnimation(.easeOut(duration: 0.4).delay(0.05)) {
                 isAnimated = true
             }
@@ -62,51 +59,60 @@ struct ProductInfoCardView: View {
 
     // MARK: - Subviews
 
+    // Generic Info Row (Kept for Product)
     private func infoRow(icon: String, iconColor: Color, title: String, value: String) -> some View {
         HStack(alignment: .top, spacing: 12) {
-            iconView(systemName: icon, color: iconColor) // Use helper
+            iconView(systemName: icon, color: iconColor)
 
-            VStack(alignment: .leading, spacing: 2) { // Reduced spacing
-                Text(title.uppercased()) // Keep uppercase if desired, or use sentence case
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title.uppercased())
                     .font(.caption)
-                    .fontWeight(.medium) // Use medium weight
-                    .foregroundColor(.secondary) // Standard secondary color
+                    .fontWeight(.medium)
+                    .foregroundColor(.secondary)
                 Text(value)
                     .font(.body)
-                    // .fontWeight(.medium) // Default weight for body is fine
-                    .foregroundColor(.primary) // Standard primary color
+                    .foregroundColor(.primary)
+                    .fixedSize(horizontal: false, vertical: true) // Allow product name to wrap
             }
-            Spacer() // Ensure row takes full width if needed
+            Spacer()
         }
     }
 
-    private func headquartersRow() -> some View {
+    // New: Combined Company & Country Row
+    private func companyAndCountryRow() -> some View {
         HStack(alignment: .top, spacing: 12) {
-            iconView(systemName: "mappin.circle.fill", color: .green)
+            // Use building icon for company
+            iconView(systemName: "building.2.fill", color: .purple)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text("Country (Headquarters)".uppercased())
+                Text("Company & HQ Country".uppercased())
                     .font(.caption)
                     .fontWeight(.medium)
                     .foregroundColor(.secondary)
 
-                HStack(alignment: .firstTextBaseline, spacing: 8) { // Align text baselines
-                    Text(headquarters.localizedCountryNameFromAlpha3()) // Convert alpha-3 code to full name
+                // Combine company, country name, and flag
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    Text(company)
                         .font(.body)
                         .foregroundColor(.primary)
-                    Text(countryFlag)
-                         .font(.title3) // Slightly smaller flag?
-                         .baselineOffset(-2) // Adjust baseline if needed
+                        .fixedSize(horizontal: false, vertical: true) // Allow wrapping
+                    Text("(\(headquarters.localizedCountryNameFromAlpha3()) \(countryFlag))")
+                        .font(.body) // Match company font size
+                        .foregroundColor(.primary) // Use primary color for country
+                        .lineLimit(1) // Prevent country wrapping
+                        .fixedSize(horizontal: true, vertical: false)
+                        .baselineOffset(1) // Adjust baseline slightly if needed
                 }
+                 .fixedSize(horizontal: false, vertical: true) // Allow HStack content to wrap if needed overall
             }
-             Spacer()
+            Spacer()
         }
     }
 
-    // New subview for Parent Company
-    private func parentCompanyRow() -> some View {
+    // New: Combined Parent Company Row
+    private func parentCompanyAndCountryRow() -> some View {
         HStack(alignment: .top, spacing: 12) {
-            iconView(systemName: "building.columns.fill", color: .brown) // Example icon
+            iconView(systemName: "building.columns.fill", color: .brown)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Ultimate Parent Company".uppercased())
@@ -114,70 +120,61 @@ struct ProductInfoCardView: View {
                     .fontWeight(.medium)
                     .foregroundColor(.secondary)
 
-                HStack(alignment: .firstTextBaseline, spacing: 8) { // Align text baselines
-                    Text(parentCompany ?? "N/A") // Display parent company name
+                // Combine parent company name and country/flag
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    Text(parentCompany ?? "N/A")
                         .font(.body)
                         .foregroundColor(.primary)
-                    Text(parentCompanyFlag) // Display parent company flag
-                         .font(.title3)
-                         .baselineOffset(-2)
+                         .fixedSize(horizontal: false, vertical: true) // Allow wrapping
+
+                    // Use HQ code to get name, fallback to empty string if nil
+                    let parentCountryName = parentCompanyHeadquarters?.localizedCountryNameFromAlpha3() ?? ""
+                    // Display country name and flag
+                    Text("(\(parentCountryName) \(parentCompanyFlag))")
+                         .font(.body) // Match parent company font size
+                         .foregroundColor(.primary) // Use primary color for country info
+                         .lineLimit(1) // Prevent flag part wrapping
+                         .fixedSize(horizontal: true, vertical: false)
+                         .baselineOffset(1) // Adjust baseline slightly if needed
                 }
+                 .fixedSize(horizontal: false, vertical: true) // Allow HStack content to wrap if needed overall
             }
-             Spacer()
+            Spacer()
         }
     }
 
+    // Modified: Rationale Section (Always expanded)
      private func rationaleSection() -> some View {
         HStack(alignment: .top, spacing: 12) {
             iconView(systemName: "info.circle.fill", color: .orange)
 
-            VStack(alignment: .leading, spacing: 4) { // Increased spacing for rationale text
+            VStack(alignment: .leading, spacing: 4) {
                 Text("Identification Rationale".uppercased())
                     .font(.caption)
                     .fontWeight(.medium)
                     .foregroundColor(.secondary)
 
-                // Use a Group for conditional content
-                Group {
-                    if isRationaleExpanded || rationale.count < 100 {
-                        Text(rationale)
-                    } else {
-                        Text(rationale.prefix(100) + "...")
-                    }
-                }
-                .font(.body)
-                .foregroundColor(.primary)
-                .lineSpacing(4) // Add line spacing for readability
-                // Animate size changes explicitly if needed, though VStack should handle it
-                // .animation(.easeInOut, value: isRationaleExpanded)
+                // Always display full rationale
+                Text(rationale)
+                    .font(.body)
+                    .foregroundColor(.primary)
+                    .lineSpacing(4)
+                    .fixedSize(horizontal: false, vertical: true) // Ensure text wraps
 
-                // Only show button if text is long enough
-                if rationale.count >= 100 {
-                    Button {
-                        withAnimation(.easeInOut(duration: 0.3)) { // Animate the toggle
-                            isRationaleExpanded.toggle()
-                        }
-                    } label: {
-                         Text(isRationaleExpanded ? "Show Less" : "Read More")
-                             .font(.footnote)
-                             .fontWeight(.medium)
-                             .padding(.top, 4) // Add padding above button
-                    }
-                    .tint(.blue) // Use standard tint for links/buttons
-                }
+                // Removed the conditional Group and the "Read More/Less" Button
             }
-             Spacer()
+            Spacer()
         }
     }
 
-    // Helper for Icon Views
+    // Helper for Icon Views (Unchanged)
     private func iconView(systemName: String, color: Color) -> some View {
         ZStack {
             Circle()
                 .fill(color.opacity(iconCircleOpacity))
                 .frame(width: iconCircleSize, height: iconCircleSize)
             Image(systemName: systemName)
-                .font(.system(size: iconSize, weight: .medium)) // Use medium weight
+                .font(.system(size: iconSize, weight: .medium))
                 .foregroundColor(color)
         }
     }
