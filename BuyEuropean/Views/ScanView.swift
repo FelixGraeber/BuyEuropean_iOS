@@ -19,9 +19,12 @@ struct ScanView: View {
     @StateObject private var viewModel = ScanViewModel()
     @StateObject private var permissionService = PermissionService.shared
     @Environment(\.scenePhase) private var scenePhase
+    // Get IAP Manager from environment
+    @EnvironmentObject var iapManager: IAPManager 
     // State vars derived from viewModel for sheet/haptic triggers
     @State private var showResultsHapticTrigger = false
     @State private var showErrorHapticTrigger = false
+    @State private var showSupportSheet = false // State to present the SupportView
 
     @State private var manualInputText = ""
     @State private var selectedMode: InputMode = .camera
@@ -71,6 +74,20 @@ struct ScanView: View {
                             .foregroundColor(Color(red: 0 / 255, green: 51 / 255, blue: 153 / 255))
 
                         Spacer()
+
+                        // --- Add Support Button --- 
+                        Button {
+                            showSupportSheet = true
+                        } label: {
+                            Text("Support")
+                                .font(.caption.weight(.semibold))
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 6)
+                                .background(.thinMaterial)
+                                .clipShape(Capsule())
+                                .foregroundColor(Color(red: 0 / 255, green: 51 / 255, blue: 153 / 255))
+                        }
+                        // --------------------------
                     }
                     .padding(.horizontal, geometry.size.width < 350 ? 12 : 16)
                     .padding(.vertical, 10)
@@ -325,6 +342,12 @@ struct ScanView: View {
             // .animation(.easeInOut(duration: 0.3), value: selectedMode)
             .animation(.easeInOut(duration: 0.2), value: viewModel.scanState)
             .animation(.default, value: cameraService.state)
+             // Add sheet modifier for the SupportView
+            .sheet(isPresented: $showSupportSheet) {
+                // Pass the IAPManager from the environment
+                SupportView()
+                    .environmentObject(iapManager)
+            }
         }
         .onAppear {
             print("[ScanView] .onAppear triggered.")

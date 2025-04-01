@@ -12,13 +12,28 @@ struct BuyEuropeanApp: App {
     // Create the central service registry
     @StateObject private var serviceRegistry = ServiceRegistry.shared
     
+    // Initialize the IAP Manager and Entitlement Manager
+    // Use @StateObject to ensure they persist through the app's lifecycle
+    @StateObject private var iapManager:
+        IAPManager // Specify type
+    @StateObject private var entitlementManager = EntitlementManager()
+
+    // Custom init to link the two managers
+    init() {
+        let entitlementMgr = EntitlementManager()
+        let iapMgr = IAPManager(entitlementManager: entitlementMgr)
+        _iapManager = StateObject(wrappedValue: iapMgr)
+        _entitlementManager = StateObject(wrappedValue: entitlementMgr)
+    }
+
     var body: some Scene {
         WindowGroup {
-            // Inject the ServiceRegistry and LocationManager into the environment
-            // Assuming ScanView is the root view now, otherwise adapt to ContentView
-             ScanView() // Or ContentView() if that's the intended root
-                 .environmentObject(serviceRegistry) // Pass the whole registry
-                 .environmentObject(serviceRegistry.locationManager) // Pass the specific manager
+            // Inject both managers into the environment
+            ScanView()
+                .environmentObject(iapManager)
+                .environmentObject(entitlementManager)
+            // Ensure other required environment objects are still passed if needed
+            // e.g., .environmentObject(SomeOtherService())
         }
     }
 }
