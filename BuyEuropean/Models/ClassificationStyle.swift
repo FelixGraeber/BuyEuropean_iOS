@@ -74,7 +74,7 @@ struct ClassificationStyle {
                 badgeColor: Color(red: 245/255, green: 158/255, blue: 11/255),
                 icon: "cat.fill",
                 title: "Cat",
-                description: "Nice try! We spotted your furry friend. Cats are adorable, but they're not European products..."
+                description: ""
             )
         case .dog:
             return ClassificationStyle(
@@ -83,7 +83,7 @@ struct ClassificationStyle {
                 badgeColor: Color(red: 217/255, green: 119/255, blue: 6/255),
                 icon: "dog.fill",
                 title: "Dog",
-                description: "We see what you did there! Your dog is cute, but not quite what we're designed to analyze."
+                description: ""
             )
         case .animal:
             return ClassificationStyle(
@@ -92,7 +92,7 @@ struct ClassificationStyle {
                 badgeColor: Color(red: 16/255, green: 185/255, blue: 129/255),
                 icon: "hare.fill",
                 title: "Animal",
-                description: "Hmm, that's definitely not a product. Unless you're scanning wildlife catalogs, we should get back to European shopping."
+                description: ""
             )
         case .human:
             return ClassificationStyle(
@@ -101,7 +101,7 @@ struct ClassificationStyle {
                 badgeColor: Color(red: 168/255, green: 85/255, blue: 247/255),
                 icon: "person.fill",
                 title: "Human",
-                description: "We're flattered you think we can classify humans! But we're better at identifying European products than people."
+                description: ""
             )
         case .unknown:
             return ClassificationStyle(

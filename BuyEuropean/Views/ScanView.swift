@@ -88,57 +88,40 @@ struct ScanView: View {
                         // --- CAMERA MODE ---
                         if selectedMode == .camera {
                             Group {
-                                if let image = viewModel.capturedImage {
-                                    PhotoPreviewView(
-                                        image: image,
-                                        // Pass the calculated dimensions
-                                        previewWidth: cameraPreviewWidth,
-                                        previewHeight: cameraPreviewHeight,
-                                        onBackToCamera: {
-                                            viewModel.cancelBackgroundAnalysis() // Keep existing logic
-                                            viewModel.resetScan()
-                                        },
-                                        onAnalyze: {
-                                            viewModel.handleCameraButtonTap() // Keep existing logic
+                                // Camera preview container
+                                ZStack {
+                                    Color.clear
+
+                                    VStack(spacing: 16) {
+                                        Spacer().frame(height: 16)
+
+                                        ZStack {
+                                            CameraPreview(session: cameraService.session)
+                                                .frame(
+                                                    width: cameraPreviewWidth,
+                                                    height: cameraPreviewHeight
+                                                )
+                                                .clipShape(RoundedRectangle(cornerRadius: 16))
+                                                .overlay(
+                                                    RoundedRectangle(cornerRadius: 16)
+                                                        .stroke(
+                                                            Color(.systemGray5), lineWidth: 1)
+                                                )
+                                                .overlay(cameraStateOverlay())  // Make sure this uses correct state name
                                         }
-                                    )
-                                    
-                                } else {
-                                    // Camera preview container
-                                    ZStack {
-                                        Color.clear
+                                        .frame(
+                                            width: cameraPreviewWidth,
+                                            height: cameraPreviewHeight
+                                        )
+                                        .shadow(
+                                            color: Color.black.opacity(0.1), radius: 8, x: 0,
+                                            y: 4)
 
-                                        VStack(spacing: 16) {
-                                            Spacer().frame(height: 16)
-
-                                            ZStack {
-                                                CameraPreview(session: cameraService.session)
-                                                    .frame(
-                                                        width: cameraPreviewWidth,
-                                                        height: cameraPreviewHeight
-                                                    )
-                                                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                                                    .overlay(
-                                                        RoundedRectangle(cornerRadius: 16)
-                                                            .stroke(
-                                                                Color(.systemGray5), lineWidth: 1)
-                                                    )
-                                                    .overlay(cameraStateOverlay())  // Make sure this uses correct state name
-                                            }
-                                            .frame(
-                                                width: cameraPreviewWidth,
-                                                height: cameraPreviewHeight
-                                            )
-                                            .shadow(
-                                                color: Color.black.opacity(0.1), radius: 8, x: 0,
-                                                y: 4)
-
-                                            Spacer()
-                                        }
-                                        .padding(.horizontal, 20)
+                                        Spacer()
                                     }
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .padding(.horizontal, 20)
                                 }
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
                             }
                             .onChange(of: scenePhase) { newPhase in
                                 if newPhase == .active {

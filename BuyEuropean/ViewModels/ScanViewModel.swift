@@ -99,8 +99,10 @@ class ScanViewModel: ObservableObject, @unchecked Sendable {
                 case .success(let image):
                     DispatchQueue.main.async {
                         self?.capturedImage = image
-                        // Start background analysis as soon as image is captured
-                        self?.startBackgroundAnalysis()
+                        // Start analysis immediately without showing preview
+                        Task {
+                            await self?.analyzeImage()
+                        }
                     }
                 case .failure(let error):
                     DispatchQueue.main.async {
@@ -109,119 +111,18 @@ class ScanViewModel: ObservableObject, @unchecked Sendable {
                     }
                 }
             }
-        } else if capturedImage != nil {
-            // If we already have a cached result, use it immediately
-            if let cachedResult = cachedAnalysisResult {
-                DispatchQueue.main.async {
-                    self.scanState = .result(cachedResult)
-                }
-                return
-            }
-            
-            // If background analysis is already in progress, just update UI state to show loading
-            if case .backgroundScanning = scanState {
-                DispatchQueue.main.async {
-                    self.scanState = .scanning
-                }
-                
-                // No need to start new analysis - it's already happening in the background
-                // The background task will update the state when complete
-            } else {
-                // Otherwise start a new analysis
-                Task {
-                    await analyzeImage()
-                }
+        } else {
+            // This case should no longer be needed since we removed the preview
+            Task {
+                await analyzeImage()
             }
         }
     }
     
-    // Start background analysis when image is displayed
+    // Remove background analysis since we're going straight to analysis
     func startBackgroundAnalysis() {
-        // Cancel any existing task first
-        cancelBackgroundAnalysis()
-        
-        // Clear any cached result
-        cachedAnalysisResult = nil
-        
-        // Start a new background task
-        backgroundAnalysisTask = Task { [weak self] in
-            guard let self = self else { return }
-            
-            // Set state to background scanning
-            await MainActor.run {
-                self.scanState = .backgroundScanning
-            }
-            
-            guard let image = self.capturedImage else {
-                await MainActor.run {
-                    self.errorMessage = "No image selected"
-                    self.scanState = .error("No image selected")
-                }
-                return
-            }
-            
-            // Resize image to have the longest side of 768 pixels while maintaining aspect ratio
-            let resizedImage = self.imageService.resizeImage(image: image, maxDimension: 768)
-            
-            // Compress the resized image to reduce file size
-            guard let base64Image = self.imageService.convertImageToBase64(image: resizedImage, compressionQuality: 0.6) else {
-                await MainActor.run {
-                    self.errorMessage = "Failed to process image"
-                    self.scanState = .error("Failed to process image")
-                }
-                return
-            }
-            
-            do {
-                // Check if task was cancelled before making API call
-                if Task.isCancelled {
-                    return
-                }
-                
-                let response = try await self.apiService.analyzeProduct(imageBase64: base64Image)
-                
-                // Check again if task was cancelled after API call
-                if Task.isCancelled {
-                    return
-                }
-                
-                await MainActor.run {
-                    // Store the result in our cache
-                    self.cachedAnalysisResult = response
-                    
-                    // Only update UI state if we're in scanning mode (user clicked analyze)
-                    if case .scanning = self.scanState {
-                        self.scanState = .result(response)
-                    }
-                    // Otherwise keep the state as backgroundScanning
-                }
-            } catch let error as APIError {
-                if !Task.isCancelled {
-                    await MainActor.run {
-                        self.errorMessage = error.message
-                        self.scanState = .error(error.message)
-                    }
-                }
-            } catch {
-                if !Task.isCancelled {
-                    await MainActor.run {
-                        self.errorMessage = error.localizedDescription
-                        self.scanState = .error(error.localizedDescription)
-                    }
-                }
-            }
-        }
-    }
-    
-    // Cancel background analysis task
-    func cancelBackgroundAnalysis() {
-        backgroundAnalysisTask?.cancel()
-        backgroundAnalysisTask = nil
-        cachedAnalysisResult = nil
-        
-        // Only reset state if we're in background scanning
-        if case .backgroundScanning = scanState {
-            scanState = .ready
+        Task {
+            await analyzeImage()
         }
     }
     
@@ -322,6 +223,18 @@ class ScanViewModel: ObservableObject, @unchecked Sendable {
                     self.scanState = .error(error.localizedDescription)
                 }
             }
+        }
+    }
+    
+    // Cancel background analysis task
+    func cancelBackgroundAnalysis() {
+        backgroundAnalysisTask?.cancel()
+        backgroundAnalysisTask = nil
+        cachedAnalysisResult = nil
+        
+        // Only reset state if we're in background scanning
+        if case .backgroundScanning = scanState {
+            scanState = .ready
         }
     }
 }

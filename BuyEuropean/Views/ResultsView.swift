@@ -97,9 +97,27 @@ struct ResultsView: View {
                             )
                             .padding(.horizontal, horizontalPadding)
                         } else {
-                            // Display rationale or classification for non-product results
-                            CenteredMessageView(message: viewModel.identificationRationale)
-                                .padding(.horizontal, horizontalPadding)
+                            // Special display for non-product classifications (animal, human, etc.)
+                            VStack(alignment: .center, spacing: 12) {
+                                // Determine emoji using helper function
+                                Text(emoji(for: viewModel.displayClassification))
+                                    .font(.system(size: 60))
+                                    .padding(.bottom, 5)
+
+                                Text(viewModel.displayClassification.displayName)
+                                    .font(.system(size: 36, weight: .bold))
+                                    .foregroundColor(.primary)
+                                    .multilineTextAlignment(.center)
+
+                                Text(viewModel.identificationRationale)
+                                    .font(.title3)
+                                    .foregroundColor(.secondary)
+                                    .multilineTextAlignment(.center)
+                                    .padding(.top, 8)
+                            }
+                            .padding(.vertical, 30) // Add vertical padding for spacing
+                            // Optional background: .background(Color(.secondarySystemBackground).cornerRadius(12))
+                            .padding(.horizontal, horizontalPadding) // Maintain horizontal padding
                         }
 
                         // --- Section 2: Alternatives ---
@@ -150,6 +168,17 @@ struct ResultsView: View {
 
         } // ZStack
         // Consider adding .ignoresSafeArea(.keyboard) if feedback includes text editor
+    }
+
+    // MARK: - Helper Functions
+    private func emoji(for classification: Classification) -> String {
+        switch classification {
+        case .cat: return "🐱"
+        case .dog: return "🐶"
+        case .animal: return "🐾"
+        case .human: return "👤"
+        default: return "❓" // Fallback
+        }
     }
 }
 
