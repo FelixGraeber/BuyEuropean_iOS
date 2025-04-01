@@ -71,6 +71,13 @@ enum Classification: String, Codable {
     }
 }
 
+// New enum for product_or_animal_or_human field
+enum ObjectType: String, Codable, Equatable {
+    case product = "product"
+    case animal = "animal"
+    case human = "human"
+}
+
 struct EuropeanAlternative: Identifiable, Codable, Equatable {
     var id = UUID() // For SwiftUI list identification
     let productName: String
@@ -87,36 +94,38 @@ struct EuropeanAlternative: Identifiable, Codable, Equatable {
 }
 
 struct BuyEuropeanResponse: Codable, Equatable {
-    let id: Int?
-    let thinking: String?
-    let identifiedProductName: String?
+    let id: Int // Changed from Int?
+    let thinking: String // Changed from String?
+    let identifiedProductName: String // Changed from String?
     let identifiedCompany: String?
-    let identifiedHeadquarters: String?
+    let identifiedCompanyHeadquarters: String? // Renamed from identifiedHeadquarters, maps to identified_company_headquarters
     let ultimateParentCompany: String?
     let ultimateParentCompanyHeadquarters: String?
-    let identificationRationale: String?
-    let rawCountry: String?
-    let classification: Classification?
+    let identificationRationale: String // Changed from String?
+    let productOrAnimalOrHuman: ObjectType // Added new field
+    let classification: Classification // Changed from Classification?
     let potentialAlternativeThinking: String?
-    let potentialAlternative: String?
-    let potentialAlternatives: [EuropeanAlternative]?
-    let inputTokens: Int?
-    let outputTokens: Int?
-    let totalTokens: Int?
+    let potentialAlternatives: [EuropeanAlternative]? // potentialAlternative removed
+    let inputTokens: Int // Changed from Int?
+    let outputTokens: Int // Changed from Int?
+    let totalTokens: Int // Changed from Int?
+    
+    // rawCountry removed
     
     enum CodingKeys: String, CodingKey {
         case id
         case thinking
         case identifiedProductName = "identified_product_name"
         case identifiedCompany = "identified_company"
-        case identifiedHeadquarters = "identified_headquarters"
+        case identifiedCompanyHeadquarters = "identified_company_headquarters" // Renamed from identifiedHeadquarters
         case ultimateParentCompany = "ultimate_parent_company"
         case ultimateParentCompanyHeadquarters = "ultimate_parent_company_headquarters"
         case identificationRationale = "identification_rationale"
-        case rawCountry = "raw_country"
+        case productOrAnimalOrHuman = "product_or_animal_or_human" // Added
+        // rawCountry removed
         case classification
         case potentialAlternativeThinking = "potential_alternative_thinking"
-        case potentialAlternative = "potential_alternative"
+        // potentialAlternative removed
         case potentialAlternatives = "potential_alternatives"
         case inputTokens = "input_tokens"
         case outputTokens = "output_tokens"

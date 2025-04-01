@@ -25,7 +25,7 @@ class ResultsViewModel: ObservableObject {
         
         // Generate a unique ID for this analysis result
         self.analysisId = UUID().uuidString
-        print("Initialized ResultsViewModel. Classification: \(response.classification?.rawValue ?? "nil")") // Debug print
+        print("Initialized ResultsViewModel. Classification: \(response.classification.rawValue ?? "nil")") // Debug print
     }
     
     // MARK: - Computed Properties for View
@@ -54,11 +54,10 @@ class ResultsViewModel: ObservableObject {
     // Product details with defaults
     var productName: String { response.identifiedProductName ?? "N/A" }
     var companyName: String { response.identifiedCompany ?? "N/A" }
-    var headquartersCountry: String { response.identifiedHeadquarters ?? "N/A" }
+    var headquartersCountry: String { response.identifiedCompanyHeadquarters ?? "N/A" }
     var parentCompany: String? { response.ultimateParentCompany }
     var parentCompanyHeadquarters: String? { response.ultimateParentCompanyHeadquarters }
     var identificationRationale: String { response.identificationRationale ?? "No rationale provided." }
-    var rawCountryDisplay: String { response.rawCountry ?? "N/A" } // Raw country from analysis
     
     // Alternatives logic, handling nil classification
     var shouldShowAlternatives: Bool {
@@ -76,7 +75,6 @@ class ResultsViewModel: ObservableObject {
     // Other fields potentially useful for display or debugging
     var thinking: String? { response.thinking }
     var potentialAlternativeThinking: String? { response.potentialAlternativeThinking }
-    var potentialAlternativeSingular: String? { response.potentialAlternative } // The singular alternative suggestion
     var inputTokens: Int? { response.inputTokens }
     var outputTokens: Int? { response.outputTokens }
     var totalTokens: Int? { response.totalTokens }

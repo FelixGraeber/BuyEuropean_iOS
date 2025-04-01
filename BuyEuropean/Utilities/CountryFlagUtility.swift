@@ -25,6 +25,14 @@ struct CountryFlagUtility {
                 .joined()
         }
         
+        // Check if it's a 3-letter ISO code
+        if normalizedCountry.count == 3, let twoLetterCode = alpha3ToAlpha2Map[normalizedCountry] {
+            return twoLetterCode
+                .unicodeScalars
+                .map { String(UnicodeScalar(127397 + $0.value)!) }
+                .joined()
+        }
+        
         // Try to find a match in our mapping (case-insensitive)
         if let countryCode = countryMap[normalizedCountry] {
             return countryCode
@@ -36,6 +44,80 @@ struct CountryFlagUtility {
         // If no match found, return globe emoji
         return "🌍"
     }
+    
+    // Mapping from ISO 3166-1 alpha-3 to alpha-2 codes
+    private static let alpha3ToAlpha2Map: [String: String] = [
+        // European Union and Europe
+        "AUT": "AT", // Austria
+        "BEL": "BE", // Belgium
+        "DNK": "DK", // Denmark
+        "FIN": "FI", // Finland
+        "FRA": "FR", // France
+        "DEU": "DE", // Germany
+        "GRC": "GR", // Greece
+        "IRL": "IE", // Ireland
+        "ITA": "IT", // Italy
+        "LUX": "LU", // Luxembourg
+        "NLD": "NL", // Netherlands
+        "PRT": "PT", // Portugal
+        "ESP": "ES", // Spain
+        "SWE": "SE", // Sweden
+        "CHE": "CH", // Switzerland
+        "GBR": "GB", // United Kingdom
+        "NOR": "NO", // Norway
+        "POL": "PL", // Poland
+        
+        // North America
+        "USA": "US", // United States
+        "CAN": "CA", // Canada
+        "MEX": "MX", // Mexico
+        
+        // Asia Pacific
+        "CHN": "CN", // China
+        "JPN": "JP", // Japan
+        "KOR": "KR", // South Korea
+        "IND": "IN", // India
+        "AUS": "AU", // Australia
+        "NZL": "NZ", // New Zealand
+        "SGP": "SG", // Singapore
+        "TWN": "TW", // Taiwan
+        "IDN": "ID", // Indonesia
+        "MYS": "MY", // Malaysia
+        "THA": "TH", // Thailand
+        "VNM": "VN", // Vietnam
+        
+        // Middle East
+        "ISR": "IL", // Israel
+        "SAU": "SA", // Saudi Arabia
+        "ARE": "AE", // United Arab Emirates
+        "TUR": "TR", // Turkey
+        
+        // South America
+        "BRA": "BR", // Brazil
+        "ARG": "AR", // Argentina
+        "CHL": "CL", // Chile
+        "COL": "CO", // Colombia
+        
+        // Eastern Europe & Russia
+        "RUS": "RU", // Russia
+        "UKR": "UA", // Ukraine
+        "CZE": "CZ", // Czech Republic
+        "HUN": "HU", // Hungary
+        "ROU": "RO", // Romania
+        
+        // Africa
+        "ZAF": "ZA", // South Africa
+        "EGY": "EG", // Egypt
+        "NGA": "NG", // Nigeria
+        "MAR": "MA", // Morocco
+        "KEN": "KE", // Kenya
+        
+        // Other Important Markets
+        "HKG": "HK", // Hong Kong
+        "MAC": "MO", // Macau
+        "QAT": "QA", // Qatar
+        "KWT": "KW", // Kuwait
+    ]
     
     // Country name to ISO code mapping
     private static let countryMap: [String: String] = [
