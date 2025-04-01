@@ -85,25 +85,22 @@ struct ProductInfoCardView: View {
             iconView(systemName: "building.2.fill", color: .purple)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text("Company & HQ Country".uppercased())
+                Text("Company".uppercased())
                     .font(.caption)
                     .fontWeight(.medium)
                     .foregroundColor(.secondary)
 
-                // Combine company, country name, and flag
-                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                // Stack company and country vertically
+                VStack(alignment: .leading, spacing: 2) {
                     Text(company)
                         .font(.body)
                         .foregroundColor(.primary)
-                        .fixedSize(horizontal: false, vertical: true) // Allow wrapping
+                        .fixedSize(horizontal: false, vertical: true)
+                    
                     Text("(\(headquarters.localizedCountryNameFromAlpha3()) \(countryFlag))")
-                        .font(.body) // Match company font size
-                        .foregroundColor(.primary) // Use primary color for country
-                        .lineLimit(1) // Prevent country wrapping
-                        .fixedSize(horizontal: true, vertical: false)
-                        .baselineOffset(1) // Adjust baseline slightly if needed
+                        .font(.body)
+                        .foregroundColor(.primary)
                 }
-                 .fixedSize(horizontal: false, vertical: true) // Allow HStack content to wrap if needed overall
             }
             Spacer()
         }
@@ -120,24 +117,18 @@ struct ProductInfoCardView: View {
                     .fontWeight(.medium)
                     .foregroundColor(.secondary)
 
-                // Combine parent company name and country/flag
-                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                // Stack parent company and country vertically
+                VStack(alignment: .leading, spacing: 2) {
                     Text(parentCompany ?? "N/A")
                         .font(.body)
                         .foregroundColor(.primary)
-                         .fixedSize(horizontal: false, vertical: true) // Allow wrapping
-
-                    // Use HQ code to get name, fallback to empty string if nil
+                        .fixedSize(horizontal: false, vertical: true)
+                    
                     let parentCountryName = parentCompanyHeadquarters?.localizedCountryNameFromAlpha3() ?? ""
-                    // Display country name and flag
                     Text("(\(parentCountryName) \(parentCompanyFlag))")
-                         .font(.body) // Match parent company font size
-                         .foregroundColor(.primary) // Use primary color for country info
-                         .lineLimit(1) // Prevent flag part wrapping
-                         .fixedSize(horizontal: true, vertical: false)
-                         .baselineOffset(1) // Adjust baseline slightly if needed
+                        .font(.body)
+                        .foregroundColor(.primary)
                 }
-                 .fixedSize(horizontal: false, vertical: true) // Allow HStack content to wrap if needed overall
             }
             Spacer()
         }

@@ -118,15 +118,13 @@ struct BuyEuropeanResponse: Codable, Equatable {
         case thinking
         case identifiedProductName = "identified_product_name"
         case identifiedCompany = "identified_company"
-        case identifiedCompanyHeadquarters = "identified_company_headquarters" // Renamed from identifiedHeadquarters
+        case identifiedCompanyHeadquarters = "identified_company_headquarters" 
         case ultimateParentCompany = "ultimate_parent_company"
         case ultimateParentCompanyHeadquarters = "ultimate_parent_company_headquarters"
         case identificationRationale = "identification_rationale"
-        case productOrAnimalOrHuman = "product_or_animal_or_human" // Added
-        // rawCountry removed
+        case productOrAnimalOrHuman = "product_or_animal_or_human" 
         case classification
         case potentialAlternativeThinking = "potential_alternative_thinking"
-        // potentialAlternative removed
         case potentialAlternatives = "potential_alternatives"
         case inputTokens = "input_tokens"
         case outputTokens = "output_tokens"
