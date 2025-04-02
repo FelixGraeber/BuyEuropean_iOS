@@ -22,9 +22,9 @@ struct ResultsView: View {
     // Share Text (can be defined directly in ShareLink if preferred)
     private var shareText: String {
         """
-        Check out the BuyEuropean app that quickly identifies products from European companies.
-        Vote with your money and support European businesses and values.
-        Download the app: \(appStoreLink)
+        BuyEuropean quickly identifies products from European companies.
+        Vote with your Money and support European businesses and values.
+        \(appStoreLink)
         """
     }
 

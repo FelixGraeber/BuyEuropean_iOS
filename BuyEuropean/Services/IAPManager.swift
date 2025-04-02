@@ -15,8 +15,7 @@ class IAPManager: ObservableObject {
 
     // --- REPLACE WITH YOUR ACTUAL PRODUCT IDS ---
     private let productIDs: Set<String> = [
-        "com.yourapp.onetime_support", // Example ID for one-time
-        "com.yourapp.monthly_support"  // Example ID for monthly subscription
+        "support_buyeuropean_0.99", // Example ID for one-time
     ]
     // --------------------------------------------
 

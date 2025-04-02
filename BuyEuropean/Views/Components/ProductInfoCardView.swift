@@ -42,6 +42,12 @@ struct ProductInfoCardView: View {
 
             // 4. Rationale Section (Always expanded)
             rationaleSection()
+            
+            // 5. AI disclaimer text
+            Text("AI can make mistakes")
+                .font(.caption2)
+                .foregroundColor(.secondary)
+                .padding(.top, 4)
         }
         .padding()
         // Use Color(.systemBackground) for SwiftUI equivalent
@@ -90,17 +96,17 @@ struct ProductInfoCardView: View {
                     .fontWeight(.medium)
                     .foregroundColor(.secondary)
 
-                // Stack company and country vertically
-                VStack(alignment: .leading, spacing: 2) {
+                // Company and country displayed horizontally
+                HStack(spacing: 4) {
                     Text(company)
                         .font(.body)
                         .foregroundColor(.primary)
-                        .fixedSize(horizontal: false, vertical: true)
                     
                     Text("(\(headquarters.localizedCountryNameFromAlpha3()) \(countryFlag))")
                         .font(.body)
                         .foregroundColor(.primary)
                 }
+                .fixedSize(horizontal: false, vertical: true)
             }
             Spacer()
         }
