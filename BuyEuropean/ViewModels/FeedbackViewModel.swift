@@ -23,8 +23,10 @@ class FeedbackViewModel: ObservableObject, @unchecked Sendable {
     
     private let apiService = APIService.shared
     
-    init(analysisId: String, initialPositive: Bool = true, analysisImage: UIImage? = nil) {
-        self.feedbackData = FeedbackModel(analysisId: analysisId, isPositive: initialPositive)
+    init(initialPositive: Bool = true, analysisImage: UIImage? = nil) {
+        // Generate a random integer ID for feedback
+        let randomId = Int.random(in: 1_000_000...9_999_999) // Example range for a random ID
+        self.feedbackData = FeedbackModel(analysisId: randomId, isPositive: initialPositive)
         self.analysisImage = analysisImage // Initialize the image property
     }
     
@@ -101,8 +103,9 @@ class FeedbackViewModel: ObservableObject, @unchecked Sendable {
         isSubmitted = false
         showDetailedFeedback = false
         error = nil
-        // Reset feedbackData, but keep the analysisId and potentially the image reference
-        feedbackData = FeedbackModel(analysisId: feedbackData.analysisId, isPositive: true) 
+        // Reset feedbackData with a new random analysisId
+        let newRandomId = Int.random(in: 1_000_000...9_999_999) // Generate a new random ID
+        feedbackData = FeedbackModel(analysisId: newRandomId, isPositive: true)
         // Note: We are NOT resetting the analysisImage here, it stays the same for this feedback session.
     }
 }

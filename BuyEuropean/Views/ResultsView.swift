@@ -37,7 +37,7 @@ struct ResultsView: View {
         let initialViewModel = ResultsViewModel(response: response, analysisImage: analysisImage)
         _viewModel = StateObject(wrappedValue: initialViewModel)
         // Pass the image to FeedbackViewModel as well
-        _feedbackViewModel = StateObject(wrappedValue: FeedbackViewModel(analysisId: initialViewModel.analysisId, analysisImage: analysisImage))
+        _feedbackViewModel = StateObject(wrappedValue: FeedbackViewModel(analysisImage: analysisImage))
     }
 
     var body: some View {
