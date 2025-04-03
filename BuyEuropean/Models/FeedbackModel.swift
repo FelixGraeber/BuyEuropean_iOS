@@ -8,7 +8,7 @@
 import Foundation
 
 struct FeedbackModel: Codable {
-    var analysisId: String
+    var analysisId: Int
     var isPositive: Bool
     var wrongProduct: Bool
     var wrongBrand: Bool
@@ -30,7 +30,7 @@ struct FeedbackModel: Codable {
         case imageData = "image_data"
     }
     
-    init(analysisId: String, isPositive: Bool = true) {
+    init(analysisId: Int, isPositive: Bool = true) {
         self.analysisId = analysisId
         self.isPositive = isPositive
         self.wrongProduct = false

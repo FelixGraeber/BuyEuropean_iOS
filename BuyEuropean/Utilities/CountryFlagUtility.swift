@@ -46,7 +46,8 @@ struct CountryFlagUtility {
     }
     
     // Mapping from ISO 3166-1 alpha-3 to alpha-2 codes
-    private static let alpha3ToAlpha2Map: [String: String] = [
+    // Make this internal static so it can be accessed by the String extension
+    internal static let alpha3ToAlpha2Map: [String: String] = [
         // European Union and Europe
         "AUT": "AT", // Austria
         "BEL": "BE", // Belgium

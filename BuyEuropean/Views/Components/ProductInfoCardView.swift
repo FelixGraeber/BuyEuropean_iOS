@@ -96,17 +96,10 @@ struct ProductInfoCardView: View {
                     .fontWeight(.medium)
                     .foregroundColor(.secondary)
 
-                // Company and country displayed horizontally
-                HStack(spacing: 4) {
-                    Text(company)
-                        .font(.body)
-                        .foregroundColor(.primary)
-                    
-                    Text("(\(headquarters.localizedCountryNameFromAlpha3()) \(countryFlag))")
-                        .font(.body)
-                        .foregroundColor(.primary)
-                }
-                .fixedSize(horizontal: false, vertical: true)
+                // Combine company name and country/flag into a single Text view for proper wrapping
+                Text("\(company) (\(headquarters.localizedCountryNameFromAlpha3()) \(countryFlag))")
+                    .font(.body)
+                    .foregroundColor(.primary)
             }
             Spacer()
         }

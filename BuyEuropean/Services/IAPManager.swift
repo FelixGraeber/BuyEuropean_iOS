@@ -15,7 +15,14 @@ class IAPManager: ObservableObject {
 
     // --- REPLACE WITH YOUR ACTUAL PRODUCT IDS ---
     private let productIDs: Set<String> = [
-        "support_buyeuropean_0.99", // Example ID for one-time
+        "support_buyeuropean_0.99",
+        "onetime_4.99",
+        "onetime_9.99",
+        "onetime_29.99",
+        "onetime_99.99",
+        "longterm_0.99", // Added subscription
+        "longterm_4.99", // Added subscription
+        "longterm_9.99", // Added subscription
     ]
     // --------------------------------------------
 
@@ -90,22 +97,6 @@ class IAPManager: ObservableObject {
             self.error = error // Store the purchase error
             throw error // Re-throw to let the caller know
         }
-    }
-
-    func restorePurchases() async {
-        print("[IAPManager] Attempting to restore purchases...")
-        error = nil // Clear previous error
-        isFetchingProducts = true // Use this flag to indicate activity
-        do {
-            try await AppStore.sync()
-            print("[IAPManager] Purchases synced successfully.")
-            // Re-verify and update entitlements after syncing
-            await updatePurchasedStatus()
-        } catch {
-            print("[IAPManager] Failed to restore purchases: \(error)")
-            self.error = error
-        }
-        isFetchingProducts = false
     }
 
     // MARK: - Private Transaction Handling

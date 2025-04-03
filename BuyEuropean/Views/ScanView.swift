@@ -81,12 +81,15 @@ struct ScanView: View {
                         } label: {
                             Text("Support")
                                 .font(.caption.weight(.semibold))
+                                .padding(.vertical, 6)   // Re-add padding for background
                                 .padding(.horizontal, 10)
-                                .padding(.vertical, 6)
-                                .background(.thinMaterial)
-                                .clipShape(Capsule())
-                                .foregroundColor(Color(red: 0 / 255, green: 51 / 255, blue: 153 / 255))
                         }
+                        // .buttonStyle(.bordered) // Remove button style
+                        .background( // Add specific background
+                            Color(red: 0 / 255, green: 51 / 255, blue: 153 / 255).opacity(0.5)
+                        )
+                        .foregroundColor(.white) // Set text color for contrast
+                        .clipShape(Capsule())         // Keep capsule shape
                         // --------------------------
                     }
                     .padding(.horizontal, geometry.size.width < 350 ? 12 : 16)
