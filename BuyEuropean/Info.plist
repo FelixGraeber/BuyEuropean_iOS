@@ -61,5 +61,19 @@
     <key>NSCameraUsageDescription</key>
     <string>This app requires access to the camera to capture photos for analysis.</string>
 
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLName</key>
+            <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>buyeuropean</string>
+            </array>
+        </dict>
+    </array>
+
 </dict>
 </plist>

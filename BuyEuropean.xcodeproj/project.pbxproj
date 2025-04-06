@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		DCC786EC2DA221DF00B7DD26 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCC786EB2DA221DF00B7DD26 /* WidgetKit.framework */; };
+		DCC786EE2DA221DF00B7DD26 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCC786ED2DA221DF00B7DD26 /* SwiftUI.framework */; };
+		DCC786F92DA221E000B7DD26 /* BuyEuropean_WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = DCC786E92DA221DF00B7DD26 /* BuyEuropean_WidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		DC6701942D7FA8F0004492E6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -21,12 +27,36 @@
 			remoteGlobalIDString = DC6701822D7FA8EF004492E6;
 			remoteInfo = BuyEuropean;
 		};
+		DCC786F72DA221E000B7DD26 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DC67017B2D7FA8EE004492E6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DCC786E82DA221DF00B7DD26;
+			remoteInfo = BuyEuropean_WidgetExtension;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		DCC786FA2DA221E000B7DD26 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				DCC786F92DA221E000B7DD26 /* BuyEuropean_WidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		DC6701832D7FA8EF004492E6 /* BuyEuropean.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BuyEuropean.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC6701932D7FA8F0004492E6 /* BuyEuropeanTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BuyEuropeanTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC67019D2D7FA8F0004492E6 /* BuyEuropeanUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BuyEuropeanUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DCC786E92DA221DF00B7DD26 /* BuyEuropean_WidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BuyEuropean_WidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		DCC786EB2DA221DF00B7DD26 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		DCC786ED2DA221DF00B7DD26 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -36,6 +66,13 @@
 				Info.plist,
 			);
 			target = DC6701822D7FA8EF004492E6 /* BuyEuropean */;
+		};
+		DCC786FE2DA221E000B7DD26 /* Exceptions for "BuyEuropean_Widget" folder in "BuyEuropean_WidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = DCC786E82DA221DF00B7DD26 /* BuyEuropean_WidgetExtension */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -56,6 +93,14 @@
 		DC6701A02D7FA8F0004492E6 /* BuyEuropeanUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = BuyEuropeanUITests;
+			sourceTree = "<group>";
+		};
+		DCC786EF2DA221DF00B7DD26 /* BuyEuropean_Widget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				DCC786FE2DA221E000B7DD26 /* Exceptions for "BuyEuropean_Widget" folder in "BuyEuropean_WidgetExtension" target */,
+			);
+			path = BuyEuropean_Widget;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -82,6 +127,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DCC786E62DA221DF00B7DD26 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DCC786EE2DA221DF00B7DD26 /* SwiftUI.framework in Frameworks */,
+				DCC786EC2DA221DF00B7DD26 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -91,6 +145,8 @@
 				DC6701852D7FA8EF004492E6 /* BuyEuropean */,
 				DC6701962D7FA8F0004492E6 /* BuyEuropeanTests */,
 				DC6701A02D7FA8F0004492E6 /* BuyEuropeanUITests */,
+				DCC786EF2DA221DF00B7DD26 /* BuyEuropean_Widget */,
+				DCC786EA2DA221DF00B7DD26 /* Frameworks */,
 				DC6701842D7FA8EF004492E6 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -101,8 +157,18 @@
 				DC6701832D7FA8EF004492E6 /* BuyEuropean.app */,
 				DC6701932D7FA8F0004492E6 /* BuyEuropeanTests.xctest */,
 				DC67019D2D7FA8F0004492E6 /* BuyEuropeanUITests.xctest */,
+				DCC786E92DA221DF00B7DD26 /* BuyEuropean_WidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		DCC786EA2DA221DF00B7DD26 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				DCC786EB2DA221DF00B7DD26 /* WidgetKit.framework */,
+				DCC786ED2DA221DF00B7DD26 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -115,10 +181,12 @@
 				DC67017F2D7FA8EF004492E6 /* Sources */,
 				DC6701802D7FA8EF004492E6 /* Frameworks */,
 				DC6701812D7FA8EF004492E6 /* Resources */,
+				DCC786FA2DA221E000B7DD26 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				DCC786F82DA221E000B7DD26 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				DC6701852D7FA8EF004492E6 /* BuyEuropean */,
@@ -176,6 +244,28 @@
 			productReference = DC67019D2D7FA8F0004492E6 /* BuyEuropeanUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		DCC786E82DA221DF00B7DD26 /* BuyEuropean_WidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DCC786FD2DA221E000B7DD26 /* Build configuration list for PBXNativeTarget "BuyEuropean_WidgetExtension" */;
+			buildPhases = (
+				DCC786E52DA221DF00B7DD26 /* Sources */,
+				DCC786E62DA221DF00B7DD26 /* Frameworks */,
+				DCC786E72DA221DF00B7DD26 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				DCC786EF2DA221DF00B7DD26 /* BuyEuropean_Widget */,
+			);
+			name = BuyEuropean_WidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = BuyEuropean_WidgetExtension;
+			productReference = DCC786E92DA221DF00B7DD26 /* BuyEuropean_WidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -183,7 +273,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1620;
+				LastSwiftUpdateCheck = 1630;
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
 					DC6701822D7FA8EF004492E6 = {
@@ -196,6 +286,9 @@
 					DC67019C2D7FA8F0004492E6 = {
 						CreatedOnToolsVersion = 16.2;
 						TestTargetID = DC6701822D7FA8EF004492E6;
+					};
+					DCC786E82DA221DF00B7DD26 = {
+						CreatedOnToolsVersion = 16.3;
 					};
 				};
 			};
@@ -216,6 +309,7 @@
 				DC6701822D7FA8EF004492E6 /* BuyEuropean */,
 				DC6701922D7FA8F0004492E6 /* BuyEuropeanTests */,
 				DC67019C2D7FA8F0004492E6 /* BuyEuropeanUITests */,
+				DCC786E82DA221DF00B7DD26 /* BuyEuropean_WidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -236,6 +330,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		DC67019B2D7FA8F0004492E6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DCC786E72DA221DF00B7DD26 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -266,6 +367,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DCC786E52DA221DF00B7DD26 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -278,6 +386,11 @@
 			isa = PBXTargetDependency;
 			target = DC6701822D7FA8EF004492E6 /* BuyEuropean */;
 			targetProxy = DC67019E2D7FA8F0004492E6 /* PBXContainerItemProxy */;
+		};
+		DCC786F82DA221E000B7DD26 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DCC786E82DA221DF00B7DD26 /* BuyEuropean_WidgetExtension */;
+			targetProxy = DCC786F72DA221E000B7DD26 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -545,6 +658,62 @@
 			};
 			name = Release;
 		};
+		DCC786FB2DA221E000B7DD26 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3DQ8523UZ9;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BuyEuropean_Widget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = BuyEuropean_Widget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "buyeuropean.BuyEuropean.BuyEuropean-Widget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		DCC786FC2DA221E000B7DD26 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3DQ8523UZ9;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BuyEuropean_Widget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = BuyEuropean_Widget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "buyeuropean.BuyEuropean.BuyEuropean-Widget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -580,6 +749,15 @@
 			buildConfigurations = (
 				DC6701AE2D7FA8F0004492E6 /* Debug */,
 				DC6701AF2D7FA8F0004492E6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DCC786FD2DA221E000B7DD26 /* Build configuration list for PBXNativeTarget "BuyEuropean_WidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DCC786FB2DA221E000B7DD26 /* Debug */,
+				DCC786FC2DA221E000B7DD26 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

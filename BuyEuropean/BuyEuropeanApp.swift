@@ -32,6 +32,12 @@ struct BuyEuropeanApp: App {
             ScanView()
                 .environmentObject(iapManager)
                 .environmentObject(entitlementManager)
+                .onOpenURL { url in
+                    // Handle the URL
+                    print("App opened with URL: \(url)")
+                    // You could add more logic here later, e.g., navigate to a specific view
+                    // based on url.path or query parameters if needed.
+                }
             // Ensure other required environment objects are still passed if needed
             // e.g., .environmentObject(SomeOtherService())
         }
