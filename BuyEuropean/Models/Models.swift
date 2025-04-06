@@ -77,6 +77,7 @@ enum ObjectType: String, Codable, Equatable {
     case animal = "animal"
     case human = "human"
     case cat = "cat"
+    case dog = "dog"
 }
 
 struct EuropeanAlternative: Identifiable, Codable, Equatable {
