@@ -19,6 +19,7 @@ struct ScanView: View {
     @StateObject private var viewModel = ScanViewModel()
     @StateObject private var permissionService = PermissionService.shared
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.colorScheme) private var colorScheme
     // Get IAP Manager from environment
     @EnvironmentObject var iapManager: IAPManager 
     // State vars derived from viewModel for sheet/haptic triggers
@@ -71,7 +72,7 @@ struct ScanView: View {
                         Text("BuyEuropean")
                             .font(geometry.size.width < 350 ? .headline : .title3)
                             .fontWeight(.bold)
-                            .foregroundColor(Color(red: 0 / 255, green: 51 / 255, blue: 153 / 255))
+                            .foregroundColor(Color.brandPrimary)
 
                         Spacer()
 
@@ -86,7 +87,7 @@ struct ScanView: View {
                         }
                         // .buttonStyle(.bordered) // Remove button style
                         .background( // Add specific background
-                            Color(red: 0 / 255, green: 51 / 255, blue: 153 / 255).opacity(0.5)
+                            Color.brandPrimary
                         )
                         .foregroundColor(.white) // Set text color for contrast
                         .clipShape(Capsule())         // Keep capsule shape
@@ -150,8 +151,8 @@ struct ScanView: View {
                                 } else if newPhase == .background {
                                     print("[ScanView] App went to background. Stopping camera session.")
                                     cameraService.stopSession()
-}
-}
+                                }
+                            }
                             .transition(.opacity.animation(.easeInOut(duration: 0.25)))
                         }
                         // --- MANUAL INPUT MODE ---
@@ -162,7 +163,7 @@ struct ScanView: View {
 
                                     ZStack {
                                         RoundedRectangle(cornerRadius: 16)
-                                            .fill(Color.white)
+                                            .fill(Color.cardBackground)
                                             .frame(
                                                 width: min(geometry.size.width - 40, 512) + 12,
                                                 height: max(
@@ -175,11 +176,7 @@ struct ScanView: View {
                                         VStack(spacing: 16) {
                                             Text("Enter a brand or product name")
                                                 .font(.headline)
-                                                .foregroundColor(
-                                                    Color(
-                                                        red: 0 / 255, green: 51 / 255,
-                                                        blue: 153 / 255)
-                                                )
+                                                .foregroundColor(Color.brandPrimary)
                                                 .padding(.top, 16)
 
                                             VStack(spacing: 12) {
@@ -190,9 +187,14 @@ struct ScanView: View {
                                                 .font(.body)  // Dynamic Type friendly
                                                 .focused($isTextFieldFocused)
                                                 .padding(12)
+                                                .foregroundColor(.primary)
                                                 .background(
                                                     RoundedRectangle(cornerRadius: 10)
-                                                        .fill(Color(.systemGray6))
+                                                        .fill(Color.inputBackground)
+                                                        .overlay(
+                                                            RoundedRectangle(cornerRadius: 10)
+                                                                .stroke(Color.inputBorder, lineWidth: 1)
+                                                        )
                                                         .shadow(
                                                             color: Color.black.opacity(0.04),
                                                             radius: 3, x: 0, y: 1)
@@ -216,21 +218,11 @@ struct ScanView: View {
                                                         RoundedRectangle(cornerRadius: 10)
                                                             .fill(
                                                                 manualInputText.isEmpty
-                                                                    ? Color(
-                                                                        red: 0 / 255,
-                                                                        green: 51 / 255,
-                                                                        blue: 153 / 255
-                                                                    ).opacity(0.5)
-                                                                    : Color(
-                                                                        red: 0 / 255,
-                                                                        green: 51 / 255,
-                                                                        blue: 153 / 255)
+                                                                    ? Color.brandPrimary.opacity(0.5)
+                                                                    : Color.brandPrimary
                                                             )
                                                             .shadow(
-                                                                color: Color(
-                                                                    red: 0 / 255, green: 51 / 255,
-                                                                    blue: 153 / 255
-                                                                ).opacity(0.25),
+                                                                color: Color.brandPrimary.opacity(0.25),
                                                                 radius: 5, x: 0, y: 2)
                                                     )
                                                     .foregroundColor(.white)
@@ -485,7 +477,7 @@ struct ScanView: View {
 
                 Image(systemName: icon)
                     .font(.system(size: iconSize(geometry: geometry), weight: .medium))
-                    .foregroundColor(Color(red: 0 / 255, green: 51 / 255, blue: 153 / 255))
+                    .foregroundColor(Color.brandPrimary)
             }
         }
     }
@@ -499,13 +491,13 @@ struct ScanView: View {
             ZStack {
                 Circle()
                     .strokeBorder(
-                        Color(red: 0 / 255, green: 51 / 255, blue: 153 / 255).opacity(0.5),
+                        Color.brandPrimary.opacity(0.5),
                         lineWidth: 3
                     )
                     .frame(width: outerSize, height: outerSize)
 
                 Circle()
-                    .fill(Color(red: 0 / 255, green: 51 / 255, blue: 153 / 255))
+                    .fill(Color.brandPrimary)
                     .frame(width: innerSize, height: innerSize)
 
                 Image(systemName: "viewfinder")
@@ -563,10 +555,10 @@ struct ScanView: View {
         .background {
             if isSelected {
                 Capsule()
-                    .fill(Color(red: 0 / 255, green: 51 / 255, blue: 153 / 255))
+                    .fill(Color.brandPrimary)
                     .matchedGeometryEffect(id: "ModeBackground", in: animation)
                     .shadow(
-                        color: Color(red: 0 / 255, green: 51 / 255, blue: 153 / 255).opacity(0.3),
+                        color: Color.brandPrimary.opacity(0.3),
                         radius: 4, x: 0, y: 2)
             }
         }

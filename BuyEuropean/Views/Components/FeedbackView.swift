@@ -16,10 +16,10 @@ struct FeedbackView: View {
     @ObservedObject var viewModel: FeedbackViewModel
     @State private var isAnimated = false // For success animation
     @State private var sharePhotoConsent: Bool = false // State for consent toggle
-
+    @Environment(\.colorScheme) private var colorScheme
+    
     // Styling constants
     private let cornerRadius: CGFloat = 16
-    private let brandColor = Color(red: 0/255, green: 51/255, blue: 153/255) // Use brand color
 
     var body: some View {
         VStack(spacing: 16) { // Main container spacing
@@ -34,9 +34,9 @@ struct FeedbackView: View {
             }
         }
         .padding() // Padding inside the card
-        .background(Color(white: 1.0)) // White background
+        .background(Color.cardBackground) // Use our card background color
         .cornerRadius(cornerRadius)
-        .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4) // Consistent shadow
+        .shadow(color: colorScheme == .dark ? Color.black.opacity(0.2) : Color.black.opacity(0.08), radius: 8, x: 0, y: 4) // Enhanced shadow for dark mode
         .onChange(of: viewModel.isSubmitted) { submitted in
             // Trigger animation only when submitted becomes true
             if submitted {
@@ -55,7 +55,7 @@ struct FeedbackView: View {
         VStack(spacing: 12) {
             ZStack {
                 Circle()
-                    .fill(Color.green.opacity(0.15)) // Consistent opacity
+                    .fill(Color.green.opacity(colorScheme == .dark ? 0.2 : 0.15)) // Adjusted for dark mode
                     .frame(width: 54, height: 54) // Slightly larger circle
 
                 Image(systemName: "checkmark")
@@ -99,32 +99,33 @@ struct FeedbackView: View {
         Button {
             viewModel.toggleFeedbackType(isPositive: isPositive)
         } label: {
-            VStack(spacing: 8) {
-                ZStack {
-                    Circle()
-                         // Use gray background, highlighted on selection? Or keep colored.
-                        .fill((isPositive ? Color.green : Color.red).opacity(0.15))
-                        .frame(width: 50, height: 50)
-                    Image(systemName: isPositive ? "hand.thumbsup.fill" : "hand.thumbsdown.fill")
-                        .font(.system(size: 22))
-                        .foregroundColor(isPositive ? .green : .red)
-                }
-                Text(isPositive ? "Yes" : "No")
-                    .font(.subheadline)
-                    .foregroundColor(.primary) // Use primary text color
+            ZStack {
+                Circle()
+                    .fill(
+                        viewModel.feedbackData.isPositive == isPositive && viewModel.feedbackData.isPositive != nil
+                            ? Color.brandPrimary.opacity(0.15)
+                            : Color.gray.opacity(0.1)
+                    )
+                    .frame(width: 60, height: 60)
+                
+                Image(systemName: isPositive ? "hand.thumbsup.fill" : "hand.thumbsdown.fill")
+                    .font(.system(size: 22))
+                    .foregroundColor(
+                        viewModel.feedbackData.isPositive == isPositive && viewModel.feedbackData.isPositive != nil
+                            ? Color.brandPrimary
+                            : .gray
+                    )
             }
         }
-        .buttonStyle(.plain) // Ensure no default button styling interferes
     }
-
 
     @ViewBuilder
     private func detailedFeedbackForm() -> some View {
-        VStack(alignment: .leading, spacing: 20) { // Consistent spacing
+        VStack(alignment: .leading, spacing: 16) {
             Text(viewModel.feedbackData.isPositive ? "What was helpful?" : "What was incorrect?")
                 .font(.headline)
                 .foregroundColor(.primary)
-
+            
             // Checkboxes/Toggles
             VStack(alignment: .leading, spacing: 12) {
                  Toggle("Product Identification", isOn: $viewModel.feedbackData.wrongProduct)
@@ -133,12 +134,12 @@ struct FeedbackView: View {
                  Toggle("Overall Classification", isOn: $viewModel.feedbackData.wrongClassification)
                  Toggle("Suggested Alternatives", isOn: $viewModel.feedbackData.wrongAlternatives)
             }
-             .toggleStyle(CheckboxToggleStyle(tintColor: brandColor)) // Apply custom style with brand color
+             .toggleStyle(CheckboxToggleStyle(tintColor: Color.brandPrimary)) // Apply custom style with brand color
 
             // Add the consent toggle here
             if viewModel.analysisImage != nil { // Only show if there is an image
                 Toggle("Share photo to improve analysis (optional)", isOn: $sharePhotoConsent)
-                    .toggleStyle(CheckboxToggleStyle(tintColor: brandColor))
+                    .toggleStyle(CheckboxToggleStyle(tintColor: Color.brandPrimary))
                     .padding(.top, 8) // Add some space above
             }
 
@@ -153,11 +154,11 @@ struct FeedbackView: View {
                     .frame(minHeight: 80, maxHeight: 150) // Adjusted height
                     .font(.body)
                     .padding(8)
-                    .background(Color.gray.opacity(0.1)) // Use light gray background
+                    .background(Color.inputBackground)
                     .cornerRadius(8) // Rounded corners for editor
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.gray.opacity(0.3), lineWidth: 1) // Subtle border
+                            .stroke(Color.inputBorder, lineWidth: 1) // Subtle border
                     )
             }
 
@@ -187,7 +188,7 @@ struct FeedbackView: View {
                 .padding(.horizontal, 24)
                 .padding(.vertical, 12) // Standard button padding
                 .frame(minHeight: 44) // Ensure minimum tap target size
-                .background(brandColor) // Use brand color
+                .background(Color.brandPrimary) // Use brand color
                 .foregroundColor(.white)
                 .clipShape(Capsule()) // Use capsule shape for submit button
                 .disabled(viewModel.isSubmitting) // Remove isFeedbackDataValid check as it's not implemented

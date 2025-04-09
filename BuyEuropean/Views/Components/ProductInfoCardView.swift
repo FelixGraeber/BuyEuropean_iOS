@@ -15,6 +15,7 @@ struct ProductInfoCardView: View {
 
     // Removed isRationaleExpanded state
     @State private var isAnimated = false
+    @Environment(\.colorScheme) private var colorScheme
 
     // Constants for styling
     private let cornerRadius: CGFloat = 16
@@ -50,10 +51,10 @@ struct ProductInfoCardView: View {
                 .padding(.top, 4)
         }
         .padding()
-        // Use Color(.systemBackground) for SwiftUI equivalent
-        .background(Color(.systemBackground))
+        // Use our cardBackground color for better dark mode support
+        .background(Color.cardBackground)
         .cornerRadius(cornerRadius)
-        .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
+        .shadow(color: colorScheme == .dark ? Color.black.opacity(0.2) : Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
         .opacity(isAnimated ? 1 : 0)
         .offset(y: isAnimated ? 0 : 15)
         .onAppear {
@@ -148,8 +149,7 @@ struct ProductInfoCardView: View {
                 Text(rationale)
                     .font(.body)
                     .foregroundColor(.primary)
-                    .lineSpacing(4)
-                    .fixedSize(horizontal: false, vertical: true) // Ensure text wraps
+                    .fixedSize(horizontal: false, vertical: true)
 
                 // Removed the conditional Group and the "Read More/Less" Button
             }

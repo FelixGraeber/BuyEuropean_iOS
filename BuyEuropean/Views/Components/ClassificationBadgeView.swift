@@ -7,6 +7,7 @@ import SwiftUI
 struct ClassificationBadgeView: View {
     let style: ClassificationStyle
     @State private var isAnimated = false
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         VStack(spacing: 12) { // Slightly reduced spacing
@@ -19,9 +20,9 @@ struct ClassificationBadgeView: View {
                 .padding(.vertical, 10) // Slightly less vertical padding for capsule
                 .background(
                     Capsule() // Use Capsule shape
-                        .fill(style.badgeColor)
+                        .fill(style.badgeColor(for: colorScheme))
                 )
-                .shadow(color: style.badgeColor.opacity(0.4), radius: 6, x: 0, y: 3) // Adjusted shadow
+                .shadow(color: style.badgeColor(for: colorScheme).opacity(0.4), radius: 6, x: 0, y: 3) // Adjusted shadow
                 .scaleEffect(isAnimated ? 1.0 : 0.8)
                 .opacity(isAnimated ? 1.0 : 0.0)
                 .animation(.spring(response: 0.5, dampingFraction: 0.7, blendDuration: 0.1), value: isAnimated) // Smooth spring

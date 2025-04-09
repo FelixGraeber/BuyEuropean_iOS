@@ -127,7 +127,7 @@ class IAPManager: ObservableObject {
             }
 
             // Update entitlements based on the latest state
-            await entitlementManager.updateUserEntitlement(basedOn: purchasedProductIDs)
+            entitlementManager.updateUserEntitlement(basedOn: purchasedProductIDs)
 
             // IMPORTANT: Always finish the transaction
             await transaction.finish()
@@ -167,7 +167,7 @@ class IAPManager: ObservableObject {
              }
         }
         self.purchasedProductIDs = validPurchasedIDs
-        await entitlementManager.updateUserEntitlement(basedOn: validPurchasedIDs)
+        entitlementManager.updateUserEntitlement(basedOn: validPurchasedIDs)
         print("[IAPManager] Updated purchased IDs: \(self.purchasedProductIDs)")
     }
 }

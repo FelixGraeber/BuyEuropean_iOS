@@ -9,6 +9,7 @@ struct AlternativeCardView: View {
     let onLearnMore: () -> Void
 
     @State private var isAnimated = false
+    @Environment(\.colorScheme) private var colorScheme
 
     // Styling constants
     private let cornerRadius: CGFloat = 12 // Slightly smaller radius for nested cards?
@@ -52,14 +53,14 @@ struct AlternativeCardView: View {
                          .font(.footnote.weight(.medium))
                          .padding(.vertical, 4) // Smaller padding for footnote button
                 }
-                .tint(.blue) // Standard tint for external links
+                .tint(Color.brandSecondary) // Use brand color for links
             }
             .padding(.top, 4) // Space above button row
         }
         .padding(12) // Reduced padding inside card
-        .background(Color(.systemBackground)) // Card background
+        .background(Color.cardBackground) // Use our color asset for better dark mode
         .cornerRadius(cornerRadius)
-        .shadow(color: Color.black.opacity(0.06), radius: 5, x: 0, y: 2) // Subtle shadow
+        .shadow(color: colorScheme == .dark ? Color.black.opacity(0.15) : Color.black.opacity(0.06), radius: 5, x: 0, y: 2) // Enhanced shadow for dark mode
         .opacity(isAnimated ? 1 : 0)
         .offset(y: isAnimated ? 0 : 10) // Reduced offset
         .onAppear {
@@ -73,19 +74,18 @@ struct AlternativeCardView: View {
 
 struct AlternativesHeaderView: View {
     @State private var isAnimated = false
-    let brandColor = Color(red: 0/255, green: 51/255, blue: 153/255) // Define brand color
-
+    @Environment(\.colorScheme) private var colorScheme
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 6) { // Reduced spacing
             HStack(spacing: 8) {
                 Image(systemName: "flag.2.crossed.fill") // More relevant icon?
                     .font(.title3) // Consistent icon size
-                    .foregroundColor(brandColor) // Use brand color
+                    .foregroundColor(Color.brandPrimary) // Use brand color
 
                 Text("European Alternatives")
-                    .font(.title3) // Match section header size in ResultsView
-                    .fontWeight(.semibold)
-                    .foregroundColor(.primary) // Use primary color for title
+                    .font(.title3) // Consistent sizing
+                    .fontWeight(.semibold) // Medium weight for better readability
             }
 
             Text("Consider these options made within Europe or by European companies.") // Updated description
