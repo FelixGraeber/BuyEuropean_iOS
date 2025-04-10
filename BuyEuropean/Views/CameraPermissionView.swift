@@ -38,13 +38,6 @@ struct CameraPermissionView: View {
                         .background(Color.blue)
                         .cornerRadius(12)
                 }
-                
-                Button {
-                    dismiss()
-                } label: {
-                    Text("Not Now")
-                        .foregroundColor(.secondary)
-                }
             }
             .padding(.bottom, 32)
         }
