@@ -35,20 +35,13 @@ struct LocationPermissionView: View {
                         dismiss()
                     }
                 } label: {
-                    Text("Allow Location Access") // Updated button text
+                    Text("Continue") // Updated button text
                         .font(.headline)
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.green) // Match icon color
                         .cornerRadius(12)
-                }
-
-                Button {
-                    dismiss() // Just dismiss if "Not Now"
-                } label: {
-                    Text("Not Now")
-                        .foregroundColor(.secondary)
                 }
             }
             .padding(.bottom, 32)
