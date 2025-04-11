@@ -67,6 +67,22 @@ struct SupportView: View {
                         .foregroundColor(.gray)
                         .frame(maxWidth: .infinity, alignment: .center) // Center caption
                         .padding(.bottom, 10)
+
+                    // Add links for compliance
+                    HStack(spacing: 15) { // Spacing between links
+                        if let privacyURL = URL(string: "https://buyeuropean.io/privacy-policy") {
+                            Link("Privacy Policy", destination: privacyURL)
+                        }
+                        if let termsURL = URL(string: "https://buyeuropean.io/terms") {
+                            Link("Terms of Use", destination: termsURL)
+                        }
+                        if let eulaURL = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/") {
+                             Link("EULA", destination: eulaURL)
+                        }
+                    }
+                    .font(.caption) // Style links similar to the text above
+                    .frame(maxWidth: .infinity, alignment: .center) // Center the HStack
+                    .padding(.bottom, 20) // Add some bottom padding
                 }
                 .padding(.horizontal, 20) // Apply horizontal padding to the VStack content
             }
