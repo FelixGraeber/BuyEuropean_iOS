@@ -106,7 +106,7 @@ class ResultsViewModel: ObservableObject {
     func openWebSearch(for alternative: EuropeanAlternative) {
         let searchQuery = "\(alternative.productName) \(alternative.company)"
         if let encodedQuery = searchQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
-           let url = URL(string: "https://www.google.com/search?q=\(encodedQuery)") {
+           let url = URL(string: "https://www.qwant.com/?q=\(encodedQuery)") {
             UIApplication.shared.open(url)
         }
     }
