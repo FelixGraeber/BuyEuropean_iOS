@@ -25,6 +25,23 @@ class ResultsViewModel: ObservableObject {
     // Generated ID for feedback
     let analysisId: String
     
+    // --- FEEDBACK TRACKING ---
+    @Published var submittedFeedbackIds: Set<Int> = {
+        if let saved = UserDefaults.standard.array(forKey: "SubmittedFeedbackIds") as? [Int] {
+            return Set(saved)
+        }
+        return []
+    }()
+
+    func markFeedbackSubmitted(for analysisId: Int) {
+        submittedFeedbackIds.insert(analysisId)
+        UserDefaults.standard.set(Array(submittedFeedbackIds), forKey: "SubmittedFeedbackIds")
+    }
+
+    func hasSubmittedFeedback(for analysisId: Int) -> Bool {
+        submittedFeedbackIds.contains(analysisId)
+    }
+    
     init(response: BuyEuropeanResponse, analysisImage: UIImage?) {
         self.response = response
         self.analysisImage = analysisImage

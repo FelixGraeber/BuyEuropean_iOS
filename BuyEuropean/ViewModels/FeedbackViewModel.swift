@@ -66,6 +66,14 @@ class FeedbackViewModel: ObservableObject, @unchecked Sendable {
     
     private let apiService = APIService.shared
     
+    // --- FEEDBACK SUBMISSION CALLBACKS ---
+    var markFeedbackSubmittedCallback: ((Int) -> Void)?
+    var hasSubmittedFeedbackCallback: ((Int) -> Bool)?
+    var analysisId: Int { feedbackData.analysisId }
+    var hasSubmittedFeedback: Bool {
+        hasSubmittedFeedbackCallback?(analysisId) ?? false
+    }
+    
     init(initialPositive: Bool = true, analysisImage: UIImage? = nil) {
         // Generate a random integer ID for feedback
         let randomId = Int.random(in: 1_000_000...9_999_999) // Example range for a random ID
@@ -128,14 +136,8 @@ class FeedbackViewModel: ObservableObject, @unchecked Sendable {
                 await MainActor.run {
                     self.isSubmitting = false
                     self.isSubmitted = true
-                    
-                    // Reset form after 3 seconds if still showing
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
-                        guard let self = self else { return }
-                        if self.isSubmitted {
-                            self.resetForm()
-                        }
-                    }
+                    // Mark feedback as submitted for this analysisId
+                    self.markFeedbackSubmittedCallback?(self.analysisId)
                 }
             } catch let apiError as APIError {
                 await MainActor.run {
@@ -149,15 +151,5 @@ class FeedbackViewModel: ObservableObject, @unchecked Sendable {
                 }
             }
         }
-    }
-    
-    func resetForm() {
-        isSubmitted = false
-        showDetailedFeedback = false
-        error = nil
-        // Reset feedbackData with a new random analysisId
-        let newRandomId = Int.random(in: 1_000_000...9_999_999) // Generate a new random ID
-        feedbackData = FeedbackModel(analysisId: newRandomId, isPositive: true)
-        // Note: We are NOT resetting the analysisImage here, it stays the same for this feedback session.
     }
 }
