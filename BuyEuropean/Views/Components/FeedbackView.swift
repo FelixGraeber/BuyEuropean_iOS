@@ -153,6 +153,31 @@ struct FeedbackView: View {
             .toggleStyle(CheckboxToggleStyle(tintColor: Color("BrandPrimary")))
             .padding(.horizontal, 12)
             .padding(.top, 8)
+            if viewModel.canSharePhoto {
+                // Add separation and a distinct look for the image consent checkbox
+                VStack(alignment: .leading, spacing: 0) {
+                    Spacer(minLength: 10)
+                    Toggle(isOn: $viewModel.sharePhotoConsent) {
+                        HStack {
+                            Image(systemName: "photo.on.rectangle")
+                                .foregroundColor(Color("BrandPrimary"))
+                            Text("Send image to help us improve")
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color("BrandPrimary"))
+                        }
+                    }
+                    .toggleStyle(CheckboxToggleStyle(tintColor: Color("BrandPrimary")))
+                    .padding(.all, 10)
+                    .background(Color("InputBackground").opacity(0.85))
+                    .cornerRadius(10)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color("BrandPrimary").opacity(0.4), lineWidth: 1)
+                    )
+                    .padding(.horizontal, 4)
+                }
+                .padding(.top, 8)
+            }
             VStack(alignment: .leading, spacing: 6) {
                 Text("Additional details (optional)")
                     .font(.subheadline)
@@ -179,7 +204,7 @@ struct FeedbackView: View {
             HStack {
                 Spacer()
                 Button(action: {
-                    viewModel.submitFeedback(sharePhotoConsent: false)
+                    viewModel.submitFeedback()
                 }) {
                     if viewModel.isSubmitting {
                         ProgressView()

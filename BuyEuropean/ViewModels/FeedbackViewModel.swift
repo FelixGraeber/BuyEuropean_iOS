@@ -65,6 +65,7 @@ class FeedbackViewModel: ObservableObject, @unchecked Sendable {
     @Published var error: String? = nil
     @Published var showDetailedFeedback = false
     @Published var showRatingPrompt: Bool = false
+    @Published var sharePhotoConsent: Bool = false
     
     private let hasRatedOrSharedKey = "hasRatedOrSharedApp"
     
@@ -72,6 +73,8 @@ class FeedbackViewModel: ObservableObject, @unchecked Sendable {
     var hasRatedOrSharedApp: Bool {
         UserDefaults.standard.bool(forKey: hasRatedOrSharedKey)
     }
+    
+    var canSharePhoto: Bool { analysisImage != nil }
     
     // Call this after a successful positive feedback submission
     func promptForRatingIfNeeded() {
@@ -110,11 +113,15 @@ class FeedbackViewModel: ObservableObject, @unchecked Sendable {
         // If positive feedback, auto-submit without showing detailed form
         if isPositive {
             // Pass false for consent since the detailed form is skipped
-            submitFeedback(sharePhotoConsent: false)
+            submitFeedback(sharePhotoConsent: sharePhotoConsent)
             promptForRatingIfNeeded()
         } else {
             showDetailedFeedback = true
         }
+    }
+    
+    func submitFeedback() {
+        submitFeedback(sharePhotoConsent: sharePhotoConsent)
     }
     
     func submitFeedback(sharePhotoConsent: Bool) {
