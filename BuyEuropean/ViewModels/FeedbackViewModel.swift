@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 import UIKit // Import UIKit for UIImage
+import StoreKit // Import StoreKit for SKStoreReviewController
 
 // MARK: - UIImage Extension for Resizing
 extension UIImage {
@@ -63,6 +64,28 @@ class FeedbackViewModel: ObservableObject, @unchecked Sendable {
     @Published var isSubmitted = false
     @Published var error: String? = nil
     @Published var showDetailedFeedback = false
+    @Published var showRatingPrompt: Bool = false
+    
+    private let hasRatedOrSharedKey = "hasRatedOrSharedApp"
+    
+    // Helper to check if user has rated/shared
+    var hasRatedOrSharedApp: Bool {
+        UserDefaults.standard.bool(forKey: hasRatedOrSharedKey)
+    }
+    
+    // Call this after a successful positive feedback submission
+    func promptForRatingIfNeeded() {
+        if !hasRatedOrSharedApp {
+            SKStoreReviewController.requestReview()
+            setHasRatedOrSharedApp()
+        }
+    }
+    
+    // Call this after user rates or shares
+    func setHasRatedOrSharedApp() {
+        UserDefaults.standard.set(true, forKey: hasRatedOrSharedKey)
+        showRatingPrompt = false
+    }
     
     private let apiService = APIService.shared
     
@@ -88,6 +111,7 @@ class FeedbackViewModel: ObservableObject, @unchecked Sendable {
         if isPositive {
             // Pass false for consent since the detailed form is skipped
             submitFeedback(sharePhotoConsent: false)
+            promptForRatingIfNeeded()
         } else {
             showDetailedFeedback = true
         }

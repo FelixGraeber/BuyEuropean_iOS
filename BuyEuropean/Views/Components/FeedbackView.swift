@@ -1,23 +1,15 @@
 import SwiftUI
+import StoreKit
 
-// Assume FeedbackViewModel and its FeedbackData struct are defined:
-// class FeedbackViewModel: ObservableObject {
-//    @Published var isSubmitted = false
-//    @Published var showDetailedFeedback = false
-//    @Published var isSubmitting = false
-//    @Published var error: String?
-//    @Published var feedbackData = FeedbackData()
-//    func toggleFeedbackType(isPositive: Bool) { ... }
-//    func submitFeedback() { ... }
-// }
-// struct FeedbackData { var wrongProduct = false ... var feedbackText = "" }
+// Models/ViewModels imported from current project
+// If you see "Cannot find type 'FeedbackViewModel'", you need to either:
+// 1. Make sure the build target includes both this file and FeedbackViewModel.swift
+// 2. Or update this struct to match the exact implementation in your project
 
 struct FeedbackView: View {
     @ObservedObject var viewModel: FeedbackViewModel
     @State private var isAnimated = false // For success animation
-    @State private var sharePhotoConsent: Bool = false // State for consent toggle
     @Environment(\.colorScheme) private var colorScheme
-    
     // Styling constants
     private let cornerRadius: CGFloat = 16
 
@@ -37,7 +29,7 @@ struct FeedbackView: View {
                 }
             }
             .frame(maxWidth: .infinity)
-            .background(Color.cardBackground)
+            .background(Color("CardBackground"))
             .cornerRadius(cornerRadius)
             .shadow(color: colorScheme == .dark ? Color.black.opacity(0.2) : Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
         }
@@ -48,6 +40,9 @@ struct FeedbackView: View {
                 isAnimated = false // Reset first
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
                     isAnimated = true
+                }
+                if submitted && viewModel.feedbackData.isPositive {
+                    viewModel.showRatingPrompt = true
                 }
             }
         }
@@ -105,8 +100,8 @@ struct FeedbackView: View {
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
                     isAnimated = true
                 }
-                // Submit feedback in the background
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                // Execute the feedback toggle after a delay
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     viewModel.toggleFeedbackType(isPositive: true)
                 }
             } else {
@@ -117,17 +112,25 @@ struct FeedbackView: View {
             ZStack {
                 Circle()
                     .fill(
-                        viewModel.feedbackData.isPositive == isPositive && viewModel.feedbackData.isPositive != nil
-                            ? Color.brandPrimary.opacity(0.15)
+                        viewModel.feedbackData.isPositive == isPositive 
+                            ? Color("BrandPrimary").opacity(0.15)
                             : Color.gray.opacity(0.1)
                     )
-                    .frame(width: 60, height: 60)
-                
+                    .frame(width: 52, height: 52)
+                    .overlay(
+                        Circle()
+                            .stroke(
+                                viewModel.feedbackData.isPositive == isPositive
+                                    ? Color("BrandPrimary")
+                                    : .gray,
+                                lineWidth: 2
+                            )
+                    )
                 Image(systemName: isPositive ? "hand.thumbsup.fill" : "hand.thumbsdown.fill")
                     .font(.system(size: 22))
                     .foregroundColor(
-                        viewModel.feedbackData.isPositive == isPositive && viewModel.feedbackData.isPositive != nil
-                            ? Color.brandPrimary
+                        viewModel.feedbackData.isPositive == isPositive
+                            ? Color("BrandPrimary")
                             : .gray
                     )
             }
@@ -146,13 +149,8 @@ struct FeedbackView: View {
                 Toggle("Country Identification (HQ)", isOn: $viewModel.feedbackData.wrongCountry)
                 Toggle("Overall Classification", isOn: $viewModel.feedbackData.wrongClassification)
                 Toggle("Suggested Alternatives", isOn: $viewModel.feedbackData.wrongAlternatives)
-                if viewModel.analysisImage != nil {
-                    Toggle("Share photo to improve analysis (optional)", isOn: $sharePhotoConsent)
-                        .toggleStyle(CheckboxToggleStyle(tintColor: Color.brandPrimary))
-                        .padding(.top, 8)
-                }
             }
-            .toggleStyle(CheckboxToggleStyle(tintColor: Color.brandPrimary))
+            .toggleStyle(CheckboxToggleStyle(tintColor: Color("BrandPrimary")))
             .padding(.horizontal, 12)
             .padding(.top, 8)
             VStack(alignment: .leading, spacing: 6) {
@@ -164,11 +162,11 @@ struct FeedbackView: View {
                     .frame(minHeight: 80, maxHeight: 150)
                     .font(.body)
                     .padding(8)
-                    .background(Color.inputBackground)
+                    .background(Color("InputBackground"))
                     .cornerRadius(8)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.inputBorder, lineWidth: 1)
+                            .stroke(Color("InputBorder"), lineWidth: 1)
                     )
             }
             .padding(.horizontal, 12)
@@ -181,7 +179,7 @@ struct FeedbackView: View {
             HStack {
                 Spacer()
                 Button(action: {
-                    viewModel.submitFeedback(sharePhotoConsent: sharePhotoConsent)
+                    viewModel.submitFeedback(sharePhotoConsent: false)
                 }) {
                     if viewModel.isSubmitting {
                         ProgressView()
@@ -195,7 +193,7 @@ struct FeedbackView: View {
                 .padding(.horizontal, 24)
                 .padding(.vertical, 12)
                 .frame(minHeight: 44)
-                .background(Color.brandPrimary)
+                .background(Color("BrandPrimary"))
                 .foregroundColor(.white)
                 .clipShape(Capsule())
                 .disabled(viewModel.isSubmitting)
@@ -206,7 +204,7 @@ struct FeedbackView: View {
         }
         .padding(.vertical, 16)
         .padding(.horizontal, 8)
-        .background(Color.cardBackground)
+        .background(Color("CardBackground"))
         .cornerRadius(cornerRadius)
         .shadow(color: colorScheme == .dark ? Color.black.opacity(0.12) : Color.black.opacity(0.06), radius: 8, x: 0, y: 4)
     }
