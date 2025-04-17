@@ -32,8 +32,11 @@ struct HistoryView: View {
                     }
                     Spacer()
                     ClassificationBadgeView(
-                        style: ClassificationStyle.forClassification(item.response.classification)
+                        style: ClassificationStyle.forClassification(item.response.classification),
+                        font: .caption2
                     )
+                    .frame(height: 14)
+                    .fixedSize(horizontal: true, vertical: false)
                 }
                 .padding(.vertical, 4)
             }
