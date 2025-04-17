@@ -72,6 +72,7 @@ struct ScanView: View {
                                 .font(.title3)
                                 .foregroundColor(Color.brandPrimary)
                         }
+                        Spacer()
                         Image("AppIconImage")  // Ensure this asset exists
                             .resizable()
                             .scaledToFit()
