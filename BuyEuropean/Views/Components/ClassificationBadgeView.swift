@@ -26,16 +26,6 @@ struct ClassificationBadgeView: View {
                 .scaleEffect(isAnimated ? 1.0 : 0.8)
                 .opacity(isAnimated ? 1.0 : 0.0)
                 .animation(.spring(response: 0.5, dampingFraction: 0.7, blendDuration: 0.1), value: isAnimated) // Smooth spring
-
-            // Description text
-            Text(style.description)
-                .font(.subheadline) // Keep subheadline
-                .foregroundColor(.secondary) // Use standard secondary color
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 24) // Consistent horizontal padding
-                .opacity(isAnimated ? 1.0 : 0.0)
-                .offset(y: isAnimated ? 0 : 10)
-                .animation(.easeOut(duration: 0.5).delay(0.15), value: isAnimated) // Slightly adjusted delay
         }
         .padding(.vertical, 8) // Keep overall vertical padding
         .onAppear {
