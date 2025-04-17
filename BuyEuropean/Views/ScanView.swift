@@ -63,45 +63,42 @@ struct ScanView: View {
             GeometryReader { geometry in
                 VStack(spacing: 0) {
                     // MARK: - Header
-                    HStack(spacing: 10) {
-                        // History button
+                    HStack {
+                        // History icon (outlined, less filled)
                         Button {
                             showHistory = true
                         } label: {
-                            Image(systemName: "clock.fill")
+                            Image(systemName: "clock")
                                 .font(.title3)
+                                .foregroundColor(Color.brandPrimary.opacity(0.75))
+                        }
+                        .frame(width: 44, height: 44, alignment: .center) // Touch target
+
+                        Spacer()
+                        // Centered logo+title group
+                        HStack(spacing: 8) {
+                            Image("AppIconImage")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 32, height: 32)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                            Text("BuyEuropean")
+                                .font(geometry.size.width < 350 ? .headline : .title3)
+                                .fontWeight(.bold)
                                 .foregroundColor(Color.brandPrimary)
                         }
-                        Spacer()
-                        Image("AppIconImage")  // Ensure this asset exists
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 32, height: 32)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-
-                        Text("BuyEuropean")
-                            .font(geometry.size.width < 350 ? .headline : .title3)
-                            .fontWeight(.bold)
-                            .foregroundColor(Color.brandPrimary)
-
+                        .frame(maxWidth: .infinity, alignment: .center)
                         Spacer()
 
-                        // --- Add Support Button --- 
+                        // Support icon (heart, outlined, less filled)
                         Button {
                             showSupportSheet = true
                         } label: {
-                            Text("Support")
-                                .font(.caption.weight(.semibold))
-                                .padding(.vertical, 6)   // Re-add padding for background
-                                .padding(.horizontal, 10)
+                            Image(systemName: "heart")
+                                .font(.title3)
+                                .foregroundColor(Color.brandPrimary.opacity(0.75))
                         }
-                        // .buttonStyle(.bordered) // Remove button style
-                        .background( // Add specific background
-                            Color.brandPrimary
-                        )
-                        .foregroundColor(.white) // Set text color for contrast
-                        .clipShape(Capsule())         // Keep capsule shape
-                        // --------------------------
+                        .frame(width: 44, height: 44, alignment: .center)
                     }
                     .padding(.horizontal, geometry.size.width < 350 ? 12 : 16)
                     .padding(.vertical, 10)
