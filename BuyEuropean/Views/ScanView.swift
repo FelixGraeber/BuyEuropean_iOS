@@ -26,6 +26,7 @@ struct ScanView: View {
     @State private var showResultsHapticTrigger = false
     @State private var showErrorHapticTrigger = false
     @State private var showSupportSheet = false // State to present the SupportView
+    @State private var showHistory = false // State to present the HistoryView
 
     @State private var manualInputText = ""
     @State private var selectedMode: InputMode = .camera
@@ -63,6 +64,14 @@ struct ScanView: View {
                 VStack(spacing: 0) {
                     // MARK: - Header
                     HStack(spacing: 10) {
+                        // History button
+                        Button {
+                            showHistory = true
+                        } label: {
+                            Image(systemName: "clock.fill")
+                                .font(.title3)
+                                .foregroundColor(Color.brandPrimary)
+                        }
                         Image("AppIconImage")  // Ensure this asset exists
                             .resizable()
                             .scaledToFit()
@@ -342,6 +351,21 @@ struct ScanView: View {
                 // Pass the IAPManager from the environment
                 SupportView()
                     .environmentObject(iapManager)
+            }
+            // History sheet
+            .sheet(isPresented: $showHistory) {
+                NavigationView {
+                    HistoryView { item in
+                        viewModel.scanState = .result(item.response, nil)
+                        showHistory = false
+                    }
+                    .navigationTitle("History")
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("Close") { showHistory = false }
+                        }
+                    }
+                }
             }
         }
         .onAppear {
