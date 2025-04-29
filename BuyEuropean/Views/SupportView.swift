@@ -1,213 +1,281 @@
 import SwiftUI
 import StoreKit
+import MessageUI
 
-// Define the support type options
-enum SupportType: String, CaseIterable, Identifiable {
-    case oneTime = "One-Time"
-    case monthly = "Monthly"
-    var id: String { self.rawValue }
+/// Returns a descriptive string for a given product based on ID and subscription type.
+func getProductDescription(for product: Product?, isSubscription: Bool) -> String {
+    guard let product = product else { return "" }
+    if isSubscription {
+        switch product.id {
+        case let id where id.contains("0.99"): return "Fund BuyEuropean for a few hours each month"
+        case let id where id.contains("4.99"): return "Fund BuyEuropean for a day each month"
+        case let id where id.contains("9.99"): return "Fund BuyEuropean for a few days each month"
+        case let id where id.contains("29.99"): return "Fund BuyEuropean for a week each month"
+        case let id where id.contains("99.99"): return "Fund BuyEuropean for a few weeks each month"
+        default: return "Support BuyEuropean monthly"
+        }
+    } else {
+        switch product.id {
+        case let id where id.contains("support_buyeuropean"): return "Support BuyEuropean with a small donation"
+        case let id where id.contains("0.99"): return "Fund BuyEuropean for a few hours"
+        case let id where id.contains("4.99"): return "Fund BuyEuropean for a day"
+        case let id where id.contains("9.99"): return "Fund BuyEuropean for a few days"
+        case let id where id.contains("29.99"): return "Fund BuyEuropean for a week"
+        case let id where id.contains("99.99"): return "Fund BuyEuropean for a few weeks"
+        default: return "Support BuyEuropean"
+        }
+    }
 }
 
 struct SupportView: View {
-    @EnvironmentObject var iapManager: IAPManager
-    @Environment(\.dismiss) var dismiss
-    @State private var showAlert = false
-    @State private var alertMessage = ""
-    // State to track the selected support type
-    @State private var selectedSupportType: SupportType = .oneTime
+    @EnvironmentObject private var iapManager: IAPManager
+    @Environment(\.dismiss) private var dismiss
 
-    // Filtered product lists based on type
-    private var oneTimeProducts: [Product] {
-        iapManager.products.filter { $0.id.hasPrefix("onetime_") || $0.id.hasPrefix("support_") }.sorted { $0.price < $1.price }
+    // MARK: Tabs
+    enum Tab: Int, CaseIterable, Identifiable {
+        case support, feedback
+        var id: Int { rawValue }
+        var title: String { self == .support ? "Support" : "Feedback" }
     }
 
+    @State private var selectedTab: Tab = .support
+    @State private var isSubscription: Bool = false
+    @State private var selectedOneTimeIndex: Int? = nil
+    @State private var selectedSubIndex: Int? = nil
+    @State private var showShareSheet = false
+    @State private var showMailCompose = false
+
+    // MARK: Product Lists
+    private var oneTimeProducts: [Product] {
+        iapManager.products
+            .filter { $0.id.contains("onetime_") || $0.id.contains("support_buyeuropean") }
+            .sorted { $0.price < $1.price }
+    }
     private var monthlyProducts: [Product] {
-        iapManager.products.filter { $0.id.hasPrefix("longterm_") }.sorted { $0.price < $1.price }
+        iapManager.products
+            .filter { $0.id.contains("longterm_") }
+            .sorted { $0.price < $1.price }
+    }
+    private var currentProducts: [Product] {
+        isSubscription ? monthlyProducts : oneTimeProducts
+    }
+    private var selectedProduct: Product? {
+        let idx = isSubscription ? selectedSubIndex : selectedOneTimeIndex
+        guard let i = idx, currentProducts.indices.contains(i) else { return nil }
+        return currentProducts[i]
     }
 
     var body: some View {
-        NavigationView { // Embed in NavigationView for title and close button
-            ScrollView { // Use ScrollView for potentially longer lists
-                VStack(alignment: .leading, spacing: 20) {
-
-                    Text("Support BuyEuropean")
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.top, 10) // Reduced top padding slightly
-
-                    // Updated explanatory text
-                    Text("To keep BuyEuropean free and ad-free, we rely on community support. Choose how you'd like to contribute:")
-                        .font(.body)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.leading)
-
-                    // Picker for selecting support type
-                    Picker("Support Type", selection: $selectedSupportType) {
-                        ForEach(SupportType.allCases) { type in
-                            Text(type.rawValue).tag(type)
+        NavigationStack {
+            List {
+                // MARK: Tab Picker
+                Section {
+                    Picker(selection: $selectedTab, label: EmptyView()) {
+                        ForEach(Tab.allCases) { tab in
+                            Text(tab.title).tag(tab)
                         }
                     }
-                    .pickerStyle(.segmented) // Use segmented control style
-                    .padding(.bottom, 10)
-
-                    if iapManager.isFetchingProducts {
-                        ProgressView("Loading Products...")
-                            .padding(.top, 20) // Adjusted padding
-                            .frame(maxWidth: .infinity, alignment: .center)
-                    } else {
-                        // Display products based on selection
-                        displayProductList()
-                    }
-
-                    Spacer(minLength: 20) // Ensure some space before the restore button
-
-                    Text("Payments are processed securely by Apple.")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                        .frame(maxWidth: .infinity, alignment: .center) // Center caption
-                        .padding(.bottom, 10)
-
-                    // Add links for compliance
-                    HStack(spacing: 15) { // Spacing between links
-                        if let privacyURL = URL(string: "https://buyeuropean.io/privacy-policy") {
-                            Link("Privacy Policy", destination: privacyURL)
-                        }
-                        if let termsURL = URL(string: "https://buyeuropean.io/terms") {
-                            Link("Terms of Use", destination: termsURL)
-                        }
-                        if let eulaURL = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/") {
-                             Link("EULA", destination: eulaURL)
-                        }
-                    }
-                    .font(.caption) // Style links similar to the text above
-                    .frame(maxWidth: .infinity, alignment: .center) // Center the HStack
-                    .padding(.bottom, 20) // Add some bottom padding
+                    .pickerStyle(.segmented)
                 }
-                .padding(.horizontal, 20) // Apply horizontal padding to the VStack content
+
+                // MARK: Support Tab
+                if selectedTab == .support {
+                    shareSection
+                    donateSection
+                }
+                
+                // MARK: Feedback Tab
+                if selectedTab == .feedback {
+                    feedbackSection
+                }
             }
-            .navigationTitle("Support Us") // Set the navigation title
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar { // Add a close button
+            .listStyle(.insetGrouped)
+            .navigationTitle("Support Us")
+            .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Close") {
-                        dismiss()
+                    Button("Close") { dismiss() }
+                }
+            }
+            .refreshable { await iapManager.fetchProducts() }
+            // Share Sheet
+            .sheet(isPresented: $showShareSheet) {
+                ActivityView(activityItems: ["Check out BuyEuropean: https://BuyEuropean.io"])            }
+            // Mail Compose
+            .sheet(isPresented: $showMailCompose) {
+                MailComposeView(recipient: "contact@buyeuropean.io") { result in
+                    if case .sent = result {
+                        FeedbackViewModel().promptForRatingIfNeeded()
                     }
                 }
             }
-            .alert("Info", isPresented: $showAlert) { // Changed title to Info for general messages
-                Button("OK", role: .cancel) { }
-            } message: {
-                Text(alertMessage)
-            }
-            // Show error specific to IAP Manager separately if needed
-            .alert("Purchase Error", isPresented: .constant(iapManager.error != nil), presenting: iapManager.error) { _ in
-                 Button("OK") { iapManager.error = nil } // Clear error on dismiss
-            } message: { error in
-                 Text(error.localizedDescription)
-            }
+            .task { initializeSelection() }
         }
-        .navigationViewStyle(.stack) // Use stack style for better appearance on larger devices if needed
     }
 
-    // ViewBuilder for displaying the correct product list
-    @ViewBuilder
-    private func displayProductList() -> some View {
-        let productsToDisplay = (selectedSupportType == .oneTime) ? oneTimeProducts : monthlyProducts
-        let listIsEmpty = productsToDisplay.isEmpty
-
-        if listIsEmpty && !iapManager.isFetchingProducts && iapManager.products.isEmpty {
-             // Case: No products fetched at all
-             Text("Could not load support options. Please check your connection and try again.")
-                 .foregroundColor(.red)
-                 .multilineTextAlignment(.leading)
-                 .padding()
-        } else if listIsEmpty && !iapManager.isFetchingProducts {
-            // Case: Products fetched, but none match the selected type (unlikely with current setup, but good practice)
-             Text("No \(selectedSupportType.rawValue.lowercased()) options available at this time.")
-                 .foregroundColor(.secondary)
-                 .multilineTextAlignment(.center)
-                 .padding()
-        } else {
-            // Display the filtered list
-            VStack(spacing: 15) { // Add spacing between product buttons
-                ForEach(productsToDisplay) { product in
-                    productButton(product)
+    // MARK: Share Section
+    private var shareSection: some View {
+        Section(header: Text("Share BuyEuropean")) {
+            Button { showShareSheet = true } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: "square.and.arrow.up")
+                        .foregroundColor(.accentColor)
+                        .frame(width: 24, height: 24)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Share BuyEuropean").font(.headline)
+                        Text("Help us grow the BuyEuropean movement by sharing the app.")
+                            .font(.subheadline).foregroundColor(.secondary)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.forward").foregroundColor(.secondary)
                 }
+                .padding(.vertical, 4)
             }
         }
     }
 
+    // MARK: Donate Section
+    private var donateSection: some View {
+        Section(header: Text("Donate to Support")) {
+            Text("Keep BuyEuropean free and ad-free, choose how you'd like to support:")
+                .font(.subheadline).foregroundColor(.secondary).padding(.vertical, 4)
 
-    // Product Button View (Remains largely the same)
-    @ViewBuilder
-    private func productButton(_ product: Product) -> some View {
-        Button {
-            Task {
-                do {
-                    try await iapManager.purchase(product)
-                    // Optional: Show success message or dismiss view
-                    if iapManager.purchasedProductIDs.contains(product.id) {
-                       alertMessage = "Thank you for your support!"
-                       showAlert = true
-                       // Optionally dismiss after a delay?
+            if iapManager.isFetchingProducts {
+                HStack { Spacer(); ProgressView(); Spacer() }
+            } else if currentProducts.isEmpty {
+                Text("Unable to load support options—pull down to retry.")
+                    .foregroundColor(.red)
+                    .font(.subheadline)
+                    .multilineTextAlignment(.center)
+                    .padding(.vertical, 4)
+            } else {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 80), spacing: 12)], spacing: 12) {
+                    ForEach(currentProducts.indices, id: \.self) { idx in
+                        let prod = currentProducts[idx]
+                        let isSel = (isSubscription ? selectedSubIndex : selectedOneTimeIndex) == idx
+                        Button {
+                            if isSubscription {
+                                selectedSubIndex = idx
+                            } else {
+                                selectedOneTimeIndex = idx
+                            }
+                        } label: {
+                            Text(prod.displayPrice)
+                                .font(.subheadline.bold())
+                                .frame(maxWidth: .infinity, minHeight: 44)
+                                .background(isSel ? Color.accentColor : Color.clear)
+                                .foregroundColor(isSel ? .white : .accentColor)
+                                .overlay(RoundedRectangle(cornerRadius: 8)
+                                            .stroke(Color.accentColor, lineWidth: 1))
+                                .cornerRadius(8)
+                        }
+                        .buttonStyle(PlainButtonStyle()) // Use PlainButtonStyle to prevent default button behavior
                     }
-                } catch {
-                    // Error is now handled by the .alert modifier bound to iapManager.error
-                    print("[SupportView] Purchase failed: \(error)")
-                    // No need to set local alert state here anymore
                 }
-            }
-        } label: {
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(product.displayName)
-                        .font(.headline)
-                        .fontWeight(.semibold)
-                    Text(product.description)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+                .padding(.vertical, 4)
+
+                if let prod = selectedProduct {
+                    Text(getProductDescription(for: prod, isSubscription: isSubscription))
+                        .font(.caption).foregroundColor(.secondary).padding(.vertical, 4)
                 }
-                Spacer()
-                Text(product.displayPrice)
-                    .font(.headline)
-                    .fontWeight(.bold)
+
+                Toggle("Monthly Support", isOn: $isSubscription)
+                    .toggleStyle(SwitchToggleStyle(tint: .accentColor))
+                    .padding(.vertical, 4)
+                    .onChange(of: isSubscription) { _ in
+                        // Reset selection when switching between one-time and subscription
+                        if isSubscription && selectedSubIndex == nil && !monthlyProducts.isEmpty {
+                            selectedSubIndex = monthlyProducts.firstIndex(where: { $0.displayPrice.contains("4.99") }) ?? 0
+                        } else if !isSubscription && selectedOneTimeIndex == nil && !oneTimeProducts.isEmpty {
+                            selectedOneTimeIndex = oneTimeProducts.firstIndex(where: { $0.displayPrice.contains("4.99") }) ?? 0
+                        }
+                    }
+
+                Button { purchaseSelectedProduct() } label: {
+                    Text(isSubscription ? "Subscribe" : "Donate")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.accentColor)
+                .disabled(selectedProduct == nil || iapManager.isPurchasing)
             }
-            .padding()
-            .frame(maxWidth: .infinity)
-            .background(.thinMaterial) // Changed background for subtle difference
-            .cornerRadius(12)
-            .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
         }
-        // Example: Dim if purchased (adjust based on your needs, esp for subscriptions)
-         .opacity(iapManager.purchasedProductIDs.contains(product.id) && product.type != .autoRenewable ? 0.6 : 1.0)
-         .disabled(iapManager.purchasedProductIDs.contains(product.id) && product.type != .autoRenewable)
+    }
+
+    // MARK: Feedback Section
+    private var feedbackSection: some View {
+        Section(header: Text("Send Feedback")) {
+            Button { showMailCompose = true } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: "envelope")
+                        .foregroundColor(.accentColor)
+                        .frame(width: 24, height: 24)
+                    Text("contact@buyeuropean.io").foregroundColor(.accentColor)
+                    Spacer()
+                    Image(systemName: "chevron.forward").foregroundColor(.secondary)
+                }
+                .padding(.vertical, 4)
+            }
+        }
+    }
+
+    // MARK: Helpers
+    private func initializeSelection() {
+        if selectedOneTimeIndex == nil, !oneTimeProducts.isEmpty {
+            selectedOneTimeIndex = oneTimeProducts.firstIndex(where: { $0.displayPrice.contains("4.99") }) ?? 0
+        }
+        if selectedSubIndex == nil, !monthlyProducts.isEmpty {
+            selectedSubIndex = monthlyProducts.firstIndex(where: { $0.displayPrice.contains("4.99") }) ?? 0
+        }
+    }
+
+    private func purchaseSelectedProduct() {
+        guard let prod = selectedProduct else { return }
+        Task {
+            try? await iapManager.purchase(prod)
+        }
     }
 }
 
-
-// MARK: - Preview
-struct SupportView_Previews: PreviewProvider {
-    // Explicitly create EntitlementManager first for the preview
-    @MainActor static var entitlementManager = EntitlementManager()
-    // Create IAPManager and pass the manager
-    @MainActor static var iapManager: IAPManager = {
-        let manager = IAPManager(entitlementManager: entitlementManager)
-        // --- Simulate Products for Preview ---
-        // Uncomment and modify if you have a way to create mock Product instances
-        /*
-        let mockProduct1 = Product(...) // Requires StoreKit Test file or manual creation
-        let mockProduct2 = Product(...)
-        manager.products = [mockProduct1, mockProduct2]
-        manager.purchasedProductIDs = ["onetime_4.99"] // Simulate a purchased product
-        */
-        // -------------------------------------
-        return manager
-    }()
-
-    static var previews: some View {
-        SupportView()
-            .environmentObject(iapManager)
-            .environmentObject(entitlementManager) // Also inject the entitlement manager
+// MARK: ActivityView Wrapper
+struct ActivityView: UIViewControllerRepresentable {
+    let activityItems: [Any]
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        let controller = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+        if let pop = controller.popoverPresentationController {
+            pop.sourceView = UIApplication.shared.windows.first
+            pop.sourceRect = CGRect(x: UIScreen.main.bounds.midX,
+                                     y: UIScreen.main.bounds.midY,
+                                     width: 0, height: 0)
+            pop.permittedArrowDirections = []
+        }
+        return controller
     }
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
+}
+
+// MARK: MailComposeView Wrapper
+struct MailComposeView: UIViewControllerRepresentable {
+    let recipient: String
+    var onResult: ((MFMailComposeResult) -> Void)?
+    @Environment(\.dismiss) private var dismiss
+
+    class Coordinator: NSObject, MFMailComposeViewControllerDelegate {
+        let parent: MailComposeView
+        init(_ parent: MailComposeView) { self.parent = parent }
+        func mailComposeController(_ controller: MFMailComposeViewController,
+                                   didFinishWith result: MFMailComposeResult,
+                                   error: Error?) {
+            parent.onResult?(result)
+            parent.dismiss()
+        }
+    }
+
+    func makeCoordinator() -> Coordinator { Coordinator(self) }
+    func makeUIViewController(context: Context) -> MFMailComposeViewController {
+        let vc = MFMailComposeViewController()
+        vc.setToRecipients([recipient])
+        vc.mailComposeDelegate = context.coordinator
+        return vc
+    }
+    func updateUIViewController(_ uiViewController: MFMailComposeViewController, context: Context) {}
 } 

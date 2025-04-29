@@ -24,6 +24,8 @@ class IAPManager: ObservableObject {
         "longterm_0.99", // Added subscription
         "longterm_4.99", // Added subscription
         "longterm_9.99", // Added subscription
+        "longterm_29.99", // Added subscription
+        "longterm_99.99", // Added subscription
     ]
     // --------------------------------------------
 
