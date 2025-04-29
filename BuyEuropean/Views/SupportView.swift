@@ -66,203 +66,222 @@ struct SupportView: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                // MARK: Tab Picker
-                Section {
-                    Picker(selection: $selectedTab, label: EmptyView()) {
-                        ForEach(Tab.allCases) { tab in
-                            Text(tab.title).tag(tab)
+            ZStack {
+                Color(.systemGroupedBackground).ignoresSafeArea()
+
+                List {
+                    Section {
+                        Picker(selection: $selectedTab, label: EmptyView()) {
+                            ForEach(Tab.allCases) { tab in
+                                Text(tab.title).tag(tab)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                        .padding(.vertical, 5)
+                    }
+                    .listRowBackground(Color(.secondarySystemGroupedBackground))
+
+                    if selectedTab == .support {
+                        shareSection
+                        donateSection
+                    }
+                    
+                    if selectedTab == .feedback {
+                        feedbackSection
+                    }
+                }
+                .scrollContentBackground(.hidden)
+                .listStyle(.insetGrouped)
+                .navigationTitle("Support Us")
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button("Close") { dismiss() }
+                    }
+                }
+                .refreshable { await iapManager.fetchProducts() }
+                .sheet(isPresented: $showShareSheet) {
+                    ActivityView(activityItems: ["Check out BuyEuropean and Vote with your Money: https://BuyEuropean.io"])
+                }
+                .sheet(isPresented: $showMailCompose) {
+                    MailComposeView(recipient: "contact@buyeuropean.io") { result in
+                        if case .sent = result {
+                            FeedbackViewModel().promptForRatingIfNeeded()
                         }
                     }
-                    .pickerStyle(.segmented)
                 }
-
-                // MARK: Support Tab
-                if selectedTab == .support {
-                    shareSection
-                    donateSection
-                }
-                
-                // MARK: Feedback Tab
-                if selectedTab == .feedback {
-                    feedbackSection
-                }
+                .task { initializeSelection() }
             }
-            .listStyle(.insetGrouped)
-            .navigationTitle("Support Us")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Close") { dismiss() }
-                }
-            }
-            .refreshable { await iapManager.fetchProducts() }
-            // Share Sheet
-            .sheet(isPresented: $showShareSheet) {
-                ActivityView(activityItems: ["Check out BuyEuropean and Vote with your Money: https://BuyEuropean.io"])            }
-            // Mail Compose
-            .sheet(isPresented: $showMailCompose) {
-                MailComposeView(recipient: "contact@buyeuropean.io") { result in
-                    if case .sent = result {
-                        FeedbackViewModel().promptForRatingIfNeeded()
-                    }
-                }
-            }
-            .task { initializeSelection() }
         }
     }
 
-    // MARK: Share Section
     private var shareSection: some View {
-        Section(header: Text("Share BuyEuropean")) {
+        Section(header: Text("Share BuyEuropean").headerProminence(.increased)) {
             Button { showShareSheet = true } label: {
-                HStack(spacing: 12) {
-                    Image(systemName: "square.and.arrow.up")
-                        .foregroundColor(.accentColor)
-                        .frame(width: 24, height: 24)
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Share BuyEuropean").font(.headline)
-                        Text("Help us grow the BuyEuropean movement by sharing the app.")
-                            .font(.subheadline).foregroundColor(.secondary)
+                HStack {
+                    Label {
+                         VStack(alignment: .leading, spacing: 4) {
+                             Text("Share BuyEuropean").font(.headline)
+                             Text("Help us grow the BuyEuropean movement by sharing the app.")
+                                 .font(.subheadline).foregroundColor(.secondary)
+                         }
+                    } icon: {
+                        Image(systemName: "square.and.arrow.up")
+                            .imageScale(.large)
+                            .frame(width: 28, height: 28)
+                            .foregroundColor(.accentColor)
+
                     }
                     Spacer()
                     Image(systemName: "chevron.forward").foregroundColor(.secondary)
                 }
-                .padding(.vertical, 4)
+                .padding(.vertical, 6)
             }
         }
+         .listRowBackground(Color(.secondarySystemGroupedBackground))
     }
 
-    // MARK: Donate Section
     private var donateSection: some View {
-        Section(header: Text("Donate to Support")) {
-            Text("Keep BuyEuropean free and ad-free, choose how you'd like to support:")
-                .font(.subheadline).foregroundColor(.secondary).padding(.vertical, 4)
+        Section(header: Text("Donate to Support").headerProminence(.increased)) {
+            Text("Keep BuyEuropean free and ad-free. Choose how you'd like to support:")
+                .font(.subheadline).foregroundColor(.secondary).padding(.bottom, 8)
 
             if iapManager.isFetchingProducts {
                 HStack { Spacer(); ProgressView(); Spacer() }
+                    .padding(.vertical)
             } else if currentProducts.isEmpty {
                 Text("Unable to load support options—pull down to retry.")
                     .foregroundColor(.red)
                     .font(.subheadline)
                     .multilineTextAlignment(.center)
-                    .padding(.vertical, 4)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical)
             } else {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 80), spacing: 12)], spacing: 12) {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 85), spacing: 12)], spacing: 12) {
                     ForEach(currentProducts.indices, id: \.self) { idx in
                         let prod = currentProducts[idx]
                         let isSel = (isSubscription ? selectedSubIndex : selectedOneTimeIndex) == idx
                         Button {
-                            if isSubscription {
+                             if isSubscription {
                                 selectedSubIndex = idx
                             } else {
                                 selectedOneTimeIndex = idx
                             }
                         } label: {
                             Text(prod.displayPrice)
-                                .font(.subheadline.bold())
+                                .font(.subheadline.weight(.semibold))
                                 .frame(maxWidth: .infinity, minHeight: 44)
-                                .background(isSel ? Color.accentColor : Color.clear)
+                                .padding(.horizontal, 4)
                                 .foregroundColor(isSel ? .white : .accentColor)
+                                .background(isSel ? Color.accentColor : Color(.systemBackground))
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
                                 .overlay(RoundedRectangle(cornerRadius: 8)
-                                            .stroke(Color.accentColor, lineWidth: 1))
-                                .cornerRadius(8)
+                                            .stroke(Color.accentColor, lineWidth: isSel ? 0 : 1.5))
+                                .shadow(color: isSel ? .accentColor.opacity(0.3) : .clear, radius: 4, y: 2)
                         }
-                        .buttonStyle(PlainButtonStyle()) // Use PlainButtonStyle to prevent default button behavior
+                        .buttonStyle(PlainButtonStyle())
                     }
                 }
                 .padding(.vertical, 4)
+                .animation(.easeInOut(duration: 0.2), value: isSubscription ? selectedSubIndex : selectedOneTimeIndex)
 
                 if let prod = selectedProduct {
-                    Text(getProductDescription(for: prod, isSubscription: isSubscription))
-                        .font(.caption).foregroundColor(.secondary).padding(.vertical, 4)
+                     HStack {
+                         Spacer()
+                         Text(getProductDescription(for: prod, isSubscription: isSubscription))
+                             .font(.caption).foregroundColor(.secondary).multilineTextAlignment(.center)
+                         Spacer()
+                     }
+                    .padding(.vertical, 4)
+                } else {
+                    Text("Select an amount above")
+                        .font(.caption).foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.vertical, 4)
                 }
+
 
                 Toggle("Monthly Support", isOn: $isSubscription)
                     .toggleStyle(SwitchToggleStyle(tint: .accentColor))
-                    .padding(.vertical, 4)
+                    .padding(.vertical, 8)
                     .onChange(of: isSubscription) { newValue in
                         let priceToMatch: Decimal
-                        
+
+                        guard !oneTimeProducts.isEmpty, !monthlyProducts.isEmpty else { return }
+
                         if newValue {
-                            // Switching TO subscription mode
-                            // Get current one-time price to match
-                            if let index = selectedOneTimeIndex, oneTimeProducts.indices.contains(index) {
-                                priceToMatch = oneTimeProducts[index].price
-                                
-                                // Find closest price match in subscription products
-                                selectedSubIndex = findClosestPriceIndex(price: priceToMatch, in: monthlyProducts)
-                            }
+                            let currentIndex = selectedOneTimeIndex ?? findDefaultIndex(in: oneTimeProducts)
+                            guard oneTimeProducts.indices.contains(currentIndex) else { return }
+                            priceToMatch = oneTimeProducts[currentIndex].price
+                            selectedSubIndex = findClosestPriceIndex(price: priceToMatch, in: monthlyProducts)
+
                         } else {
-                            // Switching TO one-time mode
-                            // Get current subscription price to match
-                            if let index = selectedSubIndex, monthlyProducts.indices.contains(index) {
-                                priceToMatch = monthlyProducts[index].price
-                                
-                                // Find closest price match in one-time products
-                                selectedOneTimeIndex = findClosestPriceIndex(price: priceToMatch, in: oneTimeProducts)
-                            }
+                            let currentIndex = selectedSubIndex ?? findDefaultIndex(in: monthlyProducts)
+                            guard monthlyProducts.indices.contains(currentIndex) else { return }
+                            priceToMatch = monthlyProducts[currentIndex].price
+                            selectedOneTimeIndex = findClosestPriceIndex(price: priceToMatch, in: oneTimeProducts)
                         }
                     }
 
+
                 Button { purchaseSelectedProduct() } label: {
-                    Text(isSubscription ? "Subscribe" : "Donate")
-                        .frame(maxWidth: .infinity)
+                    HStack {
+                        Spacer()
+                        if iapManager.isPurchasing {
+                            ProgressView().tint(.white)
+                        } else {
+                            Text(isSubscription ? "Subscribe" : "Donate")
+                        }
+                        Spacer()
+                    }
+                    .frame(height: 30)
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(.accentColor)
                 .disabled(selectedProduct == nil || iapManager.isPurchasing)
+                .padding(.top, 8)
             }
         }
+        .listRowSeparator(.hidden)
+        .listRowBackground(Color(.secondarySystemGroupedBackground))
     }
 
-    // MARK: Feedback Section
     private var feedbackSection: some View {
-        Section(header: Text("Send Feedback")) {
+        Section(header: Text("Send Feedback").headerProminence(.increased)) {
             Button { showMailCompose = true } label: {
-                HStack(spacing: 12) {
-                    Image(systemName: "envelope")
-                        .foregroundColor(.accentColor)
-                        .frame(width: 24, height: 24)
-                    Text("contact@buyeuropean.io").foregroundColor(.accentColor)
-                    Spacer()
-                    Image(systemName: "chevron.forward").foregroundColor(.secondary)
-                }
-                .padding(.vertical, 4)
+                 HStack {
+                     Label("contact@buyeuropean.io", systemImage: "envelope")
+                         .foregroundStyle(.tint)
+                     Spacer()
+                     Image(systemName: "chevron.forward").foregroundColor(.secondary)
+                 }
+                 .padding(.vertical, 6)
             }
         }
+         .listRowBackground(Color(.secondarySystemGroupedBackground))
     }
 
-    // MARK: Helpers
-    
-    /// Find the index of the product with the closest price to the given price
     private func findClosestPriceIndex(price: Decimal, in products: [Product]) -> Int {
-        // Try exact match first (within 1 cent)
-        if let exactIndex = products.firstIndex(where: { abs($0.price - price) < 0.01 }) {
-            return exactIndex
-        }
-        
-        // Try approximate match (within $1)
-        if let approxIndex = products.firstIndex(where: { abs($0.price - price) < 1.0 }) {
-            return approxIndex
-        }
-        
-        // Try to find a $4.99 product as fallback
+        guard !products.isEmpty else { return 0 }
+
+        let closest = products.enumerated().min(by: { abs($0.element.price - price) < abs($1.element.price - price) })
+
+        return closest?.offset ?? 0
+    }
+    
+    private func findDefaultIndex(in products: [Product]) -> Int {
+        guard !products.isEmpty else { return 0 }
         if let defaultIndex = products.firstIndex(where: { $0.displayPrice.contains("4.99") }) {
             return defaultIndex
         }
-        
-        // Last resort: first product in the list
         return 0
     }
-    
+
     private func initializeSelection() {
         if selectedOneTimeIndex == nil, !oneTimeProducts.isEmpty {
-            // Try to find the 'onetime_4.99' product, or default to the first product
-            selectedOneTimeIndex = oneTimeProducts.firstIndex(where: { $0.id == "onetime_4.99" }) ?? 0
+            selectedOneTimeIndex = findDefaultIndex(in: oneTimeProducts)
         }
         if selectedSubIndex == nil, !monthlyProducts.isEmpty {
-            // Try to find the $4.99 product, or default to the first product 
-            selectedSubIndex = monthlyProducts.firstIndex(where: { $0.displayPrice.contains("4.99") }) ?? 0
+            selectedSubIndex = findDefaultIndex(in: monthlyProducts)
         }
     }
 
@@ -274,7 +293,6 @@ struct SupportView: View {
     }
 }
 
-// MARK: ActivityView Wrapper
 struct ActivityView: UIViewControllerRepresentable {
     let activityItems: [Any]
     func makeUIViewController(context: Context) -> UIActivityViewController {
@@ -291,7 +309,6 @@ struct ActivityView: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
 
-// MARK: MailComposeView Wrapper
 struct MailComposeView: UIViewControllerRepresentable {
     let recipient: String
     var onResult: ((MFMailComposeResult) -> Void)?
@@ -316,4 +333,18 @@ struct MailComposeView: UIViewControllerRepresentable {
         return vc
     }
     func updateUIViewController(_ uiViewController: MFMailComposeViewController, context: Context) {}
-} 
+}
+
+#if DEBUG
+struct SupportView_Previews: PreviewProvider {
+    static let iapManager: IAPManager = {
+        let manager = IAPManager(entitlementManager: EntitlementManager())
+        return manager
+    }()
+
+    static var previews: some View {
+        SupportView()
+            .environmentObject(iapManager)
+    }
+}
+#endif 
