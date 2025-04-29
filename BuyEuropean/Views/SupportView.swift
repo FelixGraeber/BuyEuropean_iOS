@@ -199,7 +199,6 @@ struct SupportView: View {
                         .padding(.vertical, 4)
                 }
 
-
                 Toggle("Monthly Support", isOn: $isSubscription)
                     .toggleStyle(SwitchToggleStyle(tint: .accentColor))
                     .padding(.vertical, 8)
@@ -209,19 +208,18 @@ struct SupportView: View {
                         guard !oneTimeProducts.isEmpty, !monthlyProducts.isEmpty else { return }
 
                         if newValue {
-                            let currentIndex = selectedOneTimeIndex ?? findDefaultIndex(in: oneTimeProducts)
-                            guard oneTimeProducts.indices.contains(currentIndex) else { return }
-                            priceToMatch = oneTimeProducts[currentIndex].price
+                            let currentOneTimeIdx = selectedOneTimeIndex ?? 0
+                            guard oneTimeProducts.indices.contains(currentOneTimeIdx) else { return }
+                            priceToMatch = oneTimeProducts[currentOneTimeIdx].price
                             selectedSubIndex = findClosestPriceIndex(price: priceToMatch, in: monthlyProducts)
 
                         } else {
-                            let currentIndex = selectedSubIndex ?? findDefaultIndex(in: monthlyProducts)
-                            guard monthlyProducts.indices.contains(currentIndex) else { return }
-                            priceToMatch = monthlyProducts[currentIndex].price
+                            let currentSubIdx = selectedSubIndex ?? 0
+                            guard monthlyProducts.indices.contains(currentSubIdx) else { return }
+                            priceToMatch = monthlyProducts[currentSubIdx].price
                             selectedOneTimeIndex = findClosestPriceIndex(price: priceToMatch, in: oneTimeProducts)
                         }
                     }
-
 
                 Button { purchaseSelectedProduct() } label: {
                     HStack {
@@ -268,20 +266,9 @@ struct SupportView: View {
         return closest?.offset ?? 0
     }
     
-    private func findDefaultIndex(in products: [Product]) -> Int {
-        guard !products.isEmpty else { return 0 }
-        if let defaultIndex = products.firstIndex(where: { $0.displayPrice.contains("4.99") }) {
-            return defaultIndex
-        }
-        return 0
-    }
-
     private func initializeSelection() {
         if selectedOneTimeIndex == nil, !oneTimeProducts.isEmpty {
-            selectedOneTimeIndex = findDefaultIndex(in: oneTimeProducts)
-        }
-        if selectedSubIndex == nil, !monthlyProducts.isEmpty {
-            selectedSubIndex = findDefaultIndex(in: monthlyProducts)
+            selectedOneTimeIndex = oneTimeProducts.firstIndex(where: { $0.id == "onetime_4.99" }) ?? 0
         }
     }
 
