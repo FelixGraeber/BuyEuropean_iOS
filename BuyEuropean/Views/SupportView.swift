@@ -181,12 +181,27 @@ struct SupportView: View {
                 Toggle("Monthly Support", isOn: $isSubscription)
                     .toggleStyle(SwitchToggleStyle(tint: .accentColor))
                     .padding(.vertical, 4)
-                    .onChange(of: isSubscription) { _ in
-                        // Reset selection when switching between one-time and subscription
-                        if isSubscription && selectedSubIndex == nil && !monthlyProducts.isEmpty {
-                            selectedSubIndex = monthlyProducts.firstIndex(where: { $0.displayPrice.contains("4.99") }) ?? 0
-                        } else if !isSubscription && selectedOneTimeIndex == nil && !oneTimeProducts.isEmpty {
-                            selectedOneTimeIndex = oneTimeProducts.firstIndex(where: { $0.displayPrice.contains("4.99") }) ?? 0
+                    .onChange(of: isSubscription) { newValue in
+                        let priceToMatch: Decimal
+                        
+                        if newValue {
+                            // Switching TO subscription mode
+                            // Get current one-time price to match
+                            if let index = selectedOneTimeIndex, oneTimeProducts.indices.contains(index) {
+                                priceToMatch = oneTimeProducts[index].price
+                                
+                                // Find closest price match in subscription products
+                                selectedSubIndex = findClosestPriceIndex(price: priceToMatch, in: monthlyProducts)
+                            }
+                        } else {
+                            // Switching TO one-time mode
+                            // Get current subscription price to match
+                            if let index = selectedSubIndex, monthlyProducts.indices.contains(index) {
+                                priceToMatch = monthlyProducts[index].price
+                                
+                                // Find closest price match in one-time products
+                                selectedOneTimeIndex = findClosestPriceIndex(price: priceToMatch, in: oneTimeProducts)
+                            }
                         }
                     }
 
@@ -219,11 +234,35 @@ struct SupportView: View {
     }
 
     // MARK: Helpers
+    
+    /// Find the index of the product with the closest price to the given price
+    private func findClosestPriceIndex(price: Decimal, in products: [Product]) -> Int {
+        // Try exact match first (within 1 cent)
+        if let exactIndex = products.firstIndex(where: { abs($0.price - price) < 0.01 }) {
+            return exactIndex
+        }
+        
+        // Try approximate match (within $1)
+        if let approxIndex = products.firstIndex(where: { abs($0.price - price) < 1.0 }) {
+            return approxIndex
+        }
+        
+        // Try to find a $4.99 product as fallback
+        if let defaultIndex = products.firstIndex(where: { $0.displayPrice.contains("4.99") }) {
+            return defaultIndex
+        }
+        
+        // Last resort: first product in the list
+        return 0
+    }
+    
     private func initializeSelection() {
         if selectedOneTimeIndex == nil, !oneTimeProducts.isEmpty {
+            // Try to find the $4.99 product, or default to the first product
             selectedOneTimeIndex = oneTimeProducts.firstIndex(where: { $0.displayPrice.contains("4.99") }) ?? 0
         }
         if selectedSubIndex == nil, !monthlyProducts.isEmpty {
+            // Try to find the $4.99 product, or default to the first product 
             selectedSubIndex = monthlyProducts.firstIndex(where: { $0.displayPrice.contains("4.99") }) ?? 0
         }
     }
