@@ -7,21 +7,20 @@ func getProductDescription(for product: Product?, isSubscription: Bool) -> Strin
     guard let product = product else { return "" }
     if isSubscription {
         switch product.id {
-        case let id where id.contains("0.99"): return "Fund BuyEuropean for a few hours each month"
-        case let id where id.contains("4.99"): return "Fund BuyEuropean for a day each month"
-        case let id where id.contains("9.99"): return "Fund BuyEuropean for a few days each month"
-        case let id where id.contains("29.99"): return "Fund BuyEuropean for a week each month"
-        case let id where id.contains("99.99"): return "Fund BuyEuropean for a few weeks each month"
+        case "longterm_0.99": return "Fund BuyEuropean for a few hours each month"
+        case "longterm_4.99": return "Fund BuyEuropean for a day each month"
+        case "longterm_9.99": return "Fund BuyEuropean for a few days each month"
+        case "longterm_29.99": return "Fund BuyEuropean for a week each month"
+        case "longterm_99.99": return "Fund BuyEuropean for a few weeks each month"
         default: return "Support BuyEuropean monthly"
         }
     } else {
         switch product.id {
-        case let id where id.contains("support_buyeuropean"): return "Support BuyEuropean with a small donation"
-        case let id where id.contains("0.99"): return "Fund BuyEuropean for a few hours"
-        case let id where id.contains("4.99"): return "Fund BuyEuropean for a day"
-        case let id where id.contains("9.99"): return "Fund BuyEuropean for a few days"
-        case let id where id.contains("29.99"): return "Fund BuyEuropean for a week"
-        case let id where id.contains("99.99"): return "Fund BuyEuropean for a few weeks"
+        case "support_buyeuropean_0.99": return "Fund BuyEuropean for a few hours"
+        case "onetime_4.99": return "Fund BuyEuropean for a day"
+        case "onetime_9.99": return "Fund BuyEuropean for a few days"
+        case "onetime_29.99": return "Fund BuyEuropean for a week"
+        case "onetime_99.99": return "Fund BuyEuropean for a few weeks"
         default: return "Support BuyEuropean"
         }
     }
