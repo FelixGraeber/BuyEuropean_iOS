@@ -98,7 +98,7 @@ struct SupportView: View {
             .refreshable { await iapManager.fetchProducts() }
             // Share Sheet
             .sheet(isPresented: $showShareSheet) {
-                ActivityView(activityItems: ["Check out BuyEuropean: https://BuyEuropean.io"])            }
+                ActivityView(activityItems: ["Check out BuyEuropean and Vote with your Money: https://BuyEuropean.io"])            }
             // Mail Compose
             .sheet(isPresented: $showMailCompose) {
                 MailComposeView(recipient: "contact@buyeuropean.io") { result in
@@ -257,8 +257,8 @@ struct SupportView: View {
     
     private func initializeSelection() {
         if selectedOneTimeIndex == nil, !oneTimeProducts.isEmpty {
-            // Try to find the $4.99 product, or default to the first product
-            selectedOneTimeIndex = oneTimeProducts.firstIndex(where: { $0.displayPrice.contains("4.99") }) ?? 0
+            // Try to find the 'onetime_4.99' product, or default to the first product
+            selectedOneTimeIndex = oneTimeProducts.firstIndex(where: { $0.id == "onetime_4.99" }) ?? 0
         }
         if selectedSubIndex == nil, !monthlyProducts.isEmpty {
             // Try to find the $4.99 product, or default to the first product 
