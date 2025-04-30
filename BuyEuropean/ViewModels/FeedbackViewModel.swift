@@ -79,7 +79,16 @@ class FeedbackViewModel: ObservableObject, @unchecked Sendable {
     // Call this after a successful positive feedback submission
     func promptForRatingIfNeeded() {
         if !hasRatedOrSharedApp {
-            SKStoreReviewController.requestReview()
+            // Get the current foreground scene
+            guard let scene = UIApplication.shared.connectedScenes
+                .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene else {
+                print("Could not find active scene to request review.")
+                return // Cannot request review without a scene
+            }
+
+            // Use the new API
+            SKStoreReviewController.requestReview(in: scene)
+
             setHasRatedOrSharedApp()
         }
     }

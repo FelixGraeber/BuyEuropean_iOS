@@ -6,38 +6,29 @@ import SwiftUI
 
 struct ClassificationBadgeView: View {
     let style: ClassificationStyle
+    var font: Font? = nil
     @State private var isAnimated = false
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        VStack(spacing: 12) { // Slightly reduced spacing
+        VStack(spacing: 12) {
             // Main badge - Using Capsule shape for a more modern look
             Text(style.title)
-                .font(.headline) // Keep headline
-                .fontWeight(.bold) // Use semibold for badge text
-                .foregroundColor(.white) // White text for contrast on color
-                .padding(.horizontal, 24)
-                .padding(.vertical, 10) // Slightly less vertical padding for capsule
+                .font(font ?? .headline)
+                .fontWeight(.bold)
+                .foregroundColor(.white)
+                .padding(.horizontal, font == .caption2 ? 14 : 24)
+                .padding(.vertical, font == .caption2 ? 4 : 10)
                 .background(
-                    Capsule() // Use Capsule shape
+                    Capsule()
                         .fill(style.badgeColor(for: colorScheme))
                 )
-                .shadow(color: style.badgeColor(for: colorScheme).opacity(0.4), radius: 6, x: 0, y: 3) // Adjusted shadow
+                .shadow(color: style.badgeColor(for: colorScheme).opacity(0.4), radius: 6, x: 0, y: 3)
                 .scaleEffect(isAnimated ? 1.0 : 0.8)
                 .opacity(isAnimated ? 1.0 : 0.0)
-                .animation(.spring(response: 0.5, dampingFraction: 0.7, blendDuration: 0.1), value: isAnimated) // Smooth spring
-
-            // Description text
-            Text(style.description)
-                .font(.subheadline) // Keep subheadline
-                .foregroundColor(.secondary) // Use standard secondary color
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 24) // Consistent horizontal padding
-                .opacity(isAnimated ? 1.0 : 0.0)
-                .offset(y: isAnimated ? 0 : 10)
-                .animation(.easeOut(duration: 0.5).delay(0.15), value: isAnimated) // Slightly adjusted delay
+                .animation(.spring(response: 0.5, dampingFraction: 0.7, blendDuration: 0.1), value: isAnimated)
         }
-        .padding(.vertical, 8) // Keep overall vertical padding
+        .padding(.vertical, 8)
         .onAppear {
             // No need for withAnimation here if using .animation modifier bound to isAnimated
             isAnimated = true

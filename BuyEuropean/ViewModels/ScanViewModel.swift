@@ -170,6 +170,7 @@ class ScanViewModel: ObservableObject, @unchecked Sendable {
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
                 self.scanState = .result(response, imageToAnalyze)
+                HistoryService.shared.add(response: response)
             }
         } catch let error as APIError {
             DispatchQueue.main.async { [weak self] in
@@ -214,6 +215,7 @@ class ScanViewModel: ObservableObject, @unchecked Sendable {
                 await MainActor.run {
                     // Ensure image is nil for text analysis results
                     self.scanState = .result(response, nil)
+                    HistoryService.shared.add(response: response)
                 }
             } catch let error as APIError {
                 await MainActor.run {

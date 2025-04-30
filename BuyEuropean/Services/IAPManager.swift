@@ -9,6 +9,7 @@ class IAPManager: ObservableObject {
     @Published private(set) var products: [Product] = []
     @Published private(set) var purchasedProductIDs: Set<String> = []
     @Published private(set) var isFetchingProducts = false
+    @Published var isPurchasing: Bool = false // Track purchase in progress
     @Published var error: Error? = nil // To display errors in the UI
 
     // MARK: - Product Identifiers
@@ -23,6 +24,8 @@ class IAPManager: ObservableObject {
         "longterm_0.99", // Added subscription
         "longterm_4.99", // Added subscription
         "longterm_9.99", // Added subscription
+        "longterm_29.99", // Added subscription
+        "longterm_99.99", // Added subscription
     ]
     // --------------------------------------------
 
@@ -69,6 +72,9 @@ class IAPManager: ObservableObject {
     }
 
     func purchase(_ product: Product) async throws {
+        // Mark purchase as in progress
+        isPurchasing = true
+        defer { isPurchasing = false }
         print("[IAPManager] Initiating purchase for product: \(product.id)")
         error = nil // Clear previous error
         do {
