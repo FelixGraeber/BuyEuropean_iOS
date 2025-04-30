@@ -56,7 +56,7 @@ struct ResultsView: View {
                             .font(.title3) // Match Done button size
                     }
                     .frame(width: 60, alignment: .leading) // Ensure consistent frame
-                    .tint(Color(red: 0/255, green: 51/255, blue: 153/255)) // Use brand color
+                    .tint(Color.accentColor)
 
                     Spacer()
 
@@ -71,7 +71,7 @@ struct ResultsView: View {
                     }
                     .fontWeight(.medium)
                     .frame(width: 60, alignment: .trailing) // Ensure consistent frame
-                    .tint(Color(red: 0/255, green: 51/255, blue: 153/255)) // Use brand color for dismiss emphasis
+                    .tint(Color.accentColor) 
 
                 }
                 .padding(.horizontal, horizontalPadding)

@@ -70,7 +70,7 @@ struct ScanView: View {
                         } label: {
                             Image(systemName: "clock")
                                 .font(.title3)
-                                .foregroundColor(Color.brandPrimary.opacity(0.75))
+                                .foregroundColor(Color.accentColor)
                         }
                         .frame(width: 44, height: 44, alignment: .center) // Touch target
 
@@ -85,7 +85,7 @@ struct ScanView: View {
                             Text("BuyEuropean")
                                 .font(geometry.size.width < 350 ? .headline : .title3)
                                 .fontWeight(.bold)
-                                .foregroundColor(Color.brandPrimary)
+                                .foregroundColor(Color.accentColor)
                         }
                         .frame(maxWidth: .infinity, alignment: .center)
                         Spacer()
@@ -96,7 +96,7 @@ struct ScanView: View {
                         } label: {
                             Image(systemName: "heart")
                                 .font(.title3)
-                                .foregroundColor(Color.brandPrimary.opacity(0.75))
+                                .foregroundColor(Color.accentColor)
                         }
                         .frame(width: 44, height: 44, alignment: .center)
                     }
