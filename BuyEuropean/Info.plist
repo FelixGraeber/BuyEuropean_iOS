@@ -55,6 +55,15 @@
         <string>UIInterfaceOrientationLandscapeRight</string>
     </array>
 
+    <!-- === APP LOCALIZATION SETTINGS === -->
+    <key>CFBundleDevelopmentRegion</key>
+    <string>en</string>
+    <key>CFBundleLocalizations</key>
+    <array>
+        <string>en</string>
+        <string>de</string>
+    </array>
+
     <!-- === LOCATION PERMISSION === -->
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>BuyEuropean uses your location to provide more relevant product alternatives based on your region.</string>

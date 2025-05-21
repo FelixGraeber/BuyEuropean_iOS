@@ -142,8 +142,9 @@ class ScanViewModel: ObservableObject, @unchecked Sendable {
         guard let image = imageToAnalyze else {
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
-                self.errorMessage = "No image selected"
-                self.scanState = .error("No image selected")
+                let errorMessage = NSLocalizedString("scan.error.no_image_selected", comment: "Error message when no image is selected for scanning")
+                self.errorMessage = errorMessage
+                self.scanState = .error(errorMessage)
             }
             return
         }
@@ -153,8 +154,9 @@ class ScanViewModel: ObservableObject, @unchecked Sendable {
         guard let base64Image = imageService.convertImageToBase64(image: resizedImage, compressionQuality: 0.6) else {
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
-                self.errorMessage = "Failed to process image"
-                self.scanState = .error("Failed to process image")
+                let errorMessage = NSLocalizedString("scan.error.failed_to_process_image", comment: "Error message when image processing fails")
+                self.errorMessage = errorMessage
+                self.scanState = .error(errorMessage)
             }
             return
         }

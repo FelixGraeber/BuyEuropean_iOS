@@ -1,0 +1,104 @@
+/* Localized strings */
+
+/* ContentView.swift */
+"app.title" = "BuyEuropean";
+"location.status.ios" = "Location Status: %@"; /* %@ is for authorizationStatus.description */
+"location.status.other" = "Location Status: N/A";
+"location.city_country" = "City: %@, Country: %@"; /* %@ are for city and country */
+
+/* ScanView.swift */
+"scan.manual.prompt" = "Enter a brand or product name";
+"scan.manual.placeholder" = "e.g., iPhone, Samsung, Nestlé, Zara...";
+"scan.manual.button.analyze" = "Analyze";
+"scan.progress.analyzing" = "Analyzing...";
+"scan.progress.processing" = "Processing...";
+"scan.mode.photo" = "Photo";
+"scan.mode.text" = "Text";
+"scan.camera.initializing" = "Initializing Camera...";
+"scan.camera.access_needed.overlay" = "Camera Access Needed";
+
+/* HistoryView.swift */
+"history.title" = "History";
+"common.close" = "Close"; /* Common string, also used in ScanView's History sheet */
+"history.company.not_available" = "N/A";
+"history.search.prompt" = "Search history";
+
+/* ScanViewModel.swift Error Messages */
+"scan.error.no_image_selected" = "No image selected";
+"scan.error.failed_to_process_image" = "Failed to process image";
+
+/* ResultsView.swift */
+"share.text.line1" = "BuyEuropean quickly identifies products from European companies.";
+"share.text.line2" = "Vote with your Money and support European businesses and values.";
+"results.title" = "Analysis Results";
+"common.done" = "Done"; /* Common string */
+"results.no_alternatives" = "No European alternatives needed.";
+"results.feedback.title" = "Feedback";
+/* Placeholder for Classification displayNames - these will be specific like classification.cat, classification.product etc. */
+/* For now, we are just noting that these need to exist. The actual values will be added when we handle the Classification enum */
+"classification.cat" = "Cat";
+"classification.dog" = "Dog";
+"classification.animal" = "Animal";
+"classification.human" = "Human";
+"classification.product" = "Product"; /* Example, more might be needed */
+
+/* CameraPermissionView.swift */
+"permission.camera.title" = "Camera Access Needed";
+"permission.camera.description" = "BuyEuropean needs camera access to take photos of your product or brand.";
+"common.continue" = "Continue"; /* Common string */
+
+/* ErrorView.swift */
+"error.title" = "Error";
+"error.button.try_again" = "Try Again";
+"common.dismiss" = "Dismiss"; /* Common string */
+
+/* LocationPermissionView.swift */
+"permission.location.title" = "Location Access Recommended";
+"permission.location.description" = "BuyEuropean uses your location to provide more relevant product alternatives based on your region. Your location is never stored or shared. This is optional and you can turn it off in the settings.";
+
+/* SupportView.swift */
+"support.description.sub.few_hours" = "Fund BuyEuropean for a few hours each month";
+"support.description.sub.day" = "Fund BuyEuropean for a day each month";
+"support.description.sub.few_days" = "Fund BuyEuropean for a few days each month";
+"support.description.sub.week" = "Fund BuyEuropean for a week each month";
+"support.description.sub.few_weeks" = "Fund BuyEuropean for a few weeks each month";
+"support.description.sub.default" = "Support BuyEuropean monthly";
+"support.description.onetime.few_hours" = "Fund BuyEuropean for a few hours";
+"support.description.onetime.day" = "Fund BuyEuropean for a day";
+"support.description.onetime.few_days" = "Fund BuyEuropean for a few days";
+"support.description.onetime.week" = "Fund BuyEuropean for a week";
+"support.description.onetime.few_weeks" = "Fund BuyEuropean for a few weeks";
+"support.description.onetime.default" = "Support BuyEuropean";
+
+"support.tab.support" = "Support";
+"support.tab.feedback" = "Feedback";
+"support.title" = "Support Us";
+/* "common.close" is already added */
+
+"support.share.header" = "Share BuyEuropean";
+"support.share.button.label" = "Share BuyEuropean";
+"support.share.button.description" = "Help us grow the BuyEuropean movement by sharing the app.";
+
+"support.donate.header" = "Donate to Support";
+"support.donate.description" = "Keep BuyEuropean free and ad-free. Choose how you'd like to support:";
+"support.donate.load_error" = "Unable to load support options—pull down to retry.";
+"support.donate.select_amount" = "Select an amount above";
+"support.donate.toggle.monthly" = "Monthly Support";
+"support.donate.button.subscribe" = "Subscribe";
+"support.donate.button.donate" = "Donate";
+
+"support.feedback.header" = "Send Feedback";
+/* Email "contact@buyeuropean.io" is not localized */
+
+/* Classification Display Names */
+"classification.europeanCountry" = "European Country";
+"classification.europeanAlly" = "European Ally";
+"classification.europeanSceptic" = "European Sceptic";
+"classification.europeanAdversary" = "European Adversary";
+"classification.neutral" = "Neutral";
+/* "classification.cat" = "Cat"; already added */
+/* "classification.dog" = "Dog"; already added */
+/* "classification.animal" = "Animal"; already added */
+/* "classification.human" = "Human"; already added */
+"classification.unknown" = "Unknown";
+/* "classification.product" was a placeholder, the specific types like europeanCountry are more accurate for this enum */

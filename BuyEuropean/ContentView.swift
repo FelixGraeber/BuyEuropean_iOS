@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Foundation // Required for NSLocalizedString
 
 struct ContentView: View {
     // LocationManager might still be needed for other purposes, or removed if not.
@@ -21,14 +22,14 @@ struct ContentView: View {
                     .foregroundStyle(.tint)
                 // Example: Display authorization status instead of the setting
                 #if os(iOS)
-                Text("Location Status: \(locationManager.authorizationStatus.description)")
+                Text(String(format: NSLocalizedString("location.status.ios", comment: ""), locationManager.authorizationStatus.description))
                 #else
-                Text("Location Status: N/A")
+                Text(LocalizedStringKey("location.status.other"))
                 #endif
-                Text("City: \(locationManager.currentCity ?? "..."), Country: \(locationManager.currentCountry ?? "...")")
+                Text(String(format: NSLocalizedString("location.city_country", comment: ""), locationManager.currentCity ?? "...", locationManager.currentCountry ?? "..."))
             }
             .padding()
-            .navigationTitle("BuyEuropean")
+            .navigationTitle(LocalizedStringKey("app.title"))
             .toolbar {
                 // REMOVED: Settings ToolbarItem
             }

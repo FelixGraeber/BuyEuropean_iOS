@@ -2,28 +2,27 @@ import SwiftUI
 import StoreKit
 import MessageUI
 
+import Foundation // For NSLocalizedString
+
 /// Returns a descriptive string for a given product based on ID and subscription type.
 func getProductDescription(for product: Product?, isSubscription: Bool) -> String {
     guard let product = product else { return "" }
-    if isSubscription {
-        switch product.id {
-        case "longterm_0.99": return "Fund BuyEuropean for a few hours each month"
-        case "longterm_4.99": return "Fund BuyEuropean for a day each month"
-        case "longterm_9.99": return "Fund BuyEuropean for a few days each month"
-        case "longterm_29.99": return "Fund BuyEuropean for a week each month"
-        case "longterm_99.99": return "Fund BuyEuropean for a few weeks each month"
-        default: return "Support BuyEuropean monthly"
-        }
-    } else {
-        switch product.id {
-        case "support_buyeuropean_0.99": return "Fund BuyEuropean for a few hours"
-        case "onetime_4.99": return "Fund BuyEuropean for a day"
-        case "onetime_9.99": return "Fund BuyEuropean for a few days"
-        case "onetime_29.99": return "Fund BuyEuropean for a week"
-        case "onetime_99.99": return "Fund BuyEuropean for a few weeks"
-        default: return "Support BuyEuropean"
-        }
+    let keyPrefix = isSubscription ? "support.description.sub." : "support.description.onetime."
+    let defaultKey = isSubscription ? "support.description.sub.default" : "support.description.onetime.default"
+
+    // Simplified mapping; assumes product IDs align with a pattern or specific values
+    // This might need adjustment if IDs are arbitrary.
+    let durationKey: String
+    switch product.id {
+    case let id where id.contains("0.99"): durationKey = "few_hours"
+    case let id where id.contains("4.99"): durationKey = "day"
+    case let id where id.contains("9.99"): durationKey = "few_days"
+    case let id where id.contains("29.99"): durationKey = "week"
+    case let id where id.contains("99.99"): durationKey = "few_weeks"
+    default: return NSLocalizedString(defaultKey, comment: "Default product description")
     }
+    
+    return NSLocalizedString(keyPrefix + durationKey, comment: "Product description for \(product.id)")
 }
 
 struct SupportView: View {
@@ -34,7 +33,12 @@ struct SupportView: View {
     enum Tab: Int, CaseIterable, Identifiable {
         case support, feedback
         var id: Int { rawValue }
-        var title: String { self == .support ? "Support" : "Feedback" }
+        var title: LocalizedStringKey {
+            switch self {
+            case .support: return "support.tab.support"
+            case .feedback: return "support.tab.feedback"
+            }
+        }
     }
 
     @State private var selectedTab: Tab = .support
@@ -73,7 +77,7 @@ struct SupportView: View {
                     Section {
                         Picker(selection: $selectedTab, label: EmptyView()) {
                             ForEach(Tab.allCases) { tab in
-                                Text(tab.title).tag(tab)
+                        Text(tab.title).tag(tab) // Text can take LocalizedStringKey
                             }
                         }
                         .pickerStyle(.segmented)
@@ -92,18 +96,22 @@ struct SupportView: View {
                 }
                 .scrollContentBackground(.hidden)
                 .listStyle(.insetGrouped)
-                .navigationTitle("Support Us")
+        .navigationTitle(LocalizedStringKey("support.title"))
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
-                        Button("Close") { dismiss() }
+                Button(LocalizedStringKey("common.close")) { dismiss() }
                     }
                 }
                 .refreshable { await iapManager.fetchProducts() }
                 .sheet(isPresented: $showShareSheet) {
-                    ActivityView(activityItems: ["Check out BuyEuropean and Vote with your Money: https://BuyEuropean.io"])
+            // Assuming share.text.line1 and line2 are defined in Localizable.strings
+            let shareLine1 = NSLocalizedString("share.text.line1", comment: "Share text line 1")
+            let shareLine2 = NSLocalizedString("share.text.line2", comment: "Share text line 2")
+            let appStoreLink = "https://apps.apple.com/de/app/buyeuropean/id6743128862?l=en-GB" // This should remain as is or be configurable
+            ActivityView(activityItems: ["\(shareLine1)\n\(shareLine2)\n\(appStoreLink)"])
                 }
                 .sheet(isPresented: $showMailCompose) {
-                    MailComposeView(recipient: "contact@buyeuropean.io") { result in
+            MailComposeView(recipient: "contact@buyeuropean.io") { result in // Email address is not typically localized
                         if case .sent = result {
                             FeedbackViewModel().promptForRatingIfNeeded()
                         }
@@ -115,13 +123,13 @@ struct SupportView: View {
     }
 
     private var shareSection: some View {
-        Section(header: Text("Share BuyEuropean").headerProminence(.increased)) {
+        Section(header: Text(LocalizedStringKey("support.share.header")).headerProminence(.increased)) {
             Button { showShareSheet = true } label: {
                 HStack {
                     Label {
                          VStack(alignment: .leading, spacing: 4) {
-                             Text("Share BuyEuropean").font(.headline)
-                             Text("Help us grow the BuyEuropean movement by sharing the app.")
+                             Text(LocalizedStringKey("support.share.button.label")).font(.headline)
+                             Text(LocalizedStringKey("support.share.button.description"))
                                  .font(.subheadline).foregroundColor(.secondary)
                          }
                     } icon: {
@@ -141,15 +149,15 @@ struct SupportView: View {
     }
 
     private var donateSection: some View {
-        Section(header: Text("Donate to Support").headerProminence(.increased)) {
-            Text("Keep BuyEuropean free and ad-free. Choose how you'd like to support:")
+        Section(header: Text(LocalizedStringKey("support.donate.header")).headerProminence(.increased)) {
+            Text(LocalizedStringKey("support.donate.description"))
                 .font(.subheadline).foregroundColor(.secondary).padding(.bottom, 8)
 
             if iapManager.isFetchingProducts {
                 HStack { Spacer(); ProgressView(); Spacer() }
                     .padding(.vertical)
             } else if currentProducts.isEmpty {
-                Text("Unable to load support options—pull down to retry.")
+                Text(LocalizedStringKey("support.donate.load_error"))
                     .foregroundColor(.red)
                     .font(.subheadline)
                     .multilineTextAlignment(.center)
@@ -193,13 +201,13 @@ struct SupportView: View {
                      }
                     .padding(.vertical, 4)
                 } else {
-                    Text("Select an amount above")
+                    Text(LocalizedStringKey("support.donate.select_amount"))
                         .font(.caption).foregroundColor(.secondary)
                         .frame(maxWidth: .infinity, alignment: .center)
                         .padding(.vertical, 4)
                 }
 
-                Toggle("Monthly Support", isOn: $isSubscription)
+                Toggle(LocalizedStringKey("support.donate.toggle.monthly"), isOn: $isSubscription)
                     .toggleStyle(SwitchToggleStyle(tint: .accentColor))
                     .padding(.vertical, 8)
                     .onChange(of: isSubscription) { newValue in
@@ -227,7 +235,7 @@ struct SupportView: View {
                         if iapManager.isPurchasing {
                             ProgressView().tint(.white)
                         } else {
-                            Text(isSubscription ? "Subscribe" : "Donate")
+                            Text(isSubscription ? LocalizedStringKey("support.donate.button.subscribe") : LocalizedStringKey("support.donate.button.donate"))
                         }
                         Spacer()
                     }
@@ -244,10 +252,10 @@ struct SupportView: View {
     }
 
     private var feedbackSection: some View {
-        Section(header: Text("Send Feedback").headerProminence(.increased)) {
+        Section(header: Text(LocalizedStringKey("support.feedback.header")).headerProminence(.increased)) {
             Button { showMailCompose = true } label: {
                  HStack {
-                     Label("contact@buyeuropean.io", systemImage: "envelope")
+                     Label("contact@buyeuropean.io", systemImage: "envelope") // Email not localized
                          .foregroundStyle(.tint)
                      Spacer()
                      Image(systemName: "chevron.forward").foregroundColor(.secondary)

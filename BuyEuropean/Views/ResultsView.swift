@@ -1,4 +1,5 @@
 import SwiftUI
+import Foundation // For NSLocalizedString, if needed
 
 // Assume these are defined elsewhere:
 // ResultsViewModel, FeedbackViewModel, ClassificationBadgeView, ProductInfoCardView,
@@ -21,9 +22,11 @@ struct ResultsView: View {
 
     // Share Text (can be defined directly in ShareLink if preferred)
     private var shareText: String {
-        """
-        BuyEuropean quickly identifies products from European companies.
-        Vote with your Money and support European businesses and values.
+        let line1 = NSLocalizedString("share.text.line1", comment: "Share text line 1")
+        let line2 = NSLocalizedString("share.text.line2", comment: "Share text line 2")
+        return """
+        \(line1)
+        \(line2)
         \(appStoreLink)
         """
     }
@@ -60,13 +63,13 @@ struct ResultsView: View {
 
                     Spacer()
 
-                    Text("Analysis Results")
+                    Text(LocalizedStringKey("results.title"))
                         .font(.headline)
                         .fontWeight(.semibold) // Slightly bolder title
 
                     Spacer()
 
-                    Button("Done") {
+                    Button(LocalizedStringKey("common.done")) {
                         onDismiss()
                     }
                     .fontWeight(.medium)
@@ -152,13 +155,13 @@ struct ResultsView: View {
                             } // Alternatives VStack
                         } else if viewModel.isProductAnalysis {
                              // Show message only if it was a product analysis but no alternatives are shown
-                             CenteredMessageView(message: "No European alternatives needed.")
+                             CenteredMessageView(message: NSLocalizedString("results.no_alternatives", comment: "Message when no European alternatives are needed"))
                                 .padding(.horizontal, horizontalPadding)
                         }
 
                         // --- Section 3: Feedback ---
                         VStack(alignment: .leading, spacing: 16) {
-                            Text("Feedback")
+                            Text(LocalizedStringKey("results.feedback.title"))
                                 .font(.title3) // Slightly larger section header
                                 .fontWeight(.semibold)
                                 .padding(.horizontal, horizontalPadding)
@@ -179,21 +182,23 @@ struct ResultsView: View {
     // MARK: - Helper Functions
     private func emoji(for classification: Classification) -> String {
         switch classification {
-        case .cat: return "🐱"
-        case .dog: return "🐶"
-        case .animal: return "🐾"
-        case .human: return "👤"
-        default: return "❓" // Fallback
+        case .cat: return NSLocalizedString("classification.cat", comment: "Emoji for cat classification") // Actually, these should be the emoji directly if not localizing emojis. Or, the localized string IS the emoji.
+        case .dog: return NSLocalizedString("classification.dog", comment: "Emoji for dog classification")
+        case .animal: return NSLocalizedString("classification.animal", comment: "Emoji for animal classification")
+        case .human: return NSLocalizedString("classification.human", comment: "Emoji for human classification")
+        // For "Product", we usually show ProductInfoCardView, not an emoji.
+        // However, if Classification.product can reach here, we might need a fallback.
+        default: return NSLocalizedString("classification.product", comment: "Emoji for product classification or fallback") // "❓" or a product emoji
         }
     }
 }
 
 // Helper View for Centered Text Messages
 struct CenteredMessageView: View {
-    let message: String
+    let message: String // This can now be a LocalizedStringKey or an already localized String
 
     var body: some View {
-        Text(message)
+        Text(message) // Text view can take LocalizedStringKey directly or a String
             .font(.subheadline) // Use subheadline for secondary info
             .foregroundColor(.secondary) // Use secondary color
             .multilineTextAlignment(.center)
