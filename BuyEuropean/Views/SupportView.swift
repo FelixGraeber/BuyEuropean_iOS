@@ -1,7 +1,5 @@
 import SwiftUI
 import StoreKit
-import MessageUI
-
 import Foundation // For NSLocalizedString
 
 /// Returns a descriptive string for a given product based on ID and subscription type.
@@ -28,6 +26,7 @@ func getProductDescription(for product: Product?, isSubscription: Bool) -> Strin
 struct SupportView: View {
     @EnvironmentObject private var iapManager: IAPManager
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
 
     // MARK: Tabs
     enum Tab: Int, CaseIterable, Identifiable {
@@ -45,8 +44,14 @@ struct SupportView: View {
     @State private var isSubscription: Bool = false
     @State private var selectedOneTimeIndex: Int? = nil
     @State private var selectedSubIndex: Int? = nil
-    @State private var showShareSheet = false
-    @State private var showMailCompose = false
+
+    // Share content
+    private let appStoreLink = "https://apps.apple.com/de/app/buyeuropean/id6743128862?l=en-GB"
+    private var shareText: String {
+        let shareLine1 = NSLocalizedString("share.text.line1", comment: "Share text line 1")
+        let shareLine2 = NSLocalizedString("share.text.line2", comment: "Share text line 2")
+        return "\(shareLine1)\n\(shareLine2)\n\(appStoreLink)"
+    }
 
     // MARK: Product Lists
     private var oneTimeProducts: [Product] {
@@ -103,20 +108,6 @@ struct SupportView: View {
                     }
                 }
                 .refreshable { await iapManager.fetchProducts() }
-                .sheet(isPresented: $showShareSheet) {
-            // Assuming share.text.line1 and line2 are defined in Localizable.strings
-            let shareLine1 = NSLocalizedString("share.text.line1", comment: "Share text line 1")
-            let shareLine2 = NSLocalizedString("share.text.line2", comment: "Share text line 2")
-            let appStoreLink = "https://apps.apple.com/de/app/buyeuropean/id6743128862?l=en-GB" // This should remain as is or be configurable
-            ActivityView(activityItems: ["\(shareLine1)\n\(shareLine2)\n\(appStoreLink)"])
-                }
-                .sheet(isPresented: $showMailCompose) {
-            MailComposeView(recipient: "contact@buyeuropean.io") { result in // Email address is not typically localized
-                        if case .sent = result {
-                            FeedbackViewModel().promptForRatingIfNeeded()
-                        }
-                    }
-                }
                 .task { initializeSelection() }
             }
         }
@@ -124,7 +115,8 @@ struct SupportView: View {
 
     private var shareSection: some View {
         Section(header: Text(LocalizedStringKey("support.share.header")).headerProminence(.increased)) {
-            Button { showShareSheet = true } label: {
+            // Use iOS 16's ShareLink instead of ActivityView
+            ShareLink(item: shareText) {
                 HStack {
                     Label {
                          VStack(alignment: .leading, spacing: 4) {
@@ -253,7 +245,12 @@ struct SupportView: View {
 
     private var feedbackSection: some View {
         Section(header: Text(LocalizedStringKey("support.feedback.header")).headerProminence(.increased)) {
-            Button { showMailCompose = true } label: {
+            Button {
+                if let emailURL = URL(string: "mailto:contact@buyeuropean.io") {
+                    openURL(emailURL)
+                    FeedbackViewModel().promptForRatingIfNeeded()
+                }
+            } label: {
                  HStack {
                      Label("contact@buyeuropean.io", systemImage: "envelope") // Email not localized
                          .foregroundStyle(.tint)
@@ -286,48 +283,6 @@ struct SupportView: View {
             try? await iapManager.purchase(prod)
         }
     }
-}
-
-struct ActivityView: UIViewControllerRepresentable {
-    let activityItems: [Any]
-    func makeUIViewController(context: Context) -> UIActivityViewController {
-        let controller = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
-        if let pop = controller.popoverPresentationController {
-            pop.sourceView = UIApplication.shared.windows.first
-            pop.sourceRect = CGRect(x: UIScreen.main.bounds.midX,
-                                     y: UIScreen.main.bounds.midY,
-                                     width: 0, height: 0)
-            pop.permittedArrowDirections = []
-        }
-        return controller
-    }
-    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
-}
-
-struct MailComposeView: UIViewControllerRepresentable {
-    let recipient: String
-    var onResult: ((MFMailComposeResult) -> Void)?
-    @Environment(\.dismiss) private var dismiss
-
-    class Coordinator: NSObject, MFMailComposeViewControllerDelegate {
-        let parent: MailComposeView
-        init(_ parent: MailComposeView) { self.parent = parent }
-        func mailComposeController(_ controller: MFMailComposeViewController,
-                                   didFinishWith result: MFMailComposeResult,
-                                   error: Error?) {
-            parent.onResult?(result)
-            parent.dismiss()
-        }
-    }
-
-    func makeCoordinator() -> Coordinator { Coordinator(self) }
-    func makeUIViewController(context: Context) -> MFMailComposeViewController {
-        let vc = MFMailComposeViewController()
-        vc.setToRecipients([recipient])
-        vc.mailComposeDelegate = context.coordinator
-        return vc
-    }
-    func updateUIViewController(_ uiViewController: MFMailComposeViewController, context: Context) {}
 }
 
 #if DEBUG

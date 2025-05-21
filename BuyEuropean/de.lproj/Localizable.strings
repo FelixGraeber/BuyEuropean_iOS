@@ -172,3 +172,7 @@
 "country.netherlands" = "Niederlande";
 "country.switzerland" = "Schweiz";
 "country.austria" = "Österreich";
+
+/* ProductInfoCardView Translation */
+"translate.button" = "Übersetzen";
+"show.original.button" = "Original anzeigen";

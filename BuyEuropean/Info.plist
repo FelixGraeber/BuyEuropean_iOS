@@ -18,6 +18,8 @@
     <string>$(MARKETING_VERSION)</string>
     <key>LSRequiresIPhoneOS</key>
     <true/>
+    <key>UIColorName</key>
+    <string>AccentColor</string>
     <key>UIApplicationSceneManifest</key>
     <dict>
         <key>UIApplicationSupportsMultipleScenes</key>

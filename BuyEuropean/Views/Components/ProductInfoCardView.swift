@@ -1,4 +1,6 @@
 import SwiftUI
+import Foundation
+import NaturalLanguage
 
 struct ProductInfoCardView: View {
     let product: String
@@ -15,7 +17,10 @@ struct ProductInfoCardView: View {
 
     // Removed isRationaleExpanded state
     @State private var isAnimated = false
+    @State private var translatedRationale: String? = nil
+    @State private var isTranslating = false
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.locale) private var locale
 
     // Constants for styling
     private let cornerRadius: CGFloat = 16
@@ -49,10 +54,13 @@ struct ProductInfoCardView: View {
                 .font(.caption2)
                 .foregroundColor(.secondary)
                 .padding(.top, 4)
+            
+            // 6. Translation Button
+            translateButton()
         }
         .padding()
         // Use our cardBackground color for better dark mode support
-        .background(Color.cardBackground)
+        .background(Color("CardBackground"))
         .cornerRadius(cornerRadius)
         .shadow(color: colorScheme == .dark ? Color.black.opacity(0.2) : Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
         .opacity(isAnimated ? 1 : 0)
@@ -60,6 +68,12 @@ struct ProductInfoCardView: View {
         .onAppear {
             withAnimation(.easeOut(duration: 0.4).delay(0.05)) {
                 isAnimated = true
+            }
+        }
+        .task {
+            // Attempt auto-translation if translatedRationale is nil
+            if translatedRationale == nil {
+                await translateRationale()
             }
         }
     }
@@ -98,7 +112,7 @@ struct ProductInfoCardView: View {
                     .foregroundColor(.secondary)
 
                 // Combine company name and country/flag into a single Text view for proper wrapping
-                Text("\(company) (\(headquarters.localizedCountryNameFromAlpha3()) \(countryFlag))")
+                Text("\(company) (\(getLocalizedCountryName(from: headquarters)) \(countryFlag))")
                     .font(.body)
                     .foregroundColor(.primary)
             }
@@ -124,7 +138,7 @@ struct ProductInfoCardView: View {
                         .foregroundColor(.primary)
                         .fixedSize(horizontal: false, vertical: true)
                     
-                    let parentCountryName = parentCompanyHeadquarters?.localizedCountryNameFromAlpha3() ?? ""
+                    let parentCountryName = getLocalizedCountryName(from: parentCompanyHeadquarters ?? "")
                     Text("(\(parentCountryName) \(parentCompanyFlag))")
                         .font(.body)
                         .foregroundColor(.primary)
@@ -145,16 +159,42 @@ struct ProductInfoCardView: View {
                     .fontWeight(.medium)
                     .foregroundColor(.secondary)
 
-                // Always display full rationale
-                Text(rationale)
+                // Display translated text if available, otherwise show original
+                Text(translatedRationale ?? rationale)
                     .font(.body)
                     .foregroundColor(.primary)
                     .fixedSize(horizontal: false, vertical: true)
-
-                // Removed the conditional Group and the "Read More/Less" Button
+                
+                // Show loading indicator while translating
+                if isTranslating {
+                    ProgressView()
+                        .padding(.top, 4)
+                }
             }
             Spacer()
         }
+    }
+    
+    // Translation Button
+    private func translateButton() -> some View {
+        Button(action: {
+            Task {
+                await translateRationale()
+            }
+        }) {
+            Label(
+                translatedRationale == nil ? LocalizedStringKey("translate.button") : LocalizedStringKey("show.original.button"), 
+                systemImage: "globe"
+            )
+            .font(.footnote)
+            .padding(.vertical, 6)
+            .padding(.horizontal, 12)
+            .background(Color.secondary.opacity(0.1))
+            .cornerRadius(8)
+        }
+        .disabled(isTranslating)
+        .buttonStyle(BorderlessButtonStyle())
+        .frame(maxWidth: .infinity, alignment: .trailing)
     }
 
     // Helper for Icon Views (Unchanged)
@@ -168,4 +208,112 @@ struct ProductInfoCardView: View {
                 .foregroundColor(color)
         }
     }
-}
+    
+    // Helper for localized country names
+    private func getLocalizedCountryName(from alpha3Code: String) -> String {
+        // Simple implementation to convert Alpha-3 code to localized name
+        // Returns the code itself if conversion fails
+        let alpha3 = alpha3Code.uppercased()
+        
+        // Lookup in common Alpha-3 to Alpha-2 mappings
+        let alpha2: String?
+        switch alpha3 {
+            case "USA": alpha2 = "US"
+            case "GBR": alpha2 = "GB"
+            case "DEU": alpha2 = "DE"
+            case "FRA": alpha2 = "FR"
+            case "ITA": alpha2 = "IT"
+            case "ESP": alpha2 = "ES"
+            case "JPN": alpha2 = "JP"
+            case "CHN": alpha2 = "CN"
+            default: alpha2 = nil
+        }
+        
+        // Return localized country name if available
+        if let code = alpha2, let name = Locale.current.localizedString(forRegionCode: code) {
+            return name
+        }
+        
+        return alpha3Code // Return original code if conversion fails
+    }
+    
+    // MARK: - Translation Logic
+    
+    private func translateRationale() async {
+        // If we already have a translation, toggle back to original
+        if translatedRationale != nil {
+            translatedRationale = nil
+            return
+        }
+        
+        // Skip empty text
+        if rationale.isEmpty {
+            return
+        }
+        
+        // Show loading indicator
+        isTranslating = true
+        defer { isTranslating = false }
+        
+        // Get the current locale for target language
+        let targetLocale = locale
+        
+        do {
+            // First, detect the language
+            let languageRecognizer = NLLanguageRecognizer()
+            languageRecognizer.processString(rationale)
+            
+            guard let sourceLanguage = languageRecognizer.dominantLanguage else {
+                print("Could not determine rationale language")
+                return
+            }
+            
+            // Get target language code from current locale
+            guard let targetLanguageCode = targetLocale.language.languageCode?.identifier else {
+                print("Could not determine target language code")
+                return
+            }
+            
+            // Skip if source and target are the same
+            if sourceLanguage.rawValue == targetLanguageCode {
+                print("Source and target languages are the same, skipping translation")
+                return
+            }
+            
+            // Attempt to create a URL request for a simple translation API
+            let urlString = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=\(sourceLanguage.rawValue)&tl=\(targetLanguageCode)&dt=t&q=\(rationale.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
+            
+            guard let url = URL(string: urlString) else {
+                print("Failed to create translation URL")
+                return
+            }
+            
+            let (data, _) = try await URLSession.shared.data(from: url)
+            
+            // Parse the JSON response - fixed to concatenate all translated segments
+            if let json = try JSONSerialization.jsonObject(with: data) as? Array<Any>,
+               let translationArray = json.first as? Array<Any> {
+                
+                // The first element in the JSON response is an array of translation segments
+                // Each segment is an array where the first element is the translated text
+                var completeTranslation = ""
+                
+                // Go through all segments and concatenate them
+                for translationSegment in translationArray {
+                    if let segment = translationSegment as? Array<Any>,
+                       let translatedTextPart = segment.first as? String {
+                        completeTranslation += translatedTextPart
+                    }
+                }
+                
+                if !completeTranslation.isEmpty {
+                    await MainActor.run {
+                        self.translatedRationale = completeTranslation
+                    }
+                }
+            }
+        } catch {
+            print("Translation error: \(error.localizedDescription)")
+        }
+    }
+} 

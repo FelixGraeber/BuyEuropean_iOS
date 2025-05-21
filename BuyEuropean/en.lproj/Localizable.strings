@@ -102,3 +102,7 @@
 /* "classification.human" = "Human"; already added */
 "classification.unknown" = "Unknown";
 /* "classification.product" was a placeholder, the specific types like europeanCountry are more accurate for this enum */
+
+/* ProductInfoCardView Translation */
+"translate.button" = "Translate";
+"show.original.button" = "Show Original";
