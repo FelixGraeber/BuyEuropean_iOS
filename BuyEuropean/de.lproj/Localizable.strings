@@ -86,6 +86,7 @@
 "feedback.option.alternatives" = "Vorgeschlagene Alternativen";
 "feedback.details.prompt" = "Zusätzliche Details (optional)";
 "feedback.submit" = "Feedback senden";
+"feedback.share.photo" = "Bild senden, um uns zu helfen";
 
 /* CameraPermissionView.swift */
 "permission.camera.title" = "Kamerazugriff benötigt";

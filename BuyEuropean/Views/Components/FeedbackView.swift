@@ -64,7 +64,7 @@ struct FeedbackView: View {
             .scaleEffect(isAnimated ? 1.0 : 0.5)
             .opacity(isAnimated ? 1.0 : 0.0)
             .animation(.spring(response: 0.4, dampingFraction: 0.6).delay(0.1), value: isAnimated)
-            Text("Thank you for your feedback!")
+            Text(LocalizedStringKey("feedback.thanks"))
                 .font(.headline)
                 .foregroundColor(.primary)
                 .multilineTextAlignment(.center)
@@ -79,7 +79,7 @@ struct FeedbackView: View {
     @ViewBuilder
     private func initialFeedbackOptions() -> some View {
         VStack(spacing: 20) { // Increased spacing
-            Text("Was this analysis helpful?")
+            Text(LocalizedStringKey("feedback.question"))
                 .font(.headline) // Keep headline
                 .foregroundColor(.primary) // Use primary
 
@@ -140,15 +140,15 @@ struct FeedbackView: View {
     @ViewBuilder
     private func detailedFeedbackForm() -> some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text(viewModel.feedbackData.isPositive ? "What was helpful?" : "What was incorrect?")
+            Text(viewModel.feedbackData.isPositive ? LocalizedStringKey("feedback.positive.question") : LocalizedStringKey("feedback.negative.question"))
                 .font(.headline)
                 .foregroundColor(.primary)
             VStack(alignment: .leading, spacing: 12) {
-                Toggle("Product Identification", isOn: $viewModel.feedbackData.wrongProduct)
-                Toggle("Brand/Company Identification", isOn: $viewModel.feedbackData.wrongBrand)
-                Toggle("Country Identification (HQ)", isOn: $viewModel.feedbackData.wrongCountry)
-                Toggle("Overall Classification", isOn: $viewModel.feedbackData.wrongClassification)
-                Toggle("Suggested Alternatives", isOn: $viewModel.feedbackData.wrongAlternatives)
+                Toggle(LocalizedStringKey("feedback.option.product"), isOn: $viewModel.feedbackData.wrongProduct)
+                Toggle(LocalizedStringKey("feedback.option.brand"), isOn: $viewModel.feedbackData.wrongBrand)
+                Toggle(LocalizedStringKey("feedback.option.country"), isOn: $viewModel.feedbackData.wrongCountry)
+                Toggle(LocalizedStringKey("feedback.option.classification"), isOn: $viewModel.feedbackData.wrongClassification)
+                Toggle(LocalizedStringKey("feedback.option.alternatives"), isOn: $viewModel.feedbackData.wrongAlternatives)
             }
             .toggleStyle(CheckboxToggleStyle(tintColor: Color("BrandPrimary")))
             .padding(.horizontal, 12)
@@ -161,7 +161,7 @@ struct FeedbackView: View {
                         HStack {
                             Image(systemName: "photo.on.rectangle")
                                 .foregroundColor(Color("BrandPrimary"))
-                            Text("Send image to help us improve")
+                            Text(LocalizedStringKey("feedback.share.photo"))
                                 .fontWeight(.semibold)
                                 .foregroundColor(Color("BrandPrimary"))
                         }
@@ -179,7 +179,7 @@ struct FeedbackView: View {
                 .padding(.top, 8)
             }
             VStack(alignment: .leading, spacing: 6) {
-                Text("Additional details (optional)")
+                Text(LocalizedStringKey("feedback.details.prompt"))
                     .font(.subheadline)
                     .fontWeight(.medium)
                     .foregroundColor(.secondary)
@@ -211,7 +211,7 @@ struct FeedbackView: View {
                             .tint(.white)
                             .frame(height: 20)
                     } else {
-                        Text("Submit Feedback")
+                        Text(LocalizedStringKey("feedback.submit"))
                             .fontWeight(.semibold)
                     }
                 }
