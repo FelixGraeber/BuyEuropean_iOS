@@ -29,7 +29,7 @@ struct ProductInfoCardView: View {
             infoRow(
                 icon: "tag.fill",
                 iconColor: .blue,
-                title: "Product",
+                title: LocalizedStringKey("product.label"),
                 value: product
             )
 
@@ -45,7 +45,7 @@ struct ProductInfoCardView: View {
             rationaleSection()
             
             // 5. AI disclaimer text
-            Text("AI can make mistakes")
+            Text(LocalizedStringKey("ai.disclaimer"))
                 .font(.caption2)
                 .foregroundColor(.secondary)
                 .padding(.top, 4)
@@ -67,12 +67,12 @@ struct ProductInfoCardView: View {
     // MARK: - Subviews
 
     // Generic Info Row (Kept for Product)
-    private func infoRow(icon: String, iconColor: Color, title: String, value: String) -> some View {
+    private func infoRow(icon: String, iconColor: Color, title: LocalizedStringKey, value: String) -> some View {
         HStack(alignment: .top, spacing: 12) {
             iconView(systemName: icon, color: iconColor)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(title.uppercased())
+                Text(title)
                     .font(.caption)
                     .fontWeight(.medium)
                     .foregroundColor(.secondary)
@@ -92,7 +92,7 @@ struct ProductInfoCardView: View {
             iconView(systemName: "building.2.fill", color: .purple)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text("Company".uppercased())
+                Text(LocalizedStringKey("company.label"))
                     .font(.caption)
                     .fontWeight(.medium)
                     .foregroundColor(.secondary)
@@ -112,7 +112,7 @@ struct ProductInfoCardView: View {
             iconView(systemName: "building.columns.fill", color: .brown)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text("Ultimate Parent Company".uppercased())
+                Text(LocalizedStringKey("ultimate_parent.label"))
                     .font(.caption)
                     .fontWeight(.medium)
                     .foregroundColor(.secondary)
@@ -140,7 +140,7 @@ struct ProductInfoCardView: View {
             iconView(systemName: "info.circle.fill", color: .orange)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text("Identification Rationale".uppercased())
+                Text(LocalizedStringKey("identification.label"))
                     .font(.caption)
                     .fontWeight(.medium)
                     .foregroundColor(.secondary)

@@ -24,8 +24,8 @@ struct ClassificationStyle {
     let darkBadgeColor: Color
     
     let icon: String
-    let title: String
-    let description: String
+    let title: LocalizedStringKey
+    let description: LocalizedStringKey
     
     // Computed properties to get the right color based on color scheme
     func backgroundColor(for colorScheme: ColorScheme) -> Color {
@@ -64,8 +64,8 @@ struct ClassificationStyle {
                 darkTextColor: Color(red: 114/255, green: 160/255, blue: 250/255),
                 darkBadgeColor: Color(red: 65/255, green: 117/255, blue: 224/255),
                 icon: "flag.fill",
-                title: "European",
-                description: "This product is made by a company headquartered in Europe."
+                title: LocalizedStringKey("classification.europeanCountry.name"),
+                description: LocalizedStringKey("classification.europeanCountry.description")
             )
         case .europeanAlly:
             return ClassificationStyle(
@@ -76,8 +76,8 @@ struct ClassificationStyle {
                 darkTextColor: Color(red: 99/255, green: 166/255, blue: 255/255),
                 darkBadgeColor: Color(red: 79/255, green: 156/255, blue: 255/255),
                 icon: "hand.thumbsup.fill",
-                title: "European Ally",
-                description: "This product is made by a company from a country allied with Europe."
+                title: LocalizedStringKey("classification.europeanAlly.name"),
+                description: LocalizedStringKey("classification.europeanAlly.description")
             )
         case .europeanSceptic:
             return ClassificationStyle(
@@ -88,8 +88,8 @@ struct ClassificationStyle {
                 darkTextColor: Color(red: 255/255, green: 156/255, blue: 107/255),
                 darkBadgeColor: Color(red: 255/255, green: 146/255, blue: 89/255),
                 icon: "exclamationmark.triangle.fill",
-                title: "European Sceptic",
-                description: "This product is made by a company from a country with skeptical relations to Europe."
+                title: LocalizedStringKey("classification.europeanSceptic.name"),
+                description: LocalizedStringKey("classification.europeanSceptic.description")
             )
         case .europeanAdversary:
             return ClassificationStyle(
@@ -100,8 +100,8 @@ struct ClassificationStyle {
                 darkTextColor: Color(red: 254/255, green: 118/255, blue: 118/255),
                 darkBadgeColor: Color(red: 239/255, green: 87/255, blue: 87/255),
                 icon: "xmark.octagon.fill",
-                title: "European Adversary",
-                description: "This product is made by a company from a country with adversarial relations to Europe."
+                title: LocalizedStringKey("classification.europeanAdversary.name"),
+                description: LocalizedStringKey("classification.europeanAdversary.description")
             )
         case .neutral:
             return ClassificationStyle(
@@ -112,8 +112,8 @@ struct ClassificationStyle {
                 darkTextColor: Color(red: 180/255, green: 180/255, blue: 180/255),
                 darkBadgeColor: Color(red: 130/255, green: 130/255, blue: 130/255),
                 icon: "equal.circle.fill",
-                title: "Neutral",
-                description: "This product is made by a company from a country with neutral standing to Europe."
+                title: LocalizedStringKey("classification.neutral.name"),
+                description: LocalizedStringKey("classification.neutral.description")
             )
         case .cat:
             return ClassificationStyle(
@@ -124,8 +124,8 @@ struct ClassificationStyle {
                 darkTextColor: Color(red: 255/255, green: 177/255, blue: 100/255),
                 darkBadgeColor: Color(red: 255/255, green: 170/255, blue: 51/255),
                 icon: "cat.fill",
-                title: "Cat",
-                description: ""
+                title: LocalizedStringKey("classification.cat.name"),
+                description: LocalizedStringKey("classification.cat.description")
             )
         case .dog:
             return ClassificationStyle(
@@ -136,8 +136,8 @@ struct ClassificationStyle {
                 darkTextColor: Color(red: 245/255, green: 158/255, blue: 90/255),
                 darkBadgeColor: Color(red: 245/255, green: 146/255, blue: 46/255),
                 icon: "dog.fill",
-                title: "Dog",
-                description: ""
+                title: LocalizedStringKey("classification.dog.name"),
+                description: LocalizedStringKey("classification.dog.description")
             )
         case .animal:
             return ClassificationStyle(
@@ -148,8 +148,8 @@ struct ClassificationStyle {
                 darkTextColor: Color(red: 95/255, green: 210/255, blue: 170/255),
                 darkBadgeColor: Color(red: 52/255, green: 211/255, blue: 158/255),
                 icon: "hare.fill",
-                title: "Animal",
-                description: ""
+                title: LocalizedStringKey("classification.animal.name"),
+                description: LocalizedStringKey("classification.animal.description")
             )
         case .human:
             return ClassificationStyle(
@@ -160,8 +160,8 @@ struct ClassificationStyle {
                 darkTextColor: Color(red: 205/255, green: 132/255, blue: 250/255),
                 darkBadgeColor: Color(red: 190/255, green: 124/255, blue: 255/255),
                 icon: "person.fill",
-                title: "Human",
-                description: ""
+                title: LocalizedStringKey("classification.human.name"),
+                description: LocalizedStringKey("classification.human.description")
             )
         case .unknown:
             return ClassificationStyle(
@@ -172,8 +172,8 @@ struct ClassificationStyle {
                 darkTextColor: Color(red: 176/255, green: 180/255, blue: 189/255),
                 darkBadgeColor: Color(red: 166/255, green: 173/255, blue: 187/255),
                 icon: "questionmark.circle.fill",
-                title: "Unknown Origin",
-                description: "This product's origin could not be determined with confidence."
+                title: LocalizedStringKey("classification.unknown.name"),
+                description: LocalizedStringKey("classification.unknown.description")
             )
         }
     }

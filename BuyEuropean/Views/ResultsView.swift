@@ -113,12 +113,12 @@ struct ResultsView: View {
                                     .font(.system(size: 60))
                                     .padding(.bottom, 5)
 
-                                Text(viewModel.displayClassification.displayName)
+                                Text(LocalizedStringKey("classification.\(viewModel.displayClassification.rawValue).name"))
                                     .font(.system(size: 36, weight: .bold))
                                     .foregroundColor(.primary)
                                     .multilineTextAlignment(.center)
 
-                                Text(viewModel.identificationRationale)
+                                Text(LocalizedStringKey(viewModel.identificationRationale))
                                     .font(.title3)
                                     .foregroundColor(.secondary)
                                     .multilineTextAlignment(.center)
@@ -155,7 +155,7 @@ struct ResultsView: View {
                             } // Alternatives VStack
                         } else if viewModel.isProductAnalysis {
                              // Show message only if it was a product analysis but no alternatives are shown
-                             CenteredMessageView(message: NSLocalizedString("results.no_alternatives", comment: "Message when no European alternatives are needed"))
+                             CenteredMessageView(message: LocalizedStringKey("results.no_alternatives"))
                                 .padding(.horizontal, horizontalPadding)
                         }
 
@@ -182,23 +182,23 @@ struct ResultsView: View {
     // MARK: - Helper Functions
     private func emoji(for classification: Classification) -> String {
         switch classification {
-        case .cat: return NSLocalizedString("classification.cat", comment: "Emoji for cat classification") // Actually, these should be the emoji directly if not localizing emojis. Or, the localized string IS the emoji.
-        case .dog: return NSLocalizedString("classification.dog", comment: "Emoji for dog classification")
-        case .animal: return NSLocalizedString("classification.animal", comment: "Emoji for animal classification")
-        case .human: return NSLocalizedString("classification.human", comment: "Emoji for human classification")
+        case .cat: return NSLocalizedString("classification.cat.emoji", comment: "Emoji for cat classification") 
+        case .dog: return NSLocalizedString("classification.dog.emoji", comment: "Emoji for dog classification")
+        case .animal: return NSLocalizedString("classification.animal.emoji", comment: "Emoji for animal classification")
+        case .human: return NSLocalizedString("classification.human.emoji", comment: "Emoji for human classification")
         // For "Product", we usually show ProductInfoCardView, not an emoji.
         // However, if Classification.product can reach here, we might need a fallback.
-        default: return NSLocalizedString("classification.product", comment: "Emoji for product classification or fallback") // "❓" or a product emoji
+        default: return NSLocalizedString("classification.product.emoji", comment: "Emoji for product classification or fallback") 
         }
     }
 }
 
 // Helper View for Centered Text Messages
 struct CenteredMessageView: View {
-    let message: String // This can now be a LocalizedStringKey or an already localized String
+    let message: LocalizedStringKey // Changed to LocalizedStringKey to support direct localization
 
     var body: some View {
-        Text(message) // Text view can take LocalizedStringKey directly or a String
+        Text(message) // Text view can take LocalizedStringKey directly
             .font(.subheadline) // Use subheadline for secondary info
             .foregroundColor(.secondary) // Use secondary color
             .multilineTextAlignment(.center)

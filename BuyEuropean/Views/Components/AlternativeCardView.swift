@@ -49,7 +49,7 @@ struct AlternativeCardView: View {
             HStack {
                 Spacer() // Pushes button to the right
                 Button(action: onLearnMore) {
-                    Label("Learn More", systemImage: "arrow.up.right.square")
+                    Label(LocalizedStringKey("alternatives.learn_more"), systemImage: "arrow.up.right.square")
                          .font(.footnote.weight(.medium))
                          .padding(.vertical, 4) // Smaller padding for footnote button
                 }
@@ -83,12 +83,12 @@ struct AlternativesHeaderView: View {
                     .font(.title3) // Consistent icon size
                     .foregroundColor(Color.brandPrimary) // Use brand color
 
-                Text("European Alternatives")
+                Text(LocalizedStringKey("alternatives.title"))
                     .font(.title3) // Consistent sizing
                     .fontWeight(.semibold) // Medium weight for better readability
             }
 
-            Text("Consider these options made within Europe or by European companies.") // Updated description
+            Text(LocalizedStringKey("alternatives.subtitle")) // Updated description
                 .font(.subheadline)
                 .foregroundColor(.secondary) // Standard secondary color
                 // .italic() // Removed italic for cleaner look
