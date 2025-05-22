@@ -137,7 +137,7 @@
 /* Email "contact@buyeuropean.io" is not localized */
 
 /* Classification Display Names */
-"classification.europeanCountry.name" = "Europäisches Land";
+"classification.europeanCountry.name" = "Europäer";
 "classification.europeanAlly.name" = "Europäischer Verbündeter";
 "classification.europeanSceptic.name" = "Europäischer Skeptiker";
 "classification.europeanAdversary.name" = "Europäischer Gegner";
