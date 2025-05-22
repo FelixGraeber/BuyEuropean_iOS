@@ -54,9 +54,6 @@ struct ProductInfoCardView: View {
                 .font(.caption2)
                 .foregroundColor(.secondary)
                 .padding(.top, 4)
-            
-            // 6. Translation Button
-            translateButton()
         }
         .padding()
         // Use our cardBackground color for better dark mode support
@@ -175,28 +172,6 @@ struct ProductInfoCardView: View {
         }
     }
     
-    // Translation Button
-    private func translateButton() -> some View {
-        Button(action: {
-            Task {
-                await translateRationale()
-            }
-        }) {
-            Label(
-                translatedRationale == nil ? LocalizedStringKey("translate.button") : LocalizedStringKey("show.original.button"), 
-                systemImage: "globe"
-            )
-            .font(.footnote)
-            .padding(.vertical, 6)
-            .padding(.horizontal, 12)
-            .background(Color.secondary.opacity(0.1))
-            .cornerRadius(8)
-        }
-        .disabled(isTranslating)
-        .buttonStyle(BorderlessButtonStyle())
-        .frame(maxWidth: .infinity, alignment: .trailing)
-    }
-
     // Helper for Icon Views (Unchanged)
     private func iconView(systemName: String, color: Color) -> some View {
         ZStack {
