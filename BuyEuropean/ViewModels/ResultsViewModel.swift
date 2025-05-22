@@ -42,6 +42,13 @@ class ResultsViewModel: ObservableObject {
         submittedFeedbackIds.contains(analysisId)
     }
     
+    @Published var translatedIdentificationRationale: String? = nil
+    @Published var isTranslatingIdentificationRationale: Bool = false
+    @Published var translatedAlternativeDescriptions: [UUID: String] = [:]
+    @Published var isTranslatingAlternatives: Set<UUID> = []
+    private let translationService = TranslationService()
+    private let systemLanguageCode: String = Locale.current.language.languageCode?.identifier ?? "en"
+    
     init(response: BuyEuropeanResponse, analysisImage: UIImage?) {
         self.response = response
         self.analysisImage = analysisImage
@@ -49,6 +56,11 @@ class ResultsViewModel: ObservableObject {
         // Generate a unique ID for this analysis result
         self.analysisId = UUID().uuidString
         print("Initialized ResultsViewModel. Classification: \(response.classification.rawValue)") // Debug print
+        // --- TRANSLATION LOGIC ---
+        if systemLanguageCode != "en" {
+            translateIdentificationRationale()
+            translateAlternativesDescriptions()
+        }
     }
     
     // MARK: - Computed Properties for View
@@ -133,5 +145,39 @@ class ResultsViewModel: ObservableObject {
         withAnimation {
             showFeedback.toggle()
         }
+    }
+    
+    private func translateIdentificationRationale() {
+        isTranslatingIdentificationRationale = true
+        Task {
+            let translated = await translationService.translate(text: response.identificationRationale, to: Locale.current)
+            await MainActor.run {
+                self.translatedIdentificationRationale = translated
+                self.isTranslatingIdentificationRationale = false
+            }
+        }
+    }
+    
+    private func translateAlternativesDescriptions() {
+        for alt in alternatives {
+            isTranslatingAlternatives.insert(alt.id)
+            Task {
+                let translated = await translationService.translate(text: alt.description, to: Locale.current)
+                await MainActor.run {
+                    if let translated = translated {
+                        self.translatedAlternativeDescriptions[alt.id] = translated
+                    }
+                    self.isTranslatingAlternatives.remove(alt.id)
+                }
+            }
+        }
+    }
+    
+    func translatedDescription(for alternative: EuropeanAlternative) -> String? {
+        translatedAlternativeDescriptions[alternative.id]
+    }
+    
+    func isTranslatingAlternative(_ alternative: EuropeanAlternative) -> Bool {
+        isTranslatingAlternatives.contains(alternative.id)
     }
 }
