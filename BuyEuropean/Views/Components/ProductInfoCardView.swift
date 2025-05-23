@@ -109,7 +109,7 @@ struct ProductInfoCardView: View {
                     .foregroundColor(.secondary)
 
                 // Combine company name and country/flag into a single Text view for proper wrapping
-                Text("\(company) (\(getLocalizedCountryName(from: headquarters)) \(countryFlag))")
+                Text("\(company) (\(CountryFlagUtility.localizedName(forAlpha3Code: headquarters)) \(countryFlag))")
                     .font(.body)
                     .foregroundColor(.primary)
             }
@@ -135,7 +135,7 @@ struct ProductInfoCardView: View {
                         .foregroundColor(.primary)
                         .fixedSize(horizontal: false, vertical: true)
                     
-                    let parentCountryName = getLocalizedCountryName(from: parentCompanyHeadquarters ?? "")
+                    let parentCountryName = CountryFlagUtility.localizedName(forAlpha3Code: parentCompanyHeadquarters ?? "")
                     Text("(\(parentCountryName) \(parentCompanyFlag))")
                         .font(.body)
                         .foregroundColor(.primary)
@@ -182,34 +182,6 @@ struct ProductInfoCardView: View {
                 .font(.system(size: iconSize, weight: .medium))
                 .foregroundColor(color)
         }
-    }
-    
-    // Helper for localized country names
-    private func getLocalizedCountryName(from alpha3Code: String) -> String {
-        // Simple implementation to convert Alpha-3 code to localized name
-        // Returns the code itself if conversion fails
-        let alpha3 = alpha3Code.uppercased()
-        
-        // Lookup in common Alpha-3 to Alpha-2 mappings
-        let alpha2: String?
-        switch alpha3 {
-            case "USA": alpha2 = "US"
-            case "GBR": alpha2 = "GB"
-            case "DEU": alpha2 = "DE"
-            case "FRA": alpha2 = "FR"
-            case "ITA": alpha2 = "IT"
-            case "ESP": alpha2 = "ES"
-            case "JPN": alpha2 = "JP"
-            case "CHN": alpha2 = "CN"
-            default: alpha2 = nil
-        }
-        
-        // Return localized country name if available
-        if let code = alpha2, let name = Locale.current.localizedString(forRegionCode: code) {
-            return name
-        }
-        
-        return alpha3Code // Return original code if conversion fails
     }
     
     // MARK: - Translation Logic

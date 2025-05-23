@@ -94,6 +94,16 @@ class ResultsViewModel: ObservableObject {
     var parentCompanyHeadquarters: String? { response.ultimateParentCompanyHeadquarters }
     var identificationRationale: String { response.identificationRationale }
     
+    // Computed property for the localized company headquarters country name
+    var localizedHeadquartersCountryName: String {
+        CountryFlagUtility.localizedName(forAlpha3Code: headquartersCountry)
+    }
+    
+    // Computed property for the localized parent company headquarters country name
+    var localizedParentCompanyHeadquartersName: String {
+        CountryFlagUtility.localizedName(forAlpha3Code: parentCompanyHeadquarters)
+    }
+    
     // Computed property to determine if parent company info should be shown
     var shouldShowParentCompany: Bool {
         guard let parent = parentCompany, !parent.isEmpty else { return false }
