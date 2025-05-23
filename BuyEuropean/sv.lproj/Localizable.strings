@@ -1,0 +1,99 @@
+/* Localized strings */
+
+/* ContentView.swift */
+"app.title" = "BuyEuropean";
+"location.status.ios" = "Platsstatus: %@";
+"location.status.other" = "Platsstatus: N/A";
+"location.city_country" = "Stad: %@, Land: %@";
+
+/* ScanView.swift */
+"scan.manual.prompt" = "Ange ett varumärke eller produktnamn";
+"scan.manual.placeholder" = "t.ex. iPhone, Samsung, Nestlé, Zara...";
+"scan.manual.button.analyze" = "Analysera";
+"scan.progress.analyzing" = "Analyserar...";
+"scan.progress.processing" = "Bearbetar...";
+"scan.mode.photo" = "Foto";
+"scan.mode.text" = "Text";
+"scan.camera.initializing" = "Initierar kamera...";
+"scan.camera.access_needed.overlay" = "Kameratillgång krävs";
+
+/* HistoryView.swift */
+"history.title" = "Historik";
+"common.close" = "Stäng";
+"history.company.not_available" = "N/A";
+"history.search.prompt" = "Sök i historik";
+
+/* ScanViewModel.swift Error Messages */
+"scan.error.no_image_selected" = "Ingen bild vald";
+"scan.error.failed_to_process_image" = "Misslyckades med att bearbeta bilden";
+
+/* ResultsView.swift */
+"share.text.line1" = "BuyEuropean identifierar snabbt produkter från europeiska företag.";
+"share.text.line2" = "Rösta med dina pengar och stöd europeiska företag och värderingar.";
+"results.title" = "Analysresultat";
+"common.done" = "Klar";
+"results.no_alternatives" = "Inga europeiska alternativ behövs.";
+"results.feedback.title" = "Feedback";
+"classification.cat" = "Katt";
+"classification.dog" = "Hund";
+"classification.animal" = "Djur";
+"classification.human" = "Människa";
+"classification.product" = "Produkt";
+
+/* CameraPermissionView.swift */
+"permission.camera.title" = "Kameratillgång krävs";
+"permission.camera.description" = "BuyEuropean behöver tillgång till kameran för att ta bilder av din produkt eller ditt varumärke.";
+"common.continue" = "Fortsätt";
+
+/* ErrorView.swift */
+"error.title" = "Fel";
+"error.button.try_again" = "Försök igen";
+"common.dismiss" = "Avfärda";
+
+/* LocationPermissionView.swift */
+"permission.location.title" = "Platsåtkomst rekommenderas";
+"permission.location.description" = "BuyEuropean använder din plats för att ge mer relevanta produktalternativ baserat på din region. Din plats lagras eller delas aldrig. Detta är valfritt och du kan stänga av det i inställningarna.";
+
+/* SupportView.swift */
+"support.description.sub.few_hours" = "Finansiera BuyEuropean för några timmar per månad";
+"support.description.sub.day" = "Finansiera BuyEuropean för en dag per månad";
+"support.description.sub.few_days" = "Finansiera BuyEuropean för några dagar per månad";
+"support.description.sub.week" = "Finansiera BuyEuropean för en vecka per månad";
+"support.description.sub.few_weeks" = "Finansiera BuyEuropean för några veckor per månad";
+"support.description.sub.default" = "Stöd BuyEuropean varje månad";
+"support.description.onetime.few_hours" = "Finansiera BuyEuropean för några timmar";
+"support.description.onetime.day" = "Finansiera BuyEuropean för en dag";
+"support.description.onetime.few_days" = "Finansiera BuyEuropean för några dagar";
+"support.description.onetime.week" = "Finansiera BuyEuropean för en vecka";
+"support.description.onetime.few_weeks" = "Finansiera BuyEuropean för några veckor";
+"support.description.onetime.default" = "Stöd BuyEuropean";
+
+"support.tab.support" = "Stöd";
+"support.tab.feedback" = "Feedback";
+"support.title" = "Stöd oss";
+
+"support.share.header" = "Dela BuyEuropean";
+"support.share.button.label" = "Dela BuyEuropean";
+"support.share.button.description" = "Hjälp oss att växa BuyEuropean-rörelsen genom att dela appen.";
+
+"support.donate.header" = "Donera för att stödja";
+"support.donate.description" = "Håll BuyEuropean gratis och reklamfri. Välj hur du vill stödja:";
+"support.donate.load_error" = "Kunde inte ladda stödalternativ—dra ner för att försöka igen.";
+"support.donate.select_amount" = "Välj ett belopp ovan";
+"support.donate.toggle.monthly" = "Månatligt stöd";
+"support.donate.button.subscribe" = "Prenumerera";
+"support.donate.button.donate" = "Donera";
+
+"support.feedback.header" = "Skicka feedback";
+
+/* Classification Display Names */
+"classification.europeanCountry" = "Europeiskt land";
+"classification.europeanAlly" = "Europeisk allierad";
+"classification.europeanSceptic" = "Europeisk skeptiker";
+"classification.europeanAdversary" = "Europeisk motståndare";
+"classification.neutral" = "Neutral";
+"classification.unknown" = "Okänd";
+
+/* ProductInfoCardView Translation */
+"translate.button" = "Översätt";
+"show.original.button" = "Visa original"; 

@@ -1,0 +1,99 @@
+/* Localized strings */
+
+/* ContentView.swift */
+"app.title" = "BuyEuropean";
+"location.status.ios" = "Status lokalizacji: %@";
+"location.status.other" = "Status lokalizacji: N/D";
+"location.city_country" = "Miasto: %@, Kraj: %@";
+
+/* ScanView.swift */
+"scan.manual.prompt" = "Wpisz markę lub nazwę produktu";
+"scan.manual.placeholder" = "np. iPhone, Samsung, Nestlé, Zara...";
+"scan.manual.button.analyze" = "Analizuj";
+"scan.progress.analyzing" = "Analizowanie...";
+"scan.progress.processing" = "Przetwarzanie...";
+"scan.mode.photo" = "Zdjęcie";
+"scan.mode.text" = "Tekst";
+"scan.camera.initializing" = "Inicjowanie aparatu...";
+"scan.camera.access_needed.overlay" = "Wymagany dostęp do aparatu";
+
+/* HistoryView.swift */
+"history.title" = "Historia";
+"common.close" = "Zamknij";
+"history.company.not_available" = "N/D";
+"history.search.prompt" = "Przeszukaj historię";
+
+/* ScanViewModel.swift Error Messages */
+"scan.error.no_image_selected" = "Nie wybrano obrazu";
+"scan.error.failed_to_process_image" = "Nie udało się przetworzyć obrazu";
+
+/* ResultsView.swift */
+"share.text.line1" = "BuyEuropean szybko identyfikuje produkty europejskich firm.";
+"share.text.line2" = "Głosuj swoimi pieniędzmi i wspieraj europejskie firmy oraz wartości.";
+"results.title" = "Wyniki analizy";
+"common.done" = "Gotowe";
+"results.no_alternatives" = "Nie potrzeba europejskich alternatyw.";
+"results.feedback.title" = "Opinia";
+"classification.cat" = "Kot";
+"classification.dog" = "Pies";
+"classification.animal" = "Zwierzę";
+"classification.human" = "Człowiek";
+"classification.product" = "Produkt";
+
+/* CameraPermissionView.swift */
+"permission.camera.title" = "Wymagany dostęp do aparatu";
+"permission.camera.description" = "BuyEuropean potrzebuje dostępu do aparatu, aby zrobić zdjęcia twojego produktu lub marki.";
+"common.continue" = "Kontynuuj";
+
+/* ErrorView.swift */
+"error.title" = "Błąd";
+"error.button.try_again" = "Spróbuj ponownie";
+"common.dismiss" = "Odrzuć";
+
+/* LocationPermissionView.swift */
+"permission.location.title" = "Zalecany dostęp do lokalizacji";
+"permission.location.description" = "BuyEuropean używa twojej lokalizacji, aby oferować bardziej odpowiednie alternatywy produktów w zależności od regionu. Twoja lokalizacja nigdy nie jest przechowywana ani udostępniana. To jest opcjonalne i możesz to wyłączyć w ustawieniach.";
+
+/* SupportView.swift */
+"support.description.sub.few_hours" = "Sfinansuj BuyEuropean na kilka godzin miesięcznie";
+"support.description.sub.day" = "Sfinansuj BuyEuropean na jeden dzień miesięcznie";
+"support.description.sub.few_days" = "Sfinansuj BuyEuropean na kilka dni miesięcznie";
+"support.description.sub.week" = "Sfinansuj BuyEuropean na tydzień miesięcznie";
+"support.description.sub.few_weeks" = "Sfinansuj BuyEuropean na kilka tygodni miesięcznie";
+"support.description.sub.default" = "Wspieraj BuyEuropean co miesiąc";
+"support.description.onetime.few_hours" = "Sfinansuj BuyEuropean na kilka godzin";
+"support.description.onetime.day" = "Sfinansuj BuyEuropean na jeden dzień";
+"support.description.onetime.few_days" = "Sfinansuj BuyEuropean na kilka dni";
+"support.description.onetime.week" = "Sfinansuj BuyEuropean na tydzień";
+"support.description.onetime.few_weeks" = "Sfinansuj BuyEuropean na kilka tygodni";
+"support.description.onetime.default" = "Wspieraj BuyEuropean";
+
+"support.tab.support" = "Wsparcie";
+"support.tab.feedback" = "Opinia";
+"support.title" = "Wesprzyj nas";
+
+"support.share.header" = "Udostępnij BuyEuropean";
+"support.share.button.label" = "Udostępnij BuyEuropean";
+"support.share.button.description" = "Pomóż nam rozwinąć ruch BuyEuropean, udostępniając aplikację.";
+
+"support.donate.header" = "Wesprzyj darowizną";
+"support.donate.description" = "Utrzymaj BuyEuropean darmowym i bez reklam. Wybierz, jak chcesz wspierać:";
+"support.donate.load_error" = "Nie można załadować opcji wsparcia—przeciągnij w dół, aby spróbować ponownie.";
+"support.donate.select_amount" = "Wybierz kwotę powyżej";
+"support.donate.toggle.monthly" = "Wsparcie miesięczne";
+"support.donate.button.subscribe" = "Subskrybuj";
+"support.donate.button.donate" = "Wesprzyj";
+
+"support.feedback.header" = "Wyślij opinię";
+
+/* Classification Display Names */
+"classification.europeanCountry" = "Kraj europejski";
+"classification.europeanAlly" = "Europejski sojusznik";
+"classification.europeanSceptic" = "Europejski sceptyk";
+"classification.europeanAdversary" = "Europejski przeciwnik";
+"classification.neutral" = "Neutralny";
+"classification.unknown" = "Nieznany";
+
+/* ProductInfoCardView Translation */
+"translate.button" = "Przetłumacz";
+"show.original.button" = "Pokaż oryginał"; 

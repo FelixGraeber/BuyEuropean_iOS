@@ -1,0 +1,99 @@
+/* Localized strings */
+
+/* ContentView.swift */
+"app.title" = "BuyEuropean";
+"location.status.ios" = "Locatiestatus: %@";
+"location.status.other" = "Locatiestatus: N/B";
+"location.city_country" = "Stad: %@, Land: %@";
+
+/* ScanView.swift */
+"scan.manual.prompt" = "Voer een merk- of productnaam in";
+"scan.manual.placeholder" = "bijv. iPhone, Samsung, Nestlé, Zara...";
+"scan.manual.button.analyze" = "Analyseren";
+"scan.progress.analyzing" = "Analyseren...";
+"scan.progress.processing" = "Bezig met verwerken...";
+"scan.mode.photo" = "Foto";
+"scan.mode.text" = "Tekst";
+"scan.camera.initializing" = "Camera initialiseren...";
+"scan.camera.access_needed.overlay" = "Cameratoegang vereist";
+
+/* HistoryView.swift */
+"history.title" = "Geschiedenis";
+"common.close" = "Sluiten";
+"history.company.not_available" = "N/B";
+"history.search.prompt" = "Geschiedenis doorzoeken";
+
+/* ScanViewModel.swift Error Messages */
+"scan.error.no_image_selected" = "Geen afbeelding geselecteerd";
+"scan.error.failed_to_process_image" = "Afbeelding verwerken mislukt";
+
+/* ResultsView.swift */
+"share.text.line1" = "BuyEuropean identificeert snel producten van Europese bedrijven.";
+"share.text.line2" = "Stem met je geld en steun Europese bedrijven en waarden.";
+"results.title" = "Analyseresultaten";
+"common.done" = "Gereed";
+"results.no_alternatives" = "Geen Europese alternatieven nodig.";
+"results.feedback.title" = "Feedback";
+"classification.cat" = "Kat";
+"classification.dog" = "Hond";
+"classification.animal" = "Dier";
+"classification.human" = "Mens";
+"classification.product" = "Product";
+
+/* CameraPermissionView.swift */
+"permission.camera.title" = "Cameratoegang vereist";
+"permission.camera.description" = "BuyEuropean heeft cameratoegang nodig om foto's te maken van je product of merk.";
+"common.continue" = "Doorgaan";
+
+/* ErrorView.swift */
+"error.title" = "Fout";
+"error.button.try_again" = "Opnieuw proberen";
+"common.dismiss" = "Negeren";
+
+/* LocationPermissionView.swift */
+"permission.location.title" = "Locatietoegang aanbevolen";
+"permission.location.description" = "BuyEuropean gebruikt je locatie om relevantere productalternatieven te bieden op basis van je regio. Je locatie wordt nooit opgeslagen of gedeeld. Dit is optioneel en je kunt het uitschakelen in de instellingen.";
+
+/* SupportView.swift */
+"support.description.sub.few_hours" = "Financier BuyEuropean voor een paar uur per maand";
+"support.description.sub.day" = "Financier BuyEuropean voor een dag per maand";
+"support.description.sub.few_days" = "Financier BuyEuropean voor een paar dagen per maand";
+"support.description.sub.week" = "Financier BuyEuropean voor een week per maand";
+"support.description.sub.few_weeks" = "Financier BuyEuropean voor een paar weken per maand";
+"support.description.sub.default" = "Steun BuyEuropean maandelijks";
+"support.description.onetime.few_hours" = "Financier BuyEuropean voor een paar uur";
+"support.description.onetime.day" = "Financier BuyEuropean voor een dag";
+"support.description.onetime.few_days" = "Financier BuyEuropean voor een paar dagen";
+"support.description.onetime.week" = "Financier BuyEuropean voor een week";
+"support.description.onetime.few_weeks" = "Financier BuyEuropean voor een paar weken";
+"support.description.onetime.default" = "Steun BuyEuropean";
+
+"support.tab.support" = "Steun";
+"support.tab.feedback" = "Feedback";
+"support.title" = "Steun ons";
+
+"support.share.header" = "Deel BuyEuropean";
+"support.share.button.label" = "Deel BuyEuropean";
+"support.share.button.description" = "Help ons de BuyEuropean-beweging te laten groeien door de app te delen.";
+
+"support.donate.header" = "Doneer om te steunen";
+"support.donate.description" = "Houd BuyEuropean gratis en advertentievrij. Kies hoe je wilt steunen:";
+"support.donate.load_error" = "Kan steunopties niet laden—trek omlaag om het opnieuw te proberen.";
+"support.donate.select_amount" = "Selecteer hierboven een bedrag";
+"support.donate.toggle.monthly" = "Maandelijkse steun";
+"support.donate.button.subscribe" = "Abonneren";
+"support.donate.button.donate" = "Doneren";
+
+"support.feedback.header" = "Feedback verzenden";
+
+/* Classification Display Names */
+"classification.europeanCountry" = "Europees land";
+"classification.europeanAlly" = "Europese bondgenoot";
+"classification.europeanSceptic" = "Europese scepticus";
+"classification.europeanAdversary" = "Europese tegenstander";
+"classification.neutral" = "Neutraal";
+"classification.unknown" = "Onbekend";
+
+/* ProductInfoCardView Translation */
+"translate.button" = "Vertalen";
+"show.original.button" = "Toon origineel"; 
