@@ -32,6 +32,7 @@ struct ScanView: View {
     @State private var selectedMode: InputMode = .camera
     @StateObject private var cameraService = CameraService()
     @FocusState private var isTextFieldFocused: Bool
+    @State private var showReEngagementAlert = false // For re-engagement
 
     @Namespace private var animation
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
@@ -382,6 +383,24 @@ struct ScanView: View {
             }
             // If .notDetermined, the viewModel's init logic will show the camera permission sheet.
             // If .denied or .restricted, the cameraService state overlay might handle showing an error.
+
+            // Re-engagement logic
+            let defaults = UserDefaults.standard
+            let lastOpenDate = defaults.object(forKey: UserDefaultsKeys.lastAppOpenDate) as? Date
+            let currentDate = Date()
+            let historyIsEmpty = HistoryService.shared.history.isEmpty // Check history status
+
+            // Use the extracted logic to decide if the alert should be shown
+            if EngagementLogic.shouldShowReEngagementPrompt(
+                currentDate: currentDate,
+                lastOpenDate: lastOpenDate,
+                historyIsEmpty: historyIsEmpty
+            ) {
+                showReEngagementAlert = true
+            }
+
+            // Always update the last open date
+            defaults.set(currentDate, forKey: UserDefaultsKeys.lastAppOpenDate)
         }
         // Use onChange variant appropriate for your iOS target
         .onChange(of: viewModel.scanState) { newState in  // For iOS 14/15/16
@@ -446,6 +465,11 @@ struct ScanView: View {
                         viewModel.scanState = .ready // Set to ready state to dismiss sheet
                     })
             }
+        }
+        .alert("Welcome Back!", isPresented: $showReEngagementAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("Ready to discover more European products or review your past finds?")
         }
     }
 

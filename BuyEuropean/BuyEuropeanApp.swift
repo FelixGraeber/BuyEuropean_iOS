@@ -9,6 +9,9 @@ import SwiftUI
 
 @main
 struct BuyEuropeanApp: App {
+    @AppStorage(UserDefaultsKeys.hasCompletedOnboarding) var hasCompletedOnboarding: Bool = false
+    @State private var showOnboarding: Bool = false
+
     // Create the central service registry
     @StateObject private var serviceRegistry = ServiceRegistry.shared
     
@@ -24,6 +27,10 @@ struct BuyEuropeanApp: App {
         let iapMgr = IAPManager(entitlementManager: entitlementMgr)
         _iapManager = StateObject(wrappedValue: iapMgr)
         _entitlementManager = StateObject(wrappedValue: entitlementMgr)
+        // Initialize showOnboarding based on the persisted value
+        // This needs to be done after _hasCompletedOnboarding is initialized
+        // which happens before init() body is called.
+        _showOnboarding = State(initialValue: !hasCompletedOnboarding)
     }
 
     var body: some Scene {
@@ -32,6 +39,15 @@ struct BuyEuropeanApp: App {
             ScanView()
                 .environmentObject(iapManager)
                 .environmentObject(entitlementManager)
+                .fullScreenCover(isPresented: $showOnboarding) {
+                    OnboardingView(showOnboarding: $showOnboarding)
+                }
+                // Update hasCompletedOnboarding when showOnboarding changes to false
+                .onChange(of: showOnboarding) { newValue in
+                    if !newValue {
+                        hasCompletedOnboarding = true
+                    }
+                }
             // Ensure other required environment objects are still passed if needed
             // e.g., .environmentObject(SomeOtherService())
         }
