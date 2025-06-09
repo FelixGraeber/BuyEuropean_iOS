@@ -125,6 +125,7 @@
 
 "support.tab.support" = "Steun";
 "support.tab.feedback" = "Feedback";
+"support.tab.legal" = "Juridisch";
 "support.title" = "Steun ons";
 
 "support.share.header" = "Deel BuyEuropean";
@@ -140,6 +141,13 @@
 "support.donate.button.donate" = "Doneren";
 
 "support.feedback.header" = "Feedback verzenden";
+
+/* Legal Section */
+"legal.header" = "Juridische Informatie";
+"legal.terms.title" = "Gebruiksvoorwaarden";
+"legal.terms.description" = "Bekijk onze Gebruiksvoorwaarden en Eindgebruiker Licentieovereenkomst";
+"legal.privacy.title" = "Privacybeleid";
+"legal.privacy.description" = "Leer hoe we je gegevens verwerken en je privacy beschermen";
 
 /* Classification Display Names */
 "classification.europeanCountry" = "Europees land";

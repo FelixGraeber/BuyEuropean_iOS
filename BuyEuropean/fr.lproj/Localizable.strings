@@ -125,6 +125,7 @@
 
 "support.tab.support" = "Soutien";
 "support.tab.feedback" = "Retour";
+"support.tab.legal" = "Légal";
 "support.title" = "Soutenez-nous";
 
 "support.share.header" = "Partager BuyEuropean";
@@ -140,6 +141,13 @@
 "support.donate.button.donate" = "Faire un don";
 
 "support.feedback.header" = "Envoyer un retour";
+
+/* Legal Section */
+"legal.header" = "Informations Légales";
+"legal.terms.title" = "Conditions d'Utilisation";
+"legal.terms.description" = "Voir nos Conditions d'Utilisation et Accord de Licence Utilisateur Final";
+"legal.privacy.title" = "Politique de Confidentialité";
+"legal.privacy.description" = "Découvrez comment nous traitons vos données et protégeons votre vie privée";
 
 /* Classification Display Names */
 "classification.europeanCountry" = "Pays européen";

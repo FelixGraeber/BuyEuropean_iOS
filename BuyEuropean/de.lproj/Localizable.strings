@@ -118,6 +118,7 @@
 
 "support.tab.support" = "Unterstützen";
 "support.tab.feedback" = "Feedback";
+"support.tab.legal" = "Rechtliches";
 "support.title" = "Unterstütze uns";
 /* "common.close" is already added */
 
@@ -135,6 +136,13 @@
 
 "support.feedback.header" = "Feedback senden";
 /* Email "contact@buyeuropean.io" is not localized */
+
+/* Legal Section */
+"legal.header" = "Rechtliche Informationen";
+"legal.terms.title" = "Nutzungsbedingungen";
+"legal.terms.description" = "Unsere Nutzungsbedingungen und Endbenutzer-Lizenzvereinbarung anzeigen";
+"legal.privacy.title" = "Datenschutzerklärung";
+"legal.privacy.description" = "Erfahre, wie wir deine Daten verarbeiten und deine Privatsphäre schützen";
 
 /* Classification Display Names */
 "classification.europeanCountry.name" = "Europäer";

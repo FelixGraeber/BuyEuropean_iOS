@@ -124,7 +124,7 @@
 "support.description.onetime.default" = "Подкрепете BuyEuropean";
 
 "support.tab.support" = "Подкрепа";
-"support.tab.feedback" = "Обратна връзка";
+"support.tab.feedback" = "Feedback"; "support.tab.legal" = "Legal";
 "support.title" = "Подкрепете ни";
 
 "support.share.header" = "Споделете BuyEuropean";
@@ -188,3 +188,9 @@
 /* ProductInfoCardView Translation */
 "translate.button" = "Преведи";
 "show.original.button" = "Покажи оригинала"; 
+/* Legal Section */
+"legal.header" = "Legal Information";
+"legal.terms.title" = "Terms of Use";
+"legal.terms.description" = "View our Terms of Use and End User License Agreement";
+"legal.privacy.title" = "Privacy Policy";
+"legal.privacy.description" = "Learn how we handle your data and protect your privacy";

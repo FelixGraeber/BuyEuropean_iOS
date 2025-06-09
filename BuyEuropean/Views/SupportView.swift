@@ -30,12 +30,13 @@ struct SupportView: View {
 
     // MARK: Tabs
     enum Tab: Int, CaseIterable, Identifiable {
-        case support, feedback
+        case support, feedback, legal
         var id: Int { rawValue }
         var title: LocalizedStringKey {
             switch self {
             case .support: return "support.tab.support"
             case .feedback: return "support.tab.feedback"
+            case .legal: return "support.tab.legal"
             }
         }
     }
@@ -97,6 +98,10 @@ struct SupportView: View {
                     
                     if selectedTab == .feedback {
                         feedbackSection
+                    }
+                    
+                    if selectedTab == .legal {
+                        legalSection
                     }
                 }
                 .scrollContentBackground(.hidden)
@@ -261,6 +266,59 @@ struct SupportView: View {
             }
         }
          .listRowBackground(Color(.secondarySystemGroupedBackground))
+    }
+
+    private var legalSection: some View {
+        Section(header: Text(LocalizedStringKey("legal.header")).headerProminence(.increased)) {
+            Button {
+                if let termsURL = URL(string: "https://buyeuropean.io/terms") {
+                    openURL(termsURL)
+                }
+            } label: {
+                HStack {
+                    Label {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(LocalizedStringKey("legal.terms.title")).font(.headline)
+                            Text(LocalizedStringKey("legal.terms.description"))
+                                .font(.subheadline).foregroundColor(.secondary)
+                        }
+                    } icon: {
+                        Image(systemName: "doc.text")
+                            .imageScale(.large)
+                            .frame(width: 28, height: 28)
+                            .foregroundColor(.accentColor)
+                    }
+                    Spacer()
+                    Image(systemName: "arrow.up.right.square").foregroundColor(.secondary)
+                }
+                .padding(.vertical, 6)
+            }
+            
+            Button {
+                if let privacyURL = URL(string: "https://buyeuropean.io/privacy") {
+                    openURL(privacyURL)
+                }
+            } label: {
+                HStack {
+                    Label {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(LocalizedStringKey("legal.privacy.title")).font(.headline)
+                            Text(LocalizedStringKey("legal.privacy.description"))
+                                .font(.subheadline).foregroundColor(.secondary)
+                        }
+                    } icon: {
+                        Image(systemName: "hand.raised")
+                            .imageScale(.large)
+                            .frame(width: 28, height: 28)
+                            .foregroundColor(.accentColor)
+                    }
+                    Spacer()
+                    Image(systemName: "arrow.up.right.square").foregroundColor(.secondary)
+                }
+                .padding(.vertical, 6)
+            }
+        }
+        .listRowBackground(Color(.secondarySystemGroupedBackground))
     }
 
     private func findClosestPriceIndex(price: Decimal, in products: [Product]) -> Int {

@@ -124,7 +124,7 @@
 "support.description.onetime.default" = "Støt BuyEuropean";
 
 "support.tab.support" = "Støtte";
-"support.tab.feedback" = "Feedback";
+"support.tab.feedback" = "Feedback"; "support.tab.legal" = "Legal";
 "support.title" = "Støt os";
 
 "support.share.header" = "Del BuyEuropean";
@@ -188,3 +188,9 @@
 /* ProductInfoCardView Translation */
 "translate.button" = "Oversæt";
 "show.original.button" = "Vis original"; 
+/* Legal Section */
+"legal.header" = "Legal Information";
+"legal.terms.title" = "Terms of Use";
+"legal.terms.description" = "View our Terms of Use and End User License Agreement";
+"legal.privacy.title" = "Privacy Policy";
+"legal.privacy.description" = "Learn how we handle your data and protect your privacy";
