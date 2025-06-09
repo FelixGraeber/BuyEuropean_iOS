@@ -34,6 +34,61 @@
 "common.done" = "Gereed";
 "results.no_alternatives" = "Geen Europese alternatieven nodig.";
 "results.feedback.title" = "Feedback";
+
+/* Classification Names and Emojis */
+"classification.cat.emoji" = "🐱";
+"classification.dog.emoji" = "🐶";
+"classification.animal.emoji" = "🦊";
+"classification.human.emoji" = "👤";
+"classification.product.emoji" = "📦";
+
+"classification.cat.name" = "Kat";
+"classification.dog.name" = "Hond";
+"classification.animal.name" = "Dier";
+"classification.human.name" = "Mens";
+"classification.product.name" = "Product";
+
+/* Classification Descriptions */
+"classification.europeanCountry.description" = "Dit product wordt gemaakt door een bedrijf gevestigd in Europa.";
+"classification.europeanAlly.description" = "Dit product wordt gemaakt door een bedrijf uit een land dat bondgenoot is van Europa.";
+"classification.europeanSceptic.description" = "Dit product wordt gemaakt door een bedrijf uit een land dat sceptisch staat tegenover Europa.";
+"classification.europeanAdversary.description" = "Dit product wordt gemaakt door een bedrijf uit een land dat vijandig staat tegenover Europa.";
+"classification.neutral.description" = "Dit product wordt gemaakt door een bedrijf uit een land dat neutraal staat tegenover Europa.";
+"classification.cat.description" = "Dit is een kat.";
+"classification.dog.description" = "Dit is een hond.";
+"classification.animal.description" = "Dit is een dier.";
+"classification.human.description" = "Dit is een mens.";
+"classification.unknown.description" = "De oorsprong van dit product kon niet met zekerheid worden bepaald.";
+
+/* Product Info Card Labels */
+"product.label" = "PRODUCT";
+"company.label" = "BEDRIJF";
+"ultimate_parent.label" = "MOEDERBEDRIJF";
+"identification.label" = "IDENTIFICATIEBASIS";
+
+/* European Alternatives Section */
+"alternatives.title" = "Europese Alternatieven";
+"alternatives.subtitle" = "Overweeg deze opties die in Europa worden gemaakt of door Europese bedrijven.";
+"alternatives.learn_more" = "Meer informatie";
+
+/* AI Disclaimer */
+"ai.disclaimer" = "AI kan fouten maken";
+
+/* FeedbackView */
+"feedback.question" = "Was deze analyse nuttig?";
+"feedback.positive.question" = "Wat was nuttig?";
+"feedback.negative.question" = "Wat was onjuist?";
+"feedback.thanks" = "Bedankt voor je feedback!";
+"feedback.option.product" = "Productidentificatie";
+"feedback.option.brand" = "Merk/bedrijfidentificatie";
+"feedback.option.country" = "Landidentificatie (hoofdkantoor)";
+"feedback.option.classification" = "Algemene classificatie";
+"feedback.option.alternatives" = "Voorgestelde alternatieven";
+"feedback.details.prompt" = "Aanvullende details (optioneel)";
+"feedback.submit" = "Feedback verzenden";
+"feedback.share.photo" = "Afbeelding verzenden om ons te helpen";
+
+/* Classification Names - Legacy */
 "classification.cat" = "Kat";
 "classification.dog" = "Hond";
 "classification.animal" = "Dier";
@@ -94,6 +149,42 @@
 "classification.neutral" = "Neutraal";
 "classification.unknown" = "Onbekend";
 
+"classification.europeanCountry.name" = "Europees";
+"classification.europeanAlly.name" = "Europese Bondgenoot";
+"classification.europeanSceptic.name" = "Europese Scepticus";
+"classification.europeanAdversary.name" = "Europese Tegenstander";
+"classification.neutral.name" = "Neutraal";
+"classification.unknown.name" = "Onbekend";
+
+/* Product Categories */
+"category.audio" = "Koptelefoons en Audioapparatuur";
+"category.electronics" = "Elektronica";
+"category.clothing" = "Kleding en Mode";
+"category.food" = "Voedsel en Dranken";
+"category.cosmetics" = "Cosmetica en Persoonlijke Verzorging";
+"category.appliances" = "Huishoudelijke Apparaten";
+"category.furniture" = "Meubels en Wonen";
+"category.automotive" = "Auto's en Voertuigen";
+"category.sports" = "Sport en Fitness";
+"category.toys" = "Speelgoed en Spellen";
+
+/* Countries */
+"country.usa" = "Verenigde Staten";
+"country.southkorea" = "Zuid-Korea";
+"country.germany" = "Duitsland";
+"country.france" = "Frankrijk";
+"country.italy" = "Italië";
+"country.uk" = "Verenigd Koninkrijk";
+"country.spain" = "Spanje";
+"country.japan" = "Japan";
+"country.china" = "China";
+"country.taiwan" = "Taiwan";
+"country.sweden" = "Zweden";
+"country.denmark" = "Denemarken";
+"country.netherlands" = "Nederland";
+"country.switzerland" = "Zwitserland";
+"country.austria" = "Oostenrijk";
+
 /* ProductInfoCardView Translation */
 "translate.button" = "Vertalen";
-"show.original.button" = "Toon origineel"; 
+"show.original.button" = "Origineel tonen"; 

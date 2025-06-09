@@ -34,8 +34,61 @@
 "common.done" = "Done"; /* Common string */
 "results.no_alternatives" = "No European alternatives needed.";
 "results.feedback.title" = "Feedback";
-/* Placeholder for Classification displayNames - these will be specific like classification.cat, classification.product etc. */
-/* For now, we are just noting that these need to exist. The actual values will be added when we handle the Classification enum */
+
+/* Classification Names and Emojis */
+"classification.cat.emoji" = "🐱";
+"classification.dog.emoji" = "🐶";
+"classification.animal.emoji" = "🦊";
+"classification.human.emoji" = "👤";
+"classification.product.emoji" = "📦";
+
+"classification.cat.name" = "Cat";
+"classification.dog.name" = "Dog";
+"classification.animal.name" = "Animal";
+"classification.human.name" = "Human";
+"classification.product.name" = "Product";
+
+/* Classification Descriptions */
+"classification.europeanCountry.description" = "This product is made by a company headquartered in Europe.";
+"classification.europeanAlly.description" = "This product is made by a company from a country allied with Europe.";
+"classification.europeanSceptic.description" = "This product is made by a company from a country with a skeptical attitude towards Europe.";
+"classification.europeanAdversary.description" = "This product is made by a company from a country with an adversarial attitude towards Europe.";
+"classification.neutral.description" = "This product is made by a company from a country with a neutral attitude towards Europe.";
+"classification.cat.description" = "This is a cat.";
+"classification.dog.description" = "This is a dog.";
+"classification.animal.description" = "This is an animal.";
+"classification.human.description" = "This is a human.";
+"classification.unknown.description" = "The origin of this product could not be determined with certainty.";
+
+/* Product Info Card Labels */
+"product.label" = "PRODUCT";
+"company.label" = "COMPANY";
+"ultimate_parent.label" = "PARENT COMPANY";
+"identification.label" = "IDENTIFICATION BASIS";
+
+/* European Alternatives Section */
+"alternatives.title" = "European Alternatives";
+"alternatives.subtitle" = "Consider these options made in Europe or by European companies.";
+"alternatives.learn_more" = "Learn more";
+
+/* AI Disclaimer */
+"ai.disclaimer" = "AI can make mistakes";
+
+/* FeedbackView */
+"feedback.question" = "Was this analysis helpful?";
+"feedback.positive.question" = "What was helpful?";
+"feedback.negative.question" = "What was incorrect?";
+"feedback.thanks" = "Thank you for your feedback!";
+"feedback.option.product" = "Product identification";
+"feedback.option.brand" = "Brand/company identification";
+"feedback.option.country" = "Country identification (headquarters)";
+"feedback.option.classification" = "Overall classification";
+"feedback.option.alternatives" = "Suggested alternatives";
+"feedback.details.prompt" = "Additional details (optional)";
+"feedback.submit" = "Submit feedback";
+"feedback.share.photo" = "Send image to help us";
+
+/* Classification Names - Legacy */
 "classification.cat" = "Cat";
 "classification.dog" = "Dog";
 "classification.animal" = "Animal";
@@ -96,12 +149,43 @@
 "classification.europeanSceptic" = "European Sceptic";
 "classification.europeanAdversary" = "European Adversary";
 "classification.neutral" = "Neutral";
-/* "classification.cat" = "Cat"; already added */
-/* "classification.dog" = "Dog"; already added */
-/* "classification.animal" = "Animal"; already added */
-/* "classification.human" = "Human"; already added */
 "classification.unknown" = "Unknown";
-/* "classification.product" was a placeholder, the specific types like europeanCountry are more accurate for this enum */
+
+"classification.europeanCountry.name" = "European";
+"classification.europeanAlly.name" = "European Ally";
+"classification.europeanSceptic.name" = "European Sceptic";
+"classification.europeanAdversary.name" = "European Adversary";
+"classification.neutral.name" = "Neutral";
+"classification.unknown.name" = "Unknown";
+
+/* Product Categories */
+"category.audio" = "Headphones & Audio Equipment";
+"category.electronics" = "Electronics";
+"category.clothing" = "Clothing & Fashion";
+"category.food" = "Food & Beverages";
+"category.cosmetics" = "Cosmetics & Personal Care";
+"category.appliances" = "Home Appliances";
+"category.furniture" = "Furniture & Home";
+"category.automotive" = "Automotive & Vehicles";
+"category.sports" = "Sports & Fitness";
+"category.toys" = "Toys & Games";
+
+/* Countries */
+"country.usa" = "United States";
+"country.southkorea" = "South Korea";
+"country.germany" = "Germany";
+"country.france" = "France";
+"country.italy" = "Italy";
+"country.uk" = "United Kingdom";
+"country.spain" = "Spain";
+"country.japan" = "Japan";
+"country.china" = "China";
+"country.taiwan" = "Taiwan";
+"country.sweden" = "Sweden";
+"country.denmark" = "Denmark";
+"country.netherlands" = "Netherlands";
+"country.switzerland" = "Switzerland";
+"country.austria" = "Austria";
 
 /* ProductInfoCardView Translation */
 "translate.button" = "Translate";

@@ -34,6 +34,61 @@
 "common.done" = "Klar";
 "results.no_alternatives" = "Inga europeiska alternativ behövs.";
 "results.feedback.title" = "Feedback";
+
+/* Classification Names and Emojis */
+"classification.cat.emoji" = "🐱";
+"classification.dog.emoji" = "🐶";
+"classification.animal.emoji" = "🦊";
+"classification.human.emoji" = "👤";
+"classification.product.emoji" = "📦";
+
+"classification.cat.name" = "Katt";
+"classification.dog.name" = "Hund";
+"classification.animal.name" = "Djur";
+"classification.human.name" = "Människa";
+"classification.product.name" = "Produkt";
+
+/* Classification Descriptions */
+"classification.europeanCountry.description" = "Denna produkt tillverkas av ett företag med huvudkontor i Europa.";
+"classification.europeanAlly.description" = "Denna produkt tillverkas av ett företag från ett land som är allierat med Europa.";
+"classification.europeanSceptic.description" = "Denna produkt tillverkas av ett företag från ett land med skeptisk inställning till Europa.";
+"classification.europeanAdversary.description" = "Denna produkt tillverkas av ett företag från ett land med fientlig inställning till Europa.";
+"classification.neutral.description" = "Denna produkt tillverkas av ett företag från ett land med neutral inställning till Europa.";
+"classification.cat.description" = "Det här är en katt.";
+"classification.dog.description" = "Det här är en hund.";
+"classification.animal.description" = "Det här är ett djur.";
+"classification.human.description" = "Det här är en människa.";
+"classification.unknown.description" = "Ursprunget för denna produkt kunde inte fastställas med säkerhet.";
+
+/* Product Info Card Labels */
+"product.label" = "PRODUKT";
+"company.label" = "FÖRETAG";
+"ultimate_parent.label" = "MODERFÖRETAG";
+"identification.label" = "IDENTIFIERINGSGRUND";
+
+/* European Alternatives Section */
+"alternatives.title" = "Europeiska Alternativ";
+"alternatives.subtitle" = "Överväg dessa alternativ som tillverkas i Europa eller av europeiska företag.";
+"alternatives.learn_more" = "Läs mer";
+
+/* AI Disclaimer */
+"ai.disclaimer" = "AI kan göra misstag";
+
+/* FeedbackView */
+"feedback.question" = "Var denna analys hjälpsam?";
+"feedback.positive.question" = "Vad var hjälpsamt?";
+"feedback.negative.question" = "Vad var felaktigt?";
+"feedback.thanks" = "Tack för din feedback!";
+"feedback.option.product" = "Produktidentifiering";
+"feedback.option.brand" = "Varumärkes-/företagsidentifiering";
+"feedback.option.country" = "Landsidentifiering (huvudkontor)";
+"feedback.option.classification" = "Övergripande klassificering";
+"feedback.option.alternatives" = "Föreslagna alternativ";
+"feedback.details.prompt" = "Ytterligare detaljer (valfritt)";
+"feedback.submit" = "Skicka feedback";
+"feedback.share.photo" = "Skicka bild för att hjälpa oss";
+
+/* Classification Names - Legacy */
 "classification.cat" = "Katt";
 "classification.dog" = "Hund";
 "classification.animal" = "Djur";
@@ -93,6 +148,42 @@
 "classification.europeanAdversary" = "Europeisk motståndare";
 "classification.neutral" = "Neutral";
 "classification.unknown" = "Okänd";
+
+"classification.europeanCountry.name" = "Europeisk";
+"classification.europeanAlly.name" = "Europeisk Allierad";
+"classification.europeanSceptic.name" = "Europeisk Skeptiker";
+"classification.europeanAdversary.name" = "Europeisk Motståndare";
+"classification.neutral.name" = "Neutral";
+"classification.unknown.name" = "Okänd";
+
+/* Product Categories */
+"category.audio" = "Hörlurar och Ljudutrustning";
+"category.electronics" = "Elektronik";
+"category.clothing" = "Kläder och Mode";
+"category.food" = "Mat och Dryck";
+"category.cosmetics" = "Kosmetika och Personlig Vård";
+"category.appliances" = "Hushållsapparater";
+"category.furniture" = "Möbler och Hem";
+"category.automotive" = "Bilar och Fordon";
+"category.sports" = "Sport och Fitness";
+"category.toys" = "Leksaker och Spel";
+
+/* Countries */
+"country.usa" = "Förenta Staterna";
+"country.southkorea" = "Sydkorea";
+"country.germany" = "Tyskland";
+"country.france" = "Frankrike";
+"country.italy" = "Italien";
+"country.uk" = "Storbritannien";
+"country.spain" = "Spanien";
+"country.japan" = "Japan";
+"country.china" = "Kina";
+"country.taiwan" = "Taiwan";
+"country.sweden" = "Sverige";
+"country.denmark" = "Danmark";
+"country.netherlands" = "Nederländerna";
+"country.switzerland" = "Schweiz";
+"country.austria" = "Österrike";
 
 /* ProductInfoCardView Translation */
 "translate.button" = "Översätt";

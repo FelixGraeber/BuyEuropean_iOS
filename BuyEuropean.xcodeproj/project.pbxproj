@@ -213,6 +213,9 @@
 				nl,
 				pl,
 				pt,
+				bg,
+				cs,
+				da,
 			);
 			mainGroup = DC67017A2D7FA8EE004492E6;
 			minimizedProjectReferenceProxies = 1;

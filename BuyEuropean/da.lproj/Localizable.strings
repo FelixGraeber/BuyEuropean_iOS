@@ -1,0 +1,190 @@
+/* Localized strings */
+
+/* ContentView.swift */
+"app.title" = "BuyEuropean";
+"location.status.ios" = "Placering status: %@";
+"location.status.other" = "Placering status: N/A";
+"location.city_country" = "By: %@, Land: %@";
+
+/* ScanView.swift */
+"scan.manual.prompt" = "Indtast et mærke eller produktnavn";
+"scan.manual.placeholder" = "f.eks. iPhone, Samsung, Nestlé, Zara...";
+"scan.manual.button.analyze" = "Analyser";
+"scan.progress.analyzing" = "Analyserer...";
+"scan.progress.processing" = "Behandler...";
+"scan.mode.photo" = "Foto";
+"scan.mode.text" = "Tekst";
+"scan.camera.initializing" = "Initialiserer kamera...";
+"scan.camera.access_needed.overlay" = "Kameraadgang påkrævet";
+
+/* HistoryView.swift */
+"history.title" = "Historik";
+"common.close" = "Luk";
+"history.company.not_available" = "N/A";
+"history.search.prompt" = "Søg i historik";
+
+/* ScanViewModel.swift Error Messages */
+"scan.error.no_image_selected" = "Intet billede valgt";
+"scan.error.failed_to_process_image" = "Kunne ikke behandle billede";
+
+/* ResultsView.swift */
+"share.text.line1" = "BuyEuropean identificerer hurtigt produkter fra europæiske virksomheder.";
+"share.text.line2" = "Stem med dine penge og støt europæiske virksomheder og værdier.";
+"results.title" = "Analyseresultater";
+"common.done" = "Færdig";
+"results.no_alternatives" = "Ingen europæiske alternativer nødvendige.";
+"results.feedback.title" = "Feedback";
+
+/* Classification Names and Emojis */
+"classification.cat.emoji" = "🐱";
+"classification.dog.emoji" = "🐶";
+"classification.animal.emoji" = "🦊";
+"classification.human.emoji" = "👤";
+"classification.product.emoji" = "📦";
+
+"classification.cat.name" = "Kat";
+"classification.dog.name" = "Hund";
+"classification.animal.name" = "Dyr";
+"classification.human.name" = "Menneske";
+"classification.product.name" = "Produkt";
+
+/* Classification Descriptions */
+"classification.europeanCountry.description" = "Dette produkt er fremstillet af en virksomhed med hovedkontor i Europa.";
+"classification.europeanAlly.description" = "Dette produkt er fremstillet af en virksomhed fra et land, der er allieret med Europa.";
+"classification.europeanSceptic.description" = "Dette produkt er fremstillet af en virksomhed fra et land med en skeptisk holdning til Europa.";
+"classification.europeanAdversary.description" = "Dette produkt er fremstillet af en virksomhed fra et land med en fjendtlig holdning til Europa.";
+"classification.neutral.description" = "Dette produkt er fremstillet af en virksomhed fra et land med en neutral holdning til Europa.";
+"classification.cat.description" = "Dette er en kat.";
+"classification.dog.description" = "Dette er en hund.";
+"classification.animal.description" = "Dette er et dyr.";
+"classification.human.description" = "Dette er et menneske.";
+"classification.unknown.description" = "Oprindelsen af dette produkt kunne ikke fastslås med sikkerhed.";
+
+/* Product Info Card Labels */
+"product.label" = "PRODUKT";
+"company.label" = "VIRKSOMHED";
+"ultimate_parent.label" = "MODERVIRKSOMHED";
+"identification.label" = "IDENTIFIKATIONSGRUNDLAG";
+
+/* European Alternatives Section */
+"alternatives.title" = "Europæiske Alternativer";
+"alternatives.subtitle" = "Overvej disse muligheder fremstillet i Europa eller af europæiske virksomheder.";
+"alternatives.learn_more" = "Lær mere";
+
+/* AI Disclaimer */
+"ai.disclaimer" = "AI kan lave fejl";
+
+/* FeedbackView */
+"feedback.question" = "Var denne analyse nyttig?";
+"feedback.positive.question" = "Hvad var nyttigt?";
+"feedback.negative.question" = "Hvad var forkert?";
+"feedback.thanks" = "Tak for din feedback!";
+"feedback.option.product" = "Produktidentifikation";
+"feedback.option.brand" = "Mærke/virksomhedsidentifikation";
+"feedback.option.country" = "Landeidentifikation (hovedkontor)";
+"feedback.option.classification" = "Overordnet klassifikation";
+"feedback.option.alternatives" = "Foreslåede alternativer";
+"feedback.details.prompt" = "Yderligere detaljer (valgfrit)";
+"feedback.submit" = "Send feedback";
+"feedback.share.photo" = "Send billede for at hjælpe os";
+
+/* Classification Names - Legacy */
+"classification.cat" = "Kat";
+"classification.dog" = "Hund";
+"classification.animal" = "Dyr";
+"classification.human" = "Menneske";
+"classification.product" = "Produkt";
+
+/* CameraPermissionView.swift */
+"permission.camera.title" = "Kameraadgang påkrævet";
+"permission.camera.description" = "BuyEuropean har brug for kameraadgang for at tage billeder af dit produkt eller mærke.";
+"common.continue" = "Fortsæt";
+
+/* ErrorView.swift */
+"error.title" = "Fejl";
+"error.button.try_again" = "Prøv igen";
+"common.dismiss" = "Afvis";
+
+/* LocationPermissionView.swift */
+"permission.location.title" = "Placeringadgang anbefales";
+"permission.location.description" = "BuyEuropean bruger din placering til at give mere relevante produktalternativer baseret på din region. Din placering gemmes eller deles aldrig. Dette er valgfrit, og du kan slå det fra i indstillingerne.";
+
+/* SupportView.swift */
+"support.description.sub.few_hours" = "Finansier BuyEuropean i nogle timer om måneden";
+"support.description.sub.day" = "Finansier BuyEuropean i en dag om måneden";
+"support.description.sub.few_days" = "Finansier BuyEuropean i nogle dage om måneden";
+"support.description.sub.week" = "Finansier BuyEuropean i en uge om måneden";
+"support.description.sub.few_weeks" = "Finansier BuyEuropean i nogle uger om måneden";
+"support.description.sub.default" = "Støt BuyEuropean månedligt";
+"support.description.onetime.few_hours" = "Finansier BuyEuropean i nogle timer";
+"support.description.onetime.day" = "Finansier BuyEuropean i en dag";
+"support.description.onetime.few_days" = "Finansier BuyEuropean i nogle dage";
+"support.description.onetime.week" = "Finansier BuyEuropean i en uge";
+"support.description.onetime.few_weeks" = "Finansier BuyEuropean i nogle uger";
+"support.description.onetime.default" = "Støt BuyEuropean";
+
+"support.tab.support" = "Støtte";
+"support.tab.feedback" = "Feedback";
+"support.title" = "Støt os";
+
+"support.share.header" = "Del BuyEuropean";
+"support.share.button.label" = "Del BuyEuropean";
+"support.share.button.description" = "Hjælp os med at vækste BuyEuropean-bevægelsen ved at dele appen.";
+
+"support.donate.header" = "Doner for at støtte";
+"support.donate.description" = "Hold BuyEuropean gratis og reklamefri. Vælg hvordan du vil støtte:";
+"support.donate.load_error" = "Kunne ikke indlæse støttemuligheder—træk ned for at prøve igen.";
+"support.donate.select_amount" = "Vælg et beløb ovenfor";
+"support.donate.toggle.monthly" = "Månedlig støtte";
+"support.donate.button.subscribe" = "Abonner";
+"support.donate.button.donate" = "Doner";
+
+"support.feedback.header" = "Send feedback";
+
+/* Classification Display Names */
+"classification.europeanCountry" = "Europæisk land";
+"classification.europeanAlly" = "Europæisk allieret";
+"classification.europeanSceptic" = "Europæisk skeptiker";
+"classification.europeanAdversary" = "Europæisk modstander";
+"classification.neutral" = "Neutral";
+"classification.unknown" = "Ukendt";
+
+"classification.europeanCountry.name" = "Europæisk";
+"classification.europeanAlly.name" = "Europæisk Allieret";
+"classification.europeanSceptic.name" = "Europæisk Skeptiker";
+"classification.europeanAdversary.name" = "Europæisk Modstander";
+"classification.neutral.name" = "Neutral";
+"classification.unknown.name" = "Ukendt";
+
+/* Product Categories */
+"category.audio" = "Hovedtelefoner og Lyludstyr";
+"category.electronics" = "Elektronik";
+"category.clothing" = "Tøj og Mode";
+"category.food" = "Mad og Drikkevarer";
+"category.cosmetics" = "Kosmetik og Personlig Pleje";
+"category.appliances" = "Husholdningsapparater";
+"category.furniture" = "Møbler og Hjem";
+"category.automotive" = "Bil og Køretøjer";
+"category.sports" = "Sport og Fitness";
+"category.toys" = "Legetøj og Spil";
+
+/* Countries */
+"country.usa" = "USA";
+"country.southkorea" = "Sydkorea";
+"country.germany" = "Tyskland";
+"country.france" = "Frankrig";
+"country.italy" = "Italien";
+"country.uk" = "Storbritannien";
+"country.spain" = "Spanien";
+"country.japan" = "Japan";
+"country.china" = "Kina";
+"country.taiwan" = "Taiwan";
+"country.sweden" = "Sverige";
+"country.denmark" = "Danmark";
+"country.netherlands" = "Holland";
+"country.switzerland" = "Schweiz";
+"country.austria" = "Østrig";
+
+/* ProductInfoCardView Translation */
+"translate.button" = "Oversæt";
+"show.original.button" = "Vis original"; 

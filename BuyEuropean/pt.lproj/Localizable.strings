@@ -34,6 +34,61 @@
 "common.done" = "Concluído";
 "results.no_alternatives" = "Nenhuma alternativa europeia necessária.";
 "results.feedback.title" = "Feedback";
+
+/* Classification Names and Emojis */
+"classification.cat.emoji" = "🐱";
+"classification.dog.emoji" = "🐶";
+"classification.animal.emoji" = "🦊";
+"classification.human.emoji" = "👤";
+"classification.product.emoji" = "📦";
+
+"classification.cat.name" = "Gato";
+"classification.dog.name" = "Cão";
+"classification.animal.name" = "Animal";
+"classification.human.name" = "Humano";
+"classification.product.name" = "Produto";
+
+/* Classification Descriptions */
+"classification.europeanCountry.description" = "Este produto é fabricado por uma empresa sediada na Europa.";
+"classification.europeanAlly.description" = "Este produto é fabricado por uma empresa de um país aliado da Europa.";
+"classification.europeanSceptic.description" = "Este produto é fabricado por uma empresa de um país cético em relação à Europa.";
+"classification.europeanAdversary.description" = "Este produto é fabricado por uma empresa de um país adversário da Europa.";
+"classification.neutral.description" = "Este produto é fabricado por uma empresa de um país neutro em relação à Europa.";
+"classification.cat.description" = "Isto é um gato.";
+"classification.dog.description" = "Isto é um cão.";
+"classification.animal.description" = "Isto é um animal.";
+"classification.human.description" = "Isto é um humano.";
+"classification.unknown.description" = "A origem deste produto não pôde ser determinada com certeza.";
+
+/* Product Info Card Labels */
+"product.label" = "PRODUTO";
+"company.label" = "EMPRESA";
+"ultimate_parent.label" = "EMPRESA-MÃE";
+"identification.label" = "BASE DE IDENTIFICAÇÃO";
+
+/* European Alternatives Section */
+"alternatives.title" = "Alternativas Europeias";
+"alternatives.subtitle" = "Considere estas opções fabricadas na Europa ou por empresas europeias.";
+"alternatives.learn_more" = "Saiba mais";
+
+/* AI Disclaimer */
+"ai.disclaimer" = "A IA pode cometer erros";
+
+/* FeedbackView */
+"feedback.question" = "Esta análise foi útil?";
+"feedback.positive.question" = "O que foi útil?";
+"feedback.negative.question" = "O que estava incorreto?";
+"feedback.thanks" = "Obrigado pelo seu feedback!";
+"feedback.option.product" = "Identificação do produto";
+"feedback.option.brand" = "Identificação da marca/empresa";
+"feedback.option.country" = "Identificação do país (sede)";
+"feedback.option.classification" = "Classificação geral";
+"feedback.option.alternatives" = "Alternativas sugeridas";
+"feedback.details.prompt" = "Detalhes adicionais (opcional)";
+"feedback.submit" = "Enviar feedback";
+"feedback.share.photo" = "Enviar imagem para nos ajudar";
+
+/* Classification Names - Legacy */
 "classification.cat" = "Gato";
 "classification.dog" = "Cão";
 "classification.animal" = "Animal";
@@ -93,6 +148,42 @@
 "classification.europeanAdversary" = "Adversário europeu";
 "classification.neutral" = "Neutro";
 "classification.unknown" = "Desconhecido";
+
+"classification.europeanCountry.name" = "Europeu";
+"classification.europeanAlly.name" = "Aliado Europeu";
+"classification.europeanSceptic.name" = "Cético Europeu";
+"classification.europeanAdversary.name" = "Adversário Europeu";
+"classification.neutral.name" = "Neutro";
+"classification.unknown.name" = "Desconhecido";
+
+/* Product Categories */
+"category.audio" = "Fones de Ouvido e Equipamentos de Áudio";
+"category.electronics" = "Eletrônicos";
+"category.clothing" = "Roupas e Moda";
+"category.food" = "Alimentos e Bebidas";
+"category.cosmetics" = "Cosméticos e Cuidados Pessoais";
+"category.appliances" = "Eletrodomésticos";
+"category.furniture" = "Móveis e Casa";
+"category.automotive" = "Automotivo e Veículos";
+"category.sports" = "Esportes e Fitness";
+"category.toys" = "Brinquedos e Jogos";
+
+/* Countries */
+"country.usa" = "Estados Unidos";
+"country.southkorea" = "Coreia do Sul";
+"country.germany" = "Alemanha";
+"country.france" = "França";
+"country.italy" = "Itália";
+"country.uk" = "Reino Unido";
+"country.spain" = "Espanha";
+"country.japan" = "Japão";
+"country.china" = "China";
+"country.taiwan" = "Taiwan";
+"country.sweden" = "Suécia";
+"country.denmark" = "Dinamarca";
+"country.netherlands" = "Países Baixos";
+"country.switzerland" = "Suíça";
+"country.austria" = "Áustria";
 
 /* ProductInfoCardView Translation */
 "translate.button" = "Traduzir";

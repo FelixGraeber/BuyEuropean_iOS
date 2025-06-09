@@ -34,6 +34,61 @@
 "common.done" = "Terminé";
 "results.no_alternatives" = "Aucune alternative européenne nécessaire.";
 "results.feedback.title" = "Retour";
+
+/* Classification Names and Emojis */
+"classification.cat.emoji" = "🐱";
+"classification.dog.emoji" = "🐶";
+"classification.animal.emoji" = "🦊";
+"classification.human.emoji" = "👤";
+"classification.product.emoji" = "📦";
+
+"classification.cat.name" = "Chat";
+"classification.dog.name" = "Chien";
+"classification.animal.name" = "Animal";
+"classification.human.name" = "Humain";
+"classification.product.name" = "Produit";
+
+/* Classification Descriptions */
+"classification.europeanCountry.description" = "Ce produit est fabriqué par une entreprise basée en Europe.";
+"classification.europeanAlly.description" = "Ce produit est fabriqué par une entreprise d'un pays allié de l'Europe.";
+"classification.europeanSceptic.description" = "Ce produit est fabriqué par une entreprise d'un pays sceptique envers l'Europe.";
+"classification.europeanAdversary.description" = "Ce produit est fabriqué par une entreprise d'un pays adversaire de l'Europe.";
+"classification.neutral.description" = "Ce produit est fabriqué par une entreprise d'un pays neutre envers l'Europe.";
+"classification.cat.description" = "C'est un chat.";
+"classification.dog.description" = "C'est un chien.";
+"classification.animal.description" = "C'est un animal.";
+"classification.human.description" = "C'est un humain.";
+"classification.unknown.description" = "L'origine de ce produit n'a pas pu être déterminée avec certitude.";
+
+/* Product Info Card Labels */
+"product.label" = "PRODUIT";
+"company.label" = "ENTREPRISE";
+"ultimate_parent.label" = "SOCIÉTÉ MÈRE";
+"identification.label" = "BASE D'IDENTIFICATION";
+
+/* European Alternatives Section */
+"alternatives.title" = "Alternatives Européennes";
+"alternatives.subtitle" = "Considérez ces options fabriquées en Europe ou par des entreprises européennes.";
+"alternatives.learn_more" = "En savoir plus";
+
+/* AI Disclaimer */
+"ai.disclaimer" = "L'IA peut faire des erreurs";
+
+/* FeedbackView */
+"feedback.question" = "Cette analyse a-t-elle été utile ?";
+"feedback.positive.question" = "Qu'est-ce qui a été utile ?";
+"feedback.negative.question" = "Qu'est-ce qui était incorrect ?";
+"feedback.thanks" = "Merci pour votre retour !";
+"feedback.option.product" = "Identification du produit";
+"feedback.option.brand" = "Identification de la marque/entreprise";
+"feedback.option.country" = "Identification du pays (siège social)";
+"feedback.option.classification" = "Classification générale";
+"feedback.option.alternatives" = "Alternatives suggérées";
+"feedback.details.prompt" = "Détails supplémentaires (facultatif)";
+"feedback.submit" = "Envoyer le retour";
+"feedback.share.photo" = "Envoyer l'image pour nous aider";
+
+/* Classification Names - Legacy */
 "classification.cat" = "Chat";
 "classification.dog" = "Chien";
 "classification.animal" = "Animal";
@@ -52,7 +107,7 @@
 
 /* LocationPermissionView.swift */
 "permission.location.title" = "Accès à la localisation recommandé";
-"permission.location.description" = "BuyEuropean utilise votre localisation pour proposer des alternatives de produits plus pertinentes selon votre région. Votre localisation n'est jamais stockée ni partagée. Ceci est optionnel et vous pouvez le désactiver dans les paramètres.";
+"permission.location.description" = "BuyEuropean utilise votre localisation pour fournir des alternatives de produits plus pertinentes selon votre région. Votre localisation n'est jamais stockée ni partagée. C'est optionnel et vous pouvez le désactiver dans les paramètres.";
 
 /* SupportView.swift */
 "support.description.sub.few_hours" = "Financez BuyEuropean pour quelques heures par mois";
@@ -93,6 +148,42 @@
 "classification.europeanAdversary" = "Adversaire européen";
 "classification.neutral" = "Neutre";
 "classification.unknown" = "Inconnu";
+
+"classification.europeanCountry.name" = "Européen";
+"classification.europeanAlly.name" = "Allié Européen";
+"classification.europeanSceptic.name" = "Sceptique Européen";
+"classification.europeanAdversary.name" = "Adversaire Européen";
+"classification.neutral.name" = "Neutre";
+"classification.unknown.name" = "Inconnu";
+
+/* Product Categories */
+"category.audio" = "Casques et Équipements Audio";
+"category.electronics" = "Électronique";
+"category.clothing" = "Vêtements et Mode";
+"category.food" = "Alimentation et Boissons";
+"category.cosmetics" = "Cosmétiques et Soins Personnels";
+"category.appliances" = "Électroménager";
+"category.furniture" = "Meubles et Maison";
+"category.automotive" = "Automobile et Véhicules";
+"category.sports" = "Sport et Fitness";
+"category.toys" = "Jouets et Jeux";
+
+/* Countries */
+"country.usa" = "États-Unis";
+"country.southkorea" = "Corée du Sud";
+"country.germany" = "Allemagne";
+"country.france" = "France";
+"country.italy" = "Italie";
+"country.uk" = "Royaume-Uni";
+"country.spain" = "Espagne";
+"country.japan" = "Japon";
+"country.china" = "Chine";
+"country.taiwan" = "Taïwan";
+"country.sweden" = "Suède";
+"country.denmark" = "Danemark";
+"country.netherlands" = "Pays-Bas";
+"country.switzerland" = "Suisse";
+"country.austria" = "Autriche";
 
 /* ProductInfoCardView Translation */
 "translate.button" = "Traduire";
