@@ -13,12 +13,12 @@ struct LocationPermissionView: View {
                 .font(.system(size: 70))
                 .foregroundColor(.green) // Use a different color (e.g., green)
 
-            Text("Location Access Recommended") // Updated title
+            Text(LocalizedStringKey("permission.location.title")) // Updated title
                 .font(.title2)
                 .fontWeight(.bold)
 
             // Updated explanation text
-            Text("BuyEuropean uses your location to provide more relevant product alternatives based on your region. Your location is never stored or shared. This is optional and you can turn it off in the settings.")
+            Text(LocalizedStringKey("permission.location.description"))
                 .multilineTextAlignment(.center)
                 .foregroundColor(.secondary)
                 .padding(.horizontal)
@@ -35,7 +35,7 @@ struct LocationPermissionView: View {
                         dismiss()
                     }
                 } label: {
-                    Text("Continue") // Updated button text
+                    Text(LocalizedStringKey("common.continue")) // Updated button text
                         .font(.headline)
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)

@@ -1,4 +1,6 @@
 import SwiftUI
+import Foundation
+import NaturalLanguage
 
 struct ProductInfoCardView: View {
     let product: String
@@ -15,7 +17,10 @@ struct ProductInfoCardView: View {
 
     // Removed isRationaleExpanded state
     @State private var isAnimated = false
+    @State private var translatedRationale: String? = nil
+    @State private var isTranslating = false
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.locale) private var locale
 
     // Constants for styling
     private let cornerRadius: CGFloat = 16
@@ -29,7 +34,7 @@ struct ProductInfoCardView: View {
             infoRow(
                 icon: "tag.fill",
                 iconColor: .blue,
-                title: "Product",
+                title: LocalizedStringKey("product.label"),
                 value: product
             )
 
@@ -45,14 +50,14 @@ struct ProductInfoCardView: View {
             rationaleSection()
             
             // 5. AI disclaimer text
-            Text("AI can make mistakes")
+            Text(LocalizedStringKey("ai.disclaimer"))
                 .font(.caption2)
                 .foregroundColor(.secondary)
                 .padding(.top, 4)
         }
         .padding()
         // Use our cardBackground color for better dark mode support
-        .background(Color.cardBackground)
+        .background(Color("CardBackground"))
         .cornerRadius(cornerRadius)
         .shadow(color: colorScheme == .dark ? Color.black.opacity(0.2) : Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
         .opacity(isAnimated ? 1 : 0)
@@ -62,17 +67,23 @@ struct ProductInfoCardView: View {
                 isAnimated = true
             }
         }
+        .task {
+            // Attempt auto-translation if translatedRationale is nil
+            if translatedRationale == nil {
+                await translateRationale()
+            }
+        }
     }
 
     // MARK: - Subviews
 
     // Generic Info Row (Kept for Product)
-    private func infoRow(icon: String, iconColor: Color, title: String, value: String) -> some View {
+    private func infoRow(icon: String, iconColor: Color, title: LocalizedStringKey, value: String) -> some View {
         HStack(alignment: .top, spacing: 12) {
             iconView(systemName: icon, color: iconColor)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(title.uppercased())
+                Text(title)
                     .font(.caption)
                     .fontWeight(.medium)
                     .foregroundColor(.secondary)
@@ -92,13 +103,13 @@ struct ProductInfoCardView: View {
             iconView(systemName: "building.2.fill", color: .purple)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text("Company".uppercased())
+                Text(LocalizedStringKey("company.label"))
                     .font(.caption)
                     .fontWeight(.medium)
                     .foregroundColor(.secondary)
 
                 // Combine company name and country/flag into a single Text view for proper wrapping
-                Text("\(company) (\(headquarters.localizedCountryNameFromAlpha3()) \(countryFlag))")
+                Text("\(company) (\(CountryFlagUtility.localizedName(forAlpha3Code: headquarters)) \(countryFlag))")
                     .font(.body)
                     .foregroundColor(.primary)
             }
@@ -112,7 +123,7 @@ struct ProductInfoCardView: View {
             iconView(systemName: "building.columns.fill", color: .brown)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text("Ultimate Parent Company".uppercased())
+                Text(LocalizedStringKey("ultimate_parent.label"))
                     .font(.caption)
                     .fontWeight(.medium)
                     .foregroundColor(.secondary)
@@ -124,7 +135,7 @@ struct ProductInfoCardView: View {
                         .foregroundColor(.primary)
                         .fixedSize(horizontal: false, vertical: true)
                     
-                    let parentCountryName = parentCompanyHeadquarters?.localizedCountryNameFromAlpha3() ?? ""
+                    let parentCountryName = CountryFlagUtility.localizedName(forAlpha3Code: parentCompanyHeadquarters ?? "")
                     Text("(\(parentCountryName) \(parentCompanyFlag))")
                         .font(.body)
                         .foregroundColor(.primary)
@@ -140,23 +151,27 @@ struct ProductInfoCardView: View {
             iconView(systemName: "info.circle.fill", color: .orange)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text("Identification Rationale".uppercased())
+                Text(LocalizedStringKey("identification.label"))
                     .font(.caption)
                     .fontWeight(.medium)
                     .foregroundColor(.secondary)
 
-                // Always display full rationale
-                Text(rationale)
+                // Display translated text if available, otherwise show original
+                Text(translatedRationale ?? rationale)
                     .font(.body)
                     .foregroundColor(.primary)
                     .fixedSize(horizontal: false, vertical: true)
-
-                // Removed the conditional Group and the "Read More/Less" Button
+                
+                // Show loading indicator while translating
+                if isTranslating {
+                    ProgressView()
+                        .padding(.top, 4)
+                }
             }
             Spacer()
         }
     }
-
+    
     // Helper for Icon Views (Unchanged)
     private func iconView(systemName: String, color: Color) -> some View {
         ZStack {
@@ -168,4 +183,84 @@ struct ProductInfoCardView: View {
                 .foregroundColor(color)
         }
     }
-}
+    
+    // MARK: - Translation Logic
+    
+    private func translateRationale() async {
+        // If we already have a translation, toggle back to original
+        if translatedRationale != nil {
+            translatedRationale = nil
+            return
+        }
+        
+        // Skip empty text
+        if rationale.isEmpty {
+            return
+        }
+        
+        // Show loading indicator
+        isTranslating = true
+        defer { isTranslating = false }
+        
+        // Get the current locale for target language
+        let targetLocale = locale
+        
+        do {
+            // First, detect the language
+            let languageRecognizer = NLLanguageRecognizer()
+            languageRecognizer.processString(rationale)
+            
+            guard let sourceLanguage = languageRecognizer.dominantLanguage else {
+                print("Could not determine rationale language")
+                return
+            }
+            
+            // Get target language code from current locale
+            guard let targetLanguageCode = targetLocale.language.languageCode?.identifier else {
+                print("Could not determine target language code")
+                return
+            }
+            
+            // Skip if source and target are the same
+            if sourceLanguage.rawValue == targetLanguageCode {
+                print("Source and target languages are the same, skipping translation")
+                return
+            }
+            
+            // Attempt to create a URL request for a simple translation API
+            let urlString = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=\(sourceLanguage.rawValue)&tl=\(targetLanguageCode)&dt=t&q=\(rationale.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
+            
+            guard let url = URL(string: urlString) else {
+                print("Failed to create translation URL")
+                return
+            }
+            
+            let (data, _) = try await URLSession.shared.data(from: url)
+            
+            // Parse the JSON response - fixed to concatenate all translated segments
+            if let json = try JSONSerialization.jsonObject(with: data) as? Array<Any>,
+               let translationArray = json.first as? Array<Any> {
+                
+                // The first element in the JSON response is an array of translation segments
+                // Each segment is an array where the first element is the translated text
+                var completeTranslation = ""
+                
+                // Go through all segments and concatenate them
+                for translationSegment in translationArray {
+                    if let segment = translationSegment as? Array<Any>,
+                       let translatedTextPart = segment.first as? String {
+                        completeTranslation += translatedTextPart
+                    }
+                }
+                
+                if !completeTranslation.isEmpty {
+                    await MainActor.run {
+                        self.translatedRationale = completeTranslation
+                    }
+                }
+            }
+        } catch {
+            print("Translation error: \(error.localizedDescription)")
+        }
+    }
+} 

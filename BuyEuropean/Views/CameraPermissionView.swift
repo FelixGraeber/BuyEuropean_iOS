@@ -12,11 +12,11 @@ struct CameraPermissionView: View {
                 .font(.system(size: 70))
                 .foregroundColor(.blue)
             
-            Text("Camera Access Needed")
+            Text(LocalizedStringKey("permission.camera.title"))
                 .font(.title2)
                 .fontWeight(.bold)
             
-            Text("BuyEuropean needs camera access to take photos of your product or brand.")
+            Text(LocalizedStringKey("permission.camera.description"))
                 .multilineTextAlignment(.center)
                 .foregroundColor(.secondary)
                 .padding(.horizontal)
@@ -30,7 +30,7 @@ struct CameraPermissionView: View {
                         dismiss()
                     }
                 } label: {
-                    Text("Continue")
+                    Text(LocalizedStringKey("common.continue"))
                         .font(.headline)
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)

@@ -1,0 +1,198 @@
+/* Localized strings */
+
+/* ContentView.swift */
+"app.title" = "BuyEuropean";
+"location.status.ios" = "Locatiestatus: %@";
+"location.status.other" = "Locatiestatus: N/B";
+"location.city_country" = "Stad: %@, Land: %@";
+
+/* ScanView.swift */
+"scan.manual.prompt" = "Voer een merk- of productnaam in";
+"scan.manual.placeholder" = "bijv. iPhone, Samsung, Nestlé, Zara...";
+"scan.manual.button.analyze" = "Analyseren";
+"scan.progress.analyzing" = "Analyseren...";
+"scan.progress.processing" = "Bezig met verwerken...";
+"scan.mode.photo" = "Foto";
+"scan.mode.text" = "Tekst";
+"scan.camera.initializing" = "Camera initialiseren...";
+"scan.camera.access_needed.overlay" = "Cameratoegang vereist";
+
+/* HistoryView.swift */
+"history.title" = "Geschiedenis";
+"common.close" = "Sluiten";
+"history.company.not_available" = "N/B";
+"history.search.prompt" = "Geschiedenis doorzoeken";
+
+/* ScanViewModel.swift Error Messages */
+"scan.error.no_image_selected" = "Geen afbeelding geselecteerd";
+"scan.error.failed_to_process_image" = "Afbeelding verwerken mislukt";
+
+/* ResultsView.swift */
+"share.text.line1" = "BuyEuropean identificeert snel producten van Europese bedrijven.";
+"share.text.line2" = "Stem met je geld en steun Europese bedrijven en waarden.";
+"results.title" = "Analyseresultaten";
+"common.done" = "Gereed";
+"results.no_alternatives" = "Geen Europese alternatieven nodig.";
+"results.feedback.title" = "Feedback";
+
+/* Classification Names and Emojis */
+"classification.cat.emoji" = "🐱";
+"classification.dog.emoji" = "🐶";
+"classification.animal.emoji" = "🦊";
+"classification.human.emoji" = "👤";
+"classification.product.emoji" = "📦";
+
+"classification.cat.name" = "Kat";
+"classification.dog.name" = "Hond";
+"classification.animal.name" = "Dier";
+"classification.human.name" = "Mens";
+"classification.product.name" = "Product";
+
+/* Classification Descriptions */
+"classification.europeanCountry.description" = "Dit product wordt gemaakt door een bedrijf gevestigd in Europa.";
+"classification.europeanAlly.description" = "Dit product wordt gemaakt door een bedrijf uit een land dat bondgenoot is van Europa.";
+"classification.europeanSceptic.description" = "Dit product wordt gemaakt door een bedrijf uit een land dat sceptisch staat tegenover Europa.";
+"classification.europeanAdversary.description" = "Dit product wordt gemaakt door een bedrijf uit een land dat vijandig staat tegenover Europa.";
+"classification.neutral.description" = "Dit product wordt gemaakt door een bedrijf uit een land dat neutraal staat tegenover Europa.";
+"classification.cat.description" = "Dit is een kat.";
+"classification.dog.description" = "Dit is een hond.";
+"classification.animal.description" = "Dit is een dier.";
+"classification.human.description" = "Dit is een mens.";
+"classification.unknown.description" = "De oorsprong van dit product kon niet met zekerheid worden bepaald.";
+
+/* Product Info Card Labels */
+"product.label" = "PRODUCT";
+"company.label" = "BEDRIJF";
+"ultimate_parent.label" = "MOEDERBEDRIJF";
+"identification.label" = "IDENTIFICATIEBASIS";
+
+/* European Alternatives Section */
+"alternatives.title" = "Europese Alternatieven";
+"alternatives.subtitle" = "Overweeg deze opties die in Europa worden gemaakt of door Europese bedrijven.";
+"alternatives.learn_more" = "Meer informatie";
+
+/* AI Disclaimer */
+"ai.disclaimer" = "AI kan fouten maken";
+
+/* FeedbackView */
+"feedback.question" = "Was deze analyse nuttig?";
+"feedback.positive.question" = "Wat was nuttig?";
+"feedback.negative.question" = "Wat was onjuist?";
+"feedback.thanks" = "Bedankt voor je feedback!";
+"feedback.option.product" = "Productidentificatie";
+"feedback.option.brand" = "Merk/bedrijfidentificatie";
+"feedback.option.country" = "Landidentificatie (hoofdkantoor)";
+"feedback.option.classification" = "Algemene classificatie";
+"feedback.option.alternatives" = "Voorgestelde alternatieven";
+"feedback.details.prompt" = "Aanvullende details (optioneel)";
+"feedback.submit" = "Feedback verzenden";
+"feedback.share.photo" = "Afbeelding verzenden om ons te helpen";
+
+/* Classification Names - Legacy */
+"classification.cat" = "Kat";
+"classification.dog" = "Hond";
+"classification.animal" = "Dier";
+"classification.human" = "Mens";
+"classification.product" = "Product";
+
+/* CameraPermissionView.swift */
+"permission.camera.title" = "Cameratoegang vereist";
+"permission.camera.description" = "BuyEuropean heeft cameratoegang nodig om foto's te maken van je product of merk.";
+"common.continue" = "Doorgaan";
+
+/* ErrorView.swift */
+"error.title" = "Fout";
+"error.button.try_again" = "Opnieuw proberen";
+"common.dismiss" = "Negeren";
+
+/* LocationPermissionView.swift */
+"permission.location.title" = "Locatietoegang aanbevolen";
+"permission.location.description" = "BuyEuropean gebruikt je locatie om relevantere productalternatieven te bieden op basis van je regio. Je locatie wordt nooit opgeslagen of gedeeld. Dit is optioneel en je kunt het uitschakelen in de instellingen.";
+
+/* SupportView.swift */
+"support.description.sub.few_hours" = "Financier BuyEuropean voor een paar uur per maand";
+"support.description.sub.day" = "Financier BuyEuropean voor een dag per maand";
+"support.description.sub.few_days" = "Financier BuyEuropean voor een paar dagen per maand";
+"support.description.sub.week" = "Financier BuyEuropean voor een week per maand";
+"support.description.sub.few_weeks" = "Financier BuyEuropean voor een paar weken per maand";
+"support.description.sub.default" = "Steun BuyEuropean maandelijks";
+"support.description.onetime.few_hours" = "Financier BuyEuropean voor een paar uur";
+"support.description.onetime.day" = "Financier BuyEuropean voor een dag";
+"support.description.onetime.few_days" = "Financier BuyEuropean voor een paar dagen";
+"support.description.onetime.week" = "Financier BuyEuropean voor een week";
+"support.description.onetime.few_weeks" = "Financier BuyEuropean voor een paar weken";
+"support.description.onetime.default" = "Steun BuyEuropean";
+
+"support.tab.support" = "Steun";
+"support.tab.feedback" = "Feedback";
+"support.tab.legal" = "Juridisch";
+"support.title" = "Steun ons";
+
+"support.share.header" = "Deel BuyEuropean";
+"support.share.button.label" = "Deel BuyEuropean";
+"support.share.button.description" = "Help ons de BuyEuropean-beweging te laten groeien door de app te delen.";
+
+"support.donate.header" = "Doneer om te steunen";
+"support.donate.description" = "Houd BuyEuropean gratis en advertentievrij. Kies hoe je wilt steunen:";
+"support.donate.load_error" = "Kan steunopties niet laden—trek omlaag om het opnieuw te proberen.";
+"support.donate.select_amount" = "Selecteer hierboven een bedrag";
+"support.donate.toggle.monthly" = "Maandelijkse steun";
+"support.donate.button.subscribe" = "Abonneren";
+"support.donate.button.donate" = "Doneren";
+
+"support.feedback.header" = "Feedback verzenden";
+
+/* Legal Section */
+"legal.header" = "Juridische Informatie";
+"legal.terms.title" = "Gebruiksvoorwaarden";
+"legal.terms.description" = "Bekijk onze Gebruiksvoorwaarden en Eindgebruiker Licentieovereenkomst";
+"legal.privacy.title" = "Privacybeleid";
+"legal.privacy.description" = "Leer hoe we je gegevens verwerken en je privacy beschermen";
+
+/* Classification Display Names */
+"classification.europeanCountry" = "Europees land";
+"classification.europeanAlly" = "Europese bondgenoot";
+"classification.europeanSceptic" = "Europese scepticus";
+"classification.europeanAdversary" = "Europese tegenstander";
+"classification.neutral" = "Neutraal";
+"classification.unknown" = "Onbekend";
+
+"classification.europeanCountry.name" = "Europees";
+"classification.europeanAlly.name" = "Europese Bondgenoot";
+"classification.europeanSceptic.name" = "Europese Scepticus";
+"classification.europeanAdversary.name" = "Europese Tegenstander";
+"classification.neutral.name" = "Neutraal";
+"classification.unknown.name" = "Onbekend";
+
+/* Product Categories */
+"category.audio" = "Koptelefoons en Audioapparatuur";
+"category.electronics" = "Elektronica";
+"category.clothing" = "Kleding en Mode";
+"category.food" = "Voedsel en Dranken";
+"category.cosmetics" = "Cosmetica en Persoonlijke Verzorging";
+"category.appliances" = "Huishoudelijke Apparaten";
+"category.furniture" = "Meubels en Wonen";
+"category.automotive" = "Auto's en Voertuigen";
+"category.sports" = "Sport en Fitness";
+"category.toys" = "Speelgoed en Spellen";
+
+/* Countries */
+"country.usa" = "Verenigde Staten";
+"country.southkorea" = "Zuid-Korea";
+"country.germany" = "Duitsland";
+"country.france" = "Frankrijk";
+"country.italy" = "Italië";
+"country.uk" = "Verenigd Koninkrijk";
+"country.spain" = "Spanje";
+"country.japan" = "Japan";
+"country.china" = "China";
+"country.taiwan" = "Taiwan";
+"country.sweden" = "Zweden";
+"country.denmark" = "Denemarken";
+"country.netherlands" = "Nederland";
+"country.switzerland" = "Zwitserland";
+"country.austria" = "Oostenrijk";
+
+/* ProductInfoCardView Translation */
+"translate.button" = "Vertalen";
+"show.original.button" = "Origineel tonen"; 

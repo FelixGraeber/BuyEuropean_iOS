@@ -21,28 +21,41 @@ enum Classification: String, Codable {
     case unknown = "unknown"
     
     var displayName: String {
+        let key: String
+        let comment: String
         switch self {
         case .europeanCountry:
-            return "European Country"
+            key = "classification.europeanCountry"
+            comment = "Display name for European Country classification"
         case .europeanAlly:
-            return "European Ally"
+            key = "classification.europeanAlly"
+            comment = "Display name for European Ally classification"
         case .europeanSceptic:
-            return "European Sceptic"
+            key = "classification.europeanSceptic"
+            comment = "Display name for European Sceptic classification"
         case .europeanAdversary:
-            return "European Adversary"
+            key = "classification.europeanAdversary"
+            comment = "Display name for European Adversary classification"
         case .neutral:
-            return "Neutral"
+            key = "classification.neutral"
+            comment = "Display name for Neutral classification"
         case .cat:
-            return "Cat"
+            key = "classification.cat"
+            comment = "Display name for Cat classification"
         case .dog:
-            return "Dog"
+            key = "classification.dog"
+            comment = "Display name for Dog classification"
         case .animal:
-            return "Animal"
+            key = "classification.animal"
+            comment = "Display name for Animal classification"
         case .human:
-            return "Human"
+            key = "classification.human"
+            comment = "Display name for Human classification"
         case .unknown:
-            return "Unknown"
+            key = "classification.unknown"
+            comment = "Display name for Unknown classification"
         }
+        return NSLocalizedString(key, comment: comment)
     }
     
     var color: Color {

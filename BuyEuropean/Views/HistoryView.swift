@@ -1,4 +1,5 @@
 import SwiftUI
+import Foundation // For NSLocalizedString, if needed
 
 struct HistoryView: View {
     @ObservedObject private var historyService = HistoryService.shared
@@ -24,7 +25,7 @@ struct HistoryView: View {
             } label: {
                 HStack {
                     VStack(alignment: .leading) {
-                        Text(item.response.identifiedCompany ?? "N/A")
+                        Text(item.response.identifiedCompany ?? NSLocalizedString("history.company.not_available", comment: "Company name not available placeholder"))
                             .font(.headline)
                         Text(item.response.identifiedProductName)
                             .font(.subheadline)
@@ -42,6 +43,6 @@ struct HistoryView: View {
             }
         }
         .listStyle(PlainListStyle())
-        .searchable(text: $searchText, prompt: "Search history")
+        .searchable(text: $searchText, prompt: Text(LocalizedStringKey("history.search.prompt")))
     }
 }

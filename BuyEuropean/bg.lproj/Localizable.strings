@@ -1,0 +1,196 @@
+/* Localized strings */
+
+/* ContentView.swift */
+"app.title" = "BuyEuropean";
+"location.status.ios" = "Състояние на местоположението: %@";
+"location.status.other" = "Състояние на местоположението: Н/Д";
+"location.city_country" = "Град: %@, Страна: %@";
+
+/* ScanView.swift */
+"scan.manual.prompt" = "Въведете марка или име на продукт";
+"scan.manual.placeholder" = "напр. iPhone, Samsung, Nestlé, Zara...";
+"scan.manual.button.analyze" = "Анализирай";
+"scan.progress.analyzing" = "Анализиране...";
+"scan.progress.processing" = "Обработване...";
+"scan.mode.photo" = "Снимка";
+"scan.mode.text" = "Текст";
+"scan.camera.initializing" = "Инициализиране на камерата...";
+"scan.camera.access_needed.overlay" = "Необходим е достъп до камерата";
+
+/* HistoryView.swift */
+"history.title" = "История";
+"common.close" = "Затвори";
+"history.company.not_available" = "Н/Д";
+"history.search.prompt" = "Търсене в историята";
+
+/* ScanViewModel.swift Error Messages */
+"scan.error.no_image_selected" = "Не е избрано изображение";
+"scan.error.failed_to_process_image" = "Неуспешно обработване на изображението";
+
+/* ResultsView.swift */
+"share.text.line1" = "BuyEuropean бързо идентифицира продукти от европейски компании.";
+"share.text.line2" = "Гласувайте с парите си и подкрепете европейски бизнеси и ценности.";
+"results.title" = "Резултати от анализа";
+"common.done" = "Готово";
+"results.no_alternatives" = "Не са необходими европейски алтернативи.";
+"results.feedback.title" = "Обратна връзка";
+
+/* Classification Names and Emojis */
+"classification.cat.emoji" = "🐱";
+"classification.dog.emoji" = "🐶";
+"classification.animal.emoji" = "🦊";
+"classification.human.emoji" = "👤";
+"classification.product.emoji" = "📦";
+
+"classification.cat.name" = "Котка";
+"classification.dog.name" = "Куче";
+"classification.animal.name" = "Животно";
+"classification.human.name" = "Човек";
+"classification.product.name" = "Продукт";
+
+/* Classification Descriptions */
+"classification.europeanCountry.description" = "Този продукт се произвежда от компания със седалище в Европа.";
+"classification.europeanAlly.description" = "Този продукт се произвежда от компания от страна, която е съюзник на Европа.";
+"classification.europeanSceptic.description" = "Този продукт се произвежда от компания от страна със скептично отношение към Европа.";
+"classification.europeanAdversary.description" = "Този продукт се произвежда от компания от страна с враждебно отношение към Европа.";
+"classification.neutral.description" = "Този продукт се произвежда от компания от страна с неутрално отношение към Европа.";
+"classification.cat.description" = "Това е котка.";
+"classification.dog.description" = "Това е куче.";
+"classification.animal.description" = "Това е животно.";
+"classification.human.description" = "Това е човек.";
+"classification.unknown.description" = "Произходът на този продукт не можа да бъде определен със сигурност.";
+
+/* Product Info Card Labels */
+"product.label" = "ПРОДУКТ";
+"company.label" = "КОМПАНИЯ";
+"ultimate_parent.label" = "МАЙЧИНА КОМПАНИЯ";
+"identification.label" = "ОСНОВА ЗА ИДЕНТИФИКАЦИЯ";
+
+/* European Alternatives Section */
+"alternatives.title" = "Европейски алтернативи";
+"alternatives.subtitle" = "Разгледайте тези опции, направени в Европа или от европейски компании.";
+"alternatives.learn_more" = "Научете повече";
+
+/* AI Disclaimer */
+"ai.disclaimer" = "AI може да прави грешки";
+
+/* FeedbackView */
+"feedback.question" = "Беше ли полезен този анализ?";
+"feedback.positive.question" = "Какво беше полезно?";
+"feedback.negative.question" = "Какво беше неправилно?";
+"feedback.thanks" = "Благодарим ви за обратната връзка!";
+"feedback.option.product" = "Идентификация на продукта";
+"feedback.option.brand" = "Идентификация на марката/компанията";
+"feedback.option.country" = "Идентификация на страната (седалище)";
+"feedback.option.classification" = "Обща класификация";
+"feedback.option.alternatives" = "Предложени алтернативи";
+"feedback.details.prompt" = "Допълнителни детайли (по избор)";
+"feedback.submit" = "Изпрати обратна връзка";
+"feedback.share.photo" = "Изпратете снимка, за да ни помогнете";
+
+/* Classification Names - Legacy */
+"classification.cat" = "Котка";
+"classification.dog" = "Куче";
+"classification.animal" = "Животно";
+"classification.human" = "Човек";
+"classification.product" = "Продукт";
+
+/* CameraPermissionView.swift */
+"permission.camera.title" = "Необходим е достъп до камерата";
+"permission.camera.description" = "BuyEuropean се нуждае от достъп до камерата, за да прави снимки на вашия продукт или марка.";
+"common.continue" = "Продължи";
+
+/* ErrorView.swift */
+"error.title" = "Грешка";
+"error.button.try_again" = "Опитай отново";
+"common.dismiss" = "Отхвърли";
+
+/* LocationPermissionView.swift */
+"permission.location.title" = "Препоръчва се достъп до местоположението";
+"permission.location.description" = "BuyEuropean използва вашето местоположение, за да предостави по-подходящи алтернативи на продукти въз основа на вашия регион. Вашето местоположение никога не се съхранява или споделя. Това е по избор и можете да го изключите в настройките.";
+
+/* SupportView.swift */
+"support.description.sub.few_hours" = "Финансирайте BuyEuropean за няколко часа месечно";
+"support.description.sub.day" = "Финансирайте BuyEuropean за един ден месечно";
+"support.description.sub.few_days" = "Финансирайте BuyEuropean за няколко дни месечно";
+"support.description.sub.week" = "Финансирайте BuyEuropean за една седмица месечно";
+"support.description.sub.few_weeks" = "Финансирайте BuyEuropean за няколко седмици месечно";
+"support.description.sub.default" = "Подкрепете BuyEuropean месечно";
+"support.description.onetime.few_hours" = "Финансирайте BuyEuropean за няколко часа";
+"support.description.onetime.day" = "Финансирайте BuyEuropean за един ден";
+"support.description.onetime.few_days" = "Финансирайте BuyEuropean за няколко дни";
+"support.description.onetime.week" = "Финансирайте BuyEuropean за една седмица";
+"support.description.onetime.few_weeks" = "Финансирайте BuyEuropean за няколко седмици";
+"support.description.onetime.default" = "Подкрепете BuyEuropean";
+
+"support.tab.support" = "Подкрепа";
+"support.tab.feedback" = "Feedback"; "support.tab.legal" = "Legal";
+"support.title" = "Подкрепете ни";
+
+"support.share.header" = "Споделете BuyEuropean";
+"support.share.button.label" = "Споделете BuyEuropean";
+"support.share.button.description" = "Помогнете ни да разширим движението BuyEuropean, като споделите приложението.";
+
+"support.donate.header" = "Дарете, за да подкрепите";
+"support.donate.description" = "Поддържайте BuyEuropean безплатно и без реклами. Изберете как искате да подкрепите:";
+"support.donate.load_error" = "Неуспешно зареждане на опциите за подкрепа—дръпнете надолу, за да опитате отново.";
+"support.donate.select_amount" = "Изберете сума по-горе";
+"support.donate.toggle.monthly" = "Месечна подкрепа";
+"support.donate.button.subscribe" = "Абонирай се";
+"support.donate.button.donate" = "Дарете";
+
+"support.feedback.header" = "Изпратете обратна връзка";
+
+/* Classification Display Names */
+"classification.europeanCountry" = "Европейска страна";
+"classification.europeanAlly" = "Европейски съюзник";
+"classification.europeanSceptic" = "Европейски скептик";
+"classification.europeanAdversary" = "Европейски противник";
+"classification.neutral" = "Неутрален";
+"classification.unknown" = "Неизвестен";
+
+"classification.europeanCountry.name" = "Европейски";
+"classification.europeanAlly.name" = "Европейски съюзник";
+"classification.europeanSceptic.name" = "Европейски скептик";
+"classification.europeanAdversary.name" = "Европейски противник";
+"classification.neutral.name" = "Неутрален";
+"classification.unknown.name" = "Неизвестен";
+
+/* Product Categories */
+"category.audio" = "Слушалки и аудио оборудване";
+"category.electronics" = "Електроника";
+"category.clothing" = "Облекло и мода";
+"category.food" = "Храна и напитки";
+"category.cosmetics" = "Козметика и лична грижа";
+"category.appliances" = "Домакински уреди";
+"category.furniture" = "Мебели и дом";
+"category.automotive" = "Автомобили и превозни средства";
+"category.sports" = "Спорт и фитнес";
+"category.toys" = "Играчки и игри";
+
+/* Countries */
+"country.usa" = "Съединени щати";
+"country.southkorea" = "Южна Корея";
+"country.germany" = "Германия";
+"country.france" = "Франция";
+"country.italy" = "Италия";
+"country.uk" = "Великобритания";
+"country.spain" = "Испания";
+"country.japan" = "Япония";
+"country.china" = "Китай";
+"country.taiwan" = "Тайван";
+"country.sweden" = "Швеция";
+"country.denmark" = "Дания";
+"country.netherlands" = "Нидерландия";
+"country.switzerland" = "Швейцария";
+"country.austria" = "Австрия";
+
+/* ProductInfoCardView Translation */
+"translate.button" = "Преведи";
+"show.original.button" = "Покажи оригинала"; 
+/* Legal Section */
+"legal.header" = "Legal Information";
+"legal.terms.title" = "Terms of Use";
+"legal.terms.description" = "View our Terms of Use and End User License Agreement";
+"legal.privacy.title" = "Privacy Policy";
+"legal.privacy.description" = "Learn how we handle your data and protect your privacy";

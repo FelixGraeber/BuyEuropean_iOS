@@ -1,6 +1,7 @@
 import AVFoundation
 import Combine
 import SwiftUI
+import Foundation // For NSLocalizedString if needed, though LocalizedStringKey is preferred for SwiftUI
 
 #if canImport(UIKit)
     import UIKit
@@ -82,7 +83,7 @@ struct ScanView: View {
                                 .scaledToFit()
                                 .frame(width: 32, height: 32)
                                 .clipShape(RoundedRectangle(cornerRadius: 8))
-                            Text("BuyEuropean")
+                            Text(LocalizedStringKey("app.title"))
                                 .font(geometry.size.width < 350 ? .headline : .title3)
                                 .fontWeight(.bold)
                                 .foregroundColor(Color.accentColor)
@@ -181,14 +182,14 @@ struct ScanView: View {
                                                 y: 4)
 
                                         VStack(spacing: 16) {
-                                            Text("Enter a brand or product name")
+                                            Text(LocalizedStringKey("scan.manual.prompt"))
                                                 .font(.headline)
                                                 .foregroundColor(Color.brandPrimary)
                                                 .padding(.top, 16)
 
                                             VStack(spacing: 12) {
                                                 TextField(
-                                                    "e.g., iPhone, Samsung, Nestlé, Zara...",
+                                                    LocalizedStringKey("scan.manual.placeholder"),
                                                     text: $manualInputText
                                                 )
                                                 .font(.body)  // Dynamic Type friendly
@@ -215,7 +216,7 @@ struct ScanView: View {
                                                     HStack(spacing: 10) {
                                                         Image(systemName: "magnifyingglass")
                                                             .font(.headline)
-                                                        Text("Analyze")
+                                                        Text(LocalizedStringKey("scan.manual.button.analyze"))
                                                             .font(.headline)
                                                             .fontWeight(.semibold)
                                                     }
@@ -264,7 +265,7 @@ struct ScanView: View {
 
                                 ProgressView(
                                     viewModel.scanState == .scanning
-                                        ? "Analyzing..." : "Processing..."
+                                        ? LocalizedStringKey("scan.progress.analyzing") : LocalizedStringKey("scan.progress.processing")
                                 )
                                 .padding(20)
                                 .background(.thickMaterial)
@@ -357,10 +358,10 @@ struct ScanView: View {
                         viewModel.scanState = .result(item.response, nil)
                         showHistory = false
                     }
-                    .navigationTitle("History")
+                    .navigationTitle(LocalizedStringKey("history.title"))
                     .toolbar {
                         ToolbarItem(placement: .cancellationAction) {
-                            Button("Close") { showHistory = false }
+                            Button(LocalizedStringKey("common.close")) { showHistory = false }
                         }
                     }
                 }
@@ -559,14 +560,14 @@ struct ScanView: View {
     private func modeToggleLabel(mode: InputMode, geometry: GeometryProxy) -> some View {
         let isSelected = selectedMode == mode
         let iconName = (mode == .camera) ? "camera.fill" : "square.and.pencil"
-        let text = (mode == .camera) ? "Photo" : "Text"
+        let textKey = (mode == .camera) ? "scan.mode.photo" : "scan.mode.text"
         let iconFontSize = geometry.size.width < 375 ? 12.0 : 14.0
         let textFont: Font = geometry.size.width < 375 ? .caption : .footnote
 
         HStack(spacing: 6) {
             Image(systemName: iconName)
                 .font(.system(size: iconFontSize, weight: .medium))
-            Text(text)
+            Text(LocalizedStringKey(textKey))
                 .font(textFont)
                 .fontWeight(.semibold)
         }
@@ -599,7 +600,7 @@ struct ScanView: View {
                     switch cameraService.state {
                     case .initializing:
                         ProgressView()  // Spinner for initializing
-                        Text("Initializing Camera...")
+                        Text(LocalizedStringKey("scan.camera.initializing"))
 
                     case .error(let cameraError):  // Check if state is .error and extract the inner Camera.Error
                         // Now check the specific type of Camera.Error
@@ -608,7 +609,7 @@ struct ScanView: View {
                             // UI for permission denied
                             Image(systemName: "exclamationmark.triangle.fill").foregroundColor(
                                 .yellow)
-                            Text("Camera Access Needed")
+                            Text(LocalizedStringKey("scan.camera.access_needed.overlay"))
                         case .setupFailed, .captureFailed, .noCamera:
                             // UI for other camera errors
                             Image(systemName: "xmark.octagon.fill").foregroundColor(.red)

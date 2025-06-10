@@ -1,4 +1,6 @@
 import SwiftUI
+import Foundation
+import UIKit
 
 // Assume these are defined elsewhere:
 // ResultsViewModel, FeedbackViewModel, ClassificationBadgeView, ProductInfoCardView,
@@ -21,9 +23,11 @@ struct ResultsView: View {
 
     // Share Text (can be defined directly in ShareLink if preferred)
     private var shareText: String {
-        """
-        BuyEuropean quickly identifies products from European companies.
-        Vote with your Money and support European businesses and values.
+        let line1 = NSLocalizedString("share.text.line1", comment: "Share text line 1")
+        let line2 = NSLocalizedString("share.text.line2", comment: "Share text line 2")
+        return """
+        \(line1)
+        \(line2)
         \(appStoreLink)
         """
     }
@@ -60,13 +64,13 @@ struct ResultsView: View {
 
                     Spacer()
 
-                    Text("Analysis Results")
+                    Text(LocalizedStringKey("results.title"))
                         .font(.headline)
                         .fontWeight(.semibold) // Slightly bolder title
 
                     Spacer()
 
-                    Button("Done") {
+                    Button(LocalizedStringKey("common.done")) {
                         onDismiss()
                     }
                     .fontWeight(.medium)
@@ -90,75 +94,70 @@ struct ResultsView: View {
                         // Conditionally show Product Info or a generic message
                         if viewModel.isProductAnalysis {
                             ProductInfoCardView(
-                                product: viewModel.productName, // Use ViewModel
-                                company: viewModel.companyName, // Use ViewModel
-                                headquarters: viewModel.headquartersCountry, // Use ViewModel
-                                rationale: viewModel.identificationRationale, // Use ViewModel
-                                countryFlag: viewModel.countryFlag(for: viewModel.headquartersCountry), // Use ViewModel
-                                // Add the required arguments from the viewModel
+                                product: viewModel.productName,
+                                company: viewModel.companyName,
+                                headquarters: viewModel.headquartersCountry,
+                                rationale: viewModel.translatedIdentificationRationale ?? viewModel.identificationRationale,
+                                countryFlag: viewModel.countryFlag(for: viewModel.headquartersCountry),
                                 parentCompany: viewModel.parentCompany,
-                                parentCompanyHeadquarters: viewModel.parentCompanyHeadquarters, // Pass the HQ code
+                                parentCompanyHeadquarters: viewModel.parentCompanyHeadquarters,
                                 parentCompanyFlag: viewModel.parentCompanyFlag,
                                 shouldShowParentCompany: viewModel.shouldShowParentCompany
                             )
                             .padding(.horizontal, horizontalPadding)
+                            if viewModel.isTranslatingIdentificationRationale {
+                                ProgressView().padding(.horizontal, horizontalPadding)
+                            }
                         } else {
-                            // Special display for non-product classifications (animal, human, etc.)
                             VStack(alignment: .center, spacing: 12) {
-                                // Determine emoji using helper function
                                 Text(emoji(for: viewModel.displayClassification))
                                     .font(.system(size: 60))
                                     .padding(.bottom, 5)
-
-                                Text(viewModel.displayClassification.displayName)
+                                Text(LocalizedStringKey("classification.\(viewModel.displayClassification.rawValue).name"))
                                     .font(.system(size: 36, weight: .bold))
                                     .foregroundColor(.primary)
                                     .multilineTextAlignment(.center)
-
-                                Text(viewModel.identificationRationale)
+                                Text(viewModel.translatedIdentificationRationale ?? viewModel.identificationRationale)
                                     .font(.title3)
                                     .foregroundColor(.secondary)
                                     .multilineTextAlignment(.center)
                                     .padding(.top, 8)
+                                if viewModel.isTranslatingIdentificationRationale {
+                                    ProgressView()
+                                }
                             }
-                            .padding(.vertical, 30) // Add vertical padding for spacing
-                            // Optional background: .background(Color(.secondarySystemBackground).cornerRadius(12))
-                            .padding(.horizontal, horizontalPadding) // Maintain horizontal padding
+                            .padding(.vertical, 30)
+                            .padding(.horizontal, horizontalPadding)
                         }
 
                         // --- Section 2: Alternatives ---
                         // Only show this section if appropriate and alternatives exist
                         if viewModel.shouldShowAlternatives {
-                            VStack(alignment: .leading, spacing: 16) { // Align header left, consistent spacing
+                            VStack(alignment: .leading, spacing: 16) {
                                 AlternativesHeaderView()
-                                    .padding(.horizontal, horizontalPadding) // Add padding to header
-
-                                // Use ForEach directly with alternatives from ViewModel
+                                    .padding(.horizontal, horizontalPadding)
                                 ForEach(viewModel.alternatives) { alternative in
                                     AlternativeCardView(
                                         alternative: alternative,
                                         countryFlag: viewModel.countryFlag(for: alternative.country),
                                         onLearnMore: {
                                             viewModel.openWebSearch(for: alternative)
-                                        }
+                                        },
+                                        descriptionOverride: viewModel.translatedDescription(for: alternative),
+                                        isLoading: viewModel.isTranslatingAlternative(alternative)
                                     )
                                     .padding(.horizontal, horizontalPadding)
-                                    // Add spacing below each card if needed, or rely on VStack spacing
                                 }
-                                // Note: The case where alternatives array is empty but shouldShowAlternatives was true
-                                // might need a specific message, but shouldShowAlternatives should handle this.
-                                // If viewModel.alternatives is empty here, ForEach does nothing.
-
-                            } // Alternatives VStack
+                            }
                         } else if viewModel.isProductAnalysis {
                              // Show message only if it was a product analysis but no alternatives are shown
-                             CenteredMessageView(message: "No European alternatives needed.")
+                             CenteredMessageView(message: LocalizedStringKey("results.no_alternatives"))
                                 .padding(.horizontal, horizontalPadding)
                         }
 
                         // --- Section 3: Feedback ---
                         VStack(alignment: .leading, spacing: 16) {
-                            Text("Feedback")
+                            Text(LocalizedStringKey("results.feedback.title"))
                                 .font(.title3) // Slightly larger section header
                                 .fontWeight(.semibold)
                                 .padding(.horizontal, horizontalPadding)
@@ -179,21 +178,23 @@ struct ResultsView: View {
     // MARK: - Helper Functions
     private func emoji(for classification: Classification) -> String {
         switch classification {
-        case .cat: return "🐱"
-        case .dog: return "🐶"
-        case .animal: return "🐾"
-        case .human: return "👤"
-        default: return "❓" // Fallback
+        case .cat: return NSLocalizedString("classification.cat.emoji", comment: "Emoji for cat classification") 
+        case .dog: return NSLocalizedString("classification.dog.emoji", comment: "Emoji for dog classification")
+        case .animal: return NSLocalizedString("classification.animal.emoji", comment: "Emoji for animal classification")
+        case .human: return NSLocalizedString("classification.human.emoji", comment: "Emoji for human classification")
+        // For "Product", we usually show ProductInfoCardView, not an emoji.
+        // However, if Classification.product can reach here, we might need a fallback.
+        default: return NSLocalizedString("classification.product.emoji", comment: "Emoji for product classification or fallback") 
         }
     }
 }
 
 // Helper View for Centered Text Messages
 struct CenteredMessageView: View {
-    let message: String
+    let message: LocalizedStringKey // Changed to LocalizedStringKey to support direct localization
 
     var body: some View {
-        Text(message)
+        Text(message) // Text view can take LocalizedStringKey directly
             .font(.subheadline) // Use subheadline for secondary info
             .foregroundColor(.secondary) // Use secondary color
             .multilineTextAlignment(.center)

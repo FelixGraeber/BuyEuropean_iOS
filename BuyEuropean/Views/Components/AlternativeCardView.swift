@@ -7,6 +7,8 @@ struct AlternativeCardView: View {
     let alternative: EuropeanAlternative
     let countryFlag: String
     let onLearnMore: () -> Void
+    var descriptionOverride: String? = nil
+    var isLoading: Bool = false
 
     @State private var isAnimated = false
     @Environment(\.colorScheme) private var colorScheme
@@ -21,7 +23,7 @@ struct AlternativeCardView: View {
                 Text(alternative.productName)
                     .font(.headline) // Keep headline
                     .fontWeight(.semibold) // Make product name stand out
-                    .foregroundColor(.primary) // Use primary color
+                    .foregroundColor(Color("BrandPrimary")) // Use asset catalog color
 
                 Spacer()
 
@@ -39,26 +41,29 @@ struct AlternativeCardView: View {
                 .foregroundColor(.secondary) // Use secondary color
 
             // Description
-            Text(alternative.description)
+            Text(descriptionOverride ?? alternative.description)
                 .font(.body)
                 .foregroundColor(.primary.opacity(0.9)) // Slightly dimmer primary for body
                 .lineSpacing(3) // Add line spacing
                 .padding(.top, 4) // Space above description
+            if isLoading {
+                ProgressView().padding(.top, 2)
+            }
 
             // Learn More Button - Aligned Right
             HStack {
                 Spacer() // Pushes button to the right
                 Button(action: onLearnMore) {
-                    Label("Learn More", systemImage: "arrow.up.right.square")
+                    Label(LocalizedStringKey("alternatives.learn_more"), systemImage: "arrow.up.right.square")
                          .font(.footnote.weight(.medium))
                          .padding(.vertical, 4) // Smaller padding for footnote button
                 }
-                .tint(Color.brandSecondary) // Use brand color for links
+                .tint(Color("BrandSecondary")) // Use asset catalog color
             }
             .padding(.top, 4) // Space above button row
         }
         .padding(12) // Reduced padding inside card
-        .background(Color.cardBackground) // Use our color asset for better dark mode
+        .background(Color("CardBackground")) // Use asset catalog color
         .cornerRadius(cornerRadius)
         .shadow(color: colorScheme == .dark ? Color.black.opacity(0.15) : Color.black.opacity(0.06), radius: 5, x: 0, y: 2) // Enhanced shadow for dark mode
         .opacity(isAnimated ? 1 : 0)
@@ -81,14 +86,14 @@ struct AlternativesHeaderView: View {
             HStack(spacing: 8) {
                 Image(systemName: "flag.2.crossed.fill") // More relevant icon?
                     .font(.title3) // Consistent icon size
-                    .foregroundColor(Color.brandPrimary) // Use brand color
+                    .foregroundColor(Color("BrandPrimary")) // Use asset catalog color
 
-                Text("European Alternatives")
+                Text(LocalizedStringKey("alternatives.title"))
                     .font(.title3) // Consistent sizing
                     .fontWeight(.semibold) // Medium weight for better readability
             }
 
-            Text("Consider these options made within Europe or by European companies.") // Updated description
+            Text(LocalizedStringKey("alternatives.subtitle")) // Updated description
                 .font(.subheadline)
                 .foregroundColor(.secondary) // Standard secondary color
                 // .italic() // Removed italic for cleaner look

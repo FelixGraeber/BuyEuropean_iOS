@@ -1,0 +1,196 @@
+/* Localized strings */
+
+/* ContentView.swift */
+"app.title" = "BuyEuropean";
+"location.status.ios" = "Stav polohy: %@";
+"location.status.other" = "Stav polohy: N/A";
+"location.city_country" = "Město: %@, Země: %@";
+
+/* ScanView.swift */
+"scan.manual.prompt" = "Zadejte značku nebo název produktu";
+"scan.manual.placeholder" = "např. iPhone, Samsung, Nestlé, Zara...";
+"scan.manual.button.analyze" = "Analyzovat";
+"scan.progress.analyzing" = "Analyzuji...";
+"scan.progress.processing" = "Zpracovávám...";
+"scan.mode.photo" = "Foto";
+"scan.mode.text" = "Text";
+"scan.camera.initializing" = "Inicializuji kameru...";
+"scan.camera.access_needed.overlay" = "Je potřeba přístup ke kameře";
+
+/* HistoryView.swift */
+"history.title" = "Historie";
+"common.close" = "Zavřít";
+"history.company.not_available" = "N/A";
+"history.search.prompt" = "Hledat v historii";
+
+/* ScanViewModel.swift Error Messages */
+"scan.error.no_image_selected" = "Nebyl vybrán žádný obrázek";
+"scan.error.failed_to_process_image" = "Nepodařilo se zpracovat obrázek";
+
+/* ResultsView.swift */
+"share.text.line1" = "BuyEuropean rychle identifikuje produkty od evropských společností.";
+"share.text.line2" = "Hlasujte svými penězi a podpořte evropské firmy a hodnoty.";
+"results.title" = "Výsledky analýzy";
+"common.done" = "Hotovo";
+"results.no_alternatives" = "Nejsou potřeba žádné evropské alternativy.";
+"results.feedback.title" = "Zpětná vazba";
+
+/* Classification Names and Emojis */
+"classification.cat.emoji" = "🐱";
+"classification.dog.emoji" = "🐶";
+"classification.animal.emoji" = "🦊";
+"classification.human.emoji" = "👤";
+"classification.product.emoji" = "📦";
+
+"classification.cat.name" = "Kočka";
+"classification.dog.name" = "Pes";
+"classification.animal.name" = "Zvíře";
+"classification.human.name" = "Člověk";
+"classification.product.name" = "Produkt";
+
+/* Classification Descriptions */
+"classification.europeanCountry.description" = "Tento produkt je vyráběn společností se sídlem v Evropě.";
+"classification.europeanAlly.description" = "Tento produkt je vyráběn společností ze země, která je spojencem Evropy.";
+"classification.europeanSceptic.description" = "Tento produkt je vyráběn společností ze země se skeptickým postojem vůči Evropě.";
+"classification.europeanAdversary.description" = "Tento produkt je vyráběn společností ze země s nepřátelským postojem vůči Evropě.";
+"classification.neutral.description" = "Tento produkt je vyráběn společností ze země s neutrálním postojem vůči Evropě.";
+"classification.cat.description" = "Toto je kočka.";
+"classification.dog.description" = "Toto je pes.";
+"classification.animal.description" = "Toto je zvíře.";
+"classification.human.description" = "Toto je člověk.";
+"classification.unknown.description" = "Původ tohoto produktu nemohl být určen s jistotou.";
+
+/* Product Info Card Labels */
+"product.label" = "PRODUKT";
+"company.label" = "SPOLEČNOST";
+"ultimate_parent.label" = "MATEŘSKÁ SPOLEČNOST";
+"identification.label" = "ZÁKLAD IDENTIFIKACE";
+
+/* European Alternatives Section */
+"alternatives.title" = "Evropské alternativy";
+"alternatives.subtitle" = "Zvažte tyto možnosti vyrobené v Evropě nebo evropskými společnostmi.";
+"alternatives.learn_more" = "Zjistit více";
+
+/* AI Disclaimer */
+"ai.disclaimer" = "AI může dělat chyby";
+
+/* FeedbackView */
+"feedback.question" = "Byla tato analýza užitečná?";
+"feedback.positive.question" = "Co bylo užitečné?";
+"feedback.negative.question" = "Co bylo nesprávné?";
+"feedback.thanks" = "Děkujeme za zpětnou vazbu!";
+"feedback.option.product" = "Identifikace produktu";
+"feedback.option.brand" = "Identifikace značky/společnosti";
+"feedback.option.country" = "Identifikace země (sídlo)";
+"feedback.option.classification" = "Celková klasifikace";
+"feedback.option.alternatives" = "Navrhované alternativy";
+"feedback.details.prompt" = "Další podrobnosti (volitelně)";
+"feedback.submit" = "Odeslat zpětnou vazbu";
+"feedback.share.photo" = "Poslat obrázek pro pomoc";
+
+/* Classification Names - Legacy */
+"classification.cat" = "Kočka";
+"classification.dog" = "Pes";
+"classification.animal" = "Zvíře";
+"classification.human" = "Člověk";
+"classification.product" = "Produkt";
+
+/* CameraPermissionView.swift */
+"permission.camera.title" = "Je potřeba přístup ke kameře";
+"permission.camera.description" = "BuyEuropean potřebuje přístup ke kameře pro fotografování vašeho produktu nebo značky.";
+"common.continue" = "Pokračovat";
+
+/* ErrorView.swift */
+"error.title" = "Chyba";
+"error.button.try_again" = "Zkusit znovu";
+"common.dismiss" = "Zrušit";
+
+/* LocationPermissionView.swift */
+"permission.location.title" = "Přístup k poloze je doporučen";
+"permission.location.description" = "BuyEuropean používá vaši polohu k poskytování relevantnějších alternativ produktů na základě vašeho regionu. Vaše poloha není nikdy uložena ani sdílena. Je to volitelné a můžete to vypnout v nastavení.";
+
+/* SupportView.swift */
+"support.description.sub.few_hours" = "Financujte BuyEuropean na několik hodin měsíčně";
+"support.description.sub.day" = "Financujte BuyEuropean na jeden den měsíčně";
+"support.description.sub.few_days" = "Financujte BuyEuropean na několik dní měsíčně";
+"support.description.sub.week" = "Financujte BuyEuropean na týden měsíčně";
+"support.description.sub.few_weeks" = "Financujte BuyEuropean na několik týdnů měsíčně";
+"support.description.sub.default" = "Podporujte BuyEuropean měsíčně";
+"support.description.onetime.few_hours" = "Financujte BuyEuropean na několik hodin";
+"support.description.onetime.day" = "Financujte BuyEuropean na jeden den";
+"support.description.onetime.few_days" = "Financujte BuyEuropean na několik dní";
+"support.description.onetime.week" = "Financujte BuyEuropean na týden";
+"support.description.onetime.few_weeks" = "Financujte BuyEuropean na několik týdnů";
+"support.description.onetime.default" = "Podporujte BuyEuropean";
+
+"support.tab.support" = "Podpora";
+"support.tab.feedback" = "Feedback"; "support.tab.legal" = "Legal";
+"support.title" = "Podpořte nás";
+
+"support.share.header" = "Sdílet BuyEuropean";
+"support.share.button.label" = "Sdílet BuyEuropean";
+"support.share.button.description" = "Pomozte nám rozšířit hnutí BuyEuropean sdílením aplikace.";
+
+"support.donate.header" = "Darovat na podporu";
+"support.donate.description" = "Udržte BuyEuropean zdarma a bez reklam. Vyberte, jak chcete podpořit:";
+"support.donate.load_error" = "Nelze načíst možnosti podpory—potáhněte dolů pro opakování.";
+"support.donate.select_amount" = "Vyberte částku výše";
+"support.donate.toggle.monthly" = "Měsíční podpora";
+"support.donate.button.subscribe" = "Odebírat";
+"support.donate.button.donate" = "Darovat";
+
+"support.feedback.header" = "Poslat zpětnou vazbu";
+
+/* Classification Display Names */
+"classification.europeanCountry" = "Evropská země";
+"classification.europeanAlly" = "Evropský spojenec";
+"classification.europeanSceptic" = "Evropský skeptik";
+"classification.europeanAdversary" = "Evropský protivník";
+"classification.neutral" = "Neutrální";
+"classification.unknown" = "Neznámý";
+
+"classification.europeanCountry.name" = "Evropský";
+"classification.europeanAlly.name" = "Evropský spojenec";
+"classification.europeanSceptic.name" = "Evropský skeptik";
+"classification.europeanAdversary.name" = "Evropský protivník";
+"classification.neutral.name" = "Neutrální";
+"classification.unknown.name" = "Neznámý";
+
+/* Product Categories */
+"category.audio" = "Sluchátka a audio zařízení";
+"category.electronics" = "Elektronika";
+"category.clothing" = "Oblečení a móda";
+"category.food" = "Jídlo a nápoje";
+"category.cosmetics" = "Kosmetika a osobní péče";
+"category.appliances" = "Domácí spotřebiče";
+"category.furniture" = "Nábytek a domov";
+"category.automotive" = "Automobilový průmysl a vozidla";
+"category.sports" = "Sport a fitness";
+"category.toys" = "Hračky a hry";
+
+/* Countries */
+"country.usa" = "Spojené státy";
+"country.southkorea" = "Jižní Korea";
+"country.germany" = "Německo";
+"country.france" = "Francie";
+"country.italy" = "Itálie";
+"country.uk" = "Spojené království";
+"country.spain" = "Španělsko";
+"country.japan" = "Japonsko";
+"country.china" = "Čína";
+"country.taiwan" = "Tchaj-wan";
+"country.sweden" = "Švédsko";
+"country.denmark" = "Dánsko";
+"country.netherlands" = "Nizozemsko";
+"country.switzerland" = "Švýcarsko";
+"country.austria" = "Rakousko";
+
+/* ProductInfoCardView Translation */
+"translate.button" = "Přeložit";
+"show.original.button" = "Zobrazit originál"; 
+/* Legal Section */
+"legal.header" = "Legal Information";
+"legal.terms.title" = "Terms of Use";
+"legal.terms.description" = "View our Terms of Use and End User License Agreement";
+"legal.privacy.title" = "Privacy Policy";
+"legal.privacy.description" = "Learn how we handle your data and protect your privacy";

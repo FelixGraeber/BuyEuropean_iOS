@@ -19,17 +19,17 @@ struct ErrorView: View {
                     .foregroundColor(.red)
                     .padding()
                 
-                Text("Error")
+                Text(LocalizedStringKey("error.title"))
                     .font(.title)
                     .fontWeight(.bold)
                 
-                Text(message)
+                Text(message) // This 'message' is dynamic, so it's already a variable. No localization needed here.
                     .font(.body)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
                 
                 Button(action: onDismiss) {
-                    Text("Try Again")
+                    Text(LocalizedStringKey("error.button.try_again"))
                         .font(.headline)
                         .foregroundColor(.white)
                         .padding()
@@ -41,8 +41,8 @@ struct ErrorView: View {
                 .padding(.top, 20)
             }
             .padding()
-            .navigationBarTitle("Error", displayMode: .inline)
-            .navigationBarItems(trailing: Button("Dismiss") {
+            .navigationBarTitle(Text(LocalizedStringKey("error.title")), displayMode: .inline)
+            .navigationBarItems(trailing: Button(LocalizedStringKey("common.dismiss")) {
                 onDismiss()
             })
         }
