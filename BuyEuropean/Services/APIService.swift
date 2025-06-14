@@ -42,7 +42,8 @@ enum APIError: Error {
 class APIService {
     static let shared = APIService()
     
-    private let baseURL = "https://buy-e-ubackend-felixgraeber.replit.app"
+    private let baseURL = "https://electoral-shantee-felixgraeber-714b8722.koyeb.app"
+
     
     private var locationManager: LocationManager?
 
